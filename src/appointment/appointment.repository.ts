@@ -1,0 +1,58 @@
+import { Prisma } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
+
+export class AppointmentRepository {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async findAvailable(employeeId: string, start: Date, end: Date) {
+    return this.prisma.appointment.findFirst({
+      where: {
+        AND: [
+          {
+            employeeId,
+          },
+          {
+            status: {
+              not: 'CANCELLED',
+            },
+          },
+          {
+            OR: [
+              {
+                start: {
+                  gte: start,
+                  lte: end,
+                },
+              },
+              {
+                end: {
+                  gte: start,
+                  lte: end,
+                },
+              },
+            ],
+          },
+        ],
+      },
+    });
+  }
+
+  async create(data: Prisma.AppointmentCreateInput) {
+    return this.prisma.appointment.create({ data });
+  }
+
+  async update(id: string, data: Prisma.AppointmentUpdateInput) {
+    return this.prisma.appointment.update({
+      where: { id },
+      data,
+    });
+  }
+
+  async findOne(id: string) {
+    return this.prisma.appointment.findFirst({ where: { id } });
+  }
+
+  async findAll(filter: Prisma.AppointmentFindManyArgs) {
+    return this.prisma.appointment.findMany(filter);
+  }
+}
