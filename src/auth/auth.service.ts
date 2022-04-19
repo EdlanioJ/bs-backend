@@ -8,6 +8,7 @@ import { OauthDto } from './dto/oauth.dto';
 import { Tokens } from './dto/tokens.dto';
 import { AuthPayload } from './dto/payload.dto';
 import { AuthRepository } from './auth.repository';
+import { SendMailProducerService } from 'src/mail/service/send-mail-producer.service';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +16,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly authRepository: AuthRepository,
     private readonly configService: ConfigService,
+    private readonly mailProducer: SendMailProducerService,
   ) {}
 
   async validateOAuth(dto: OauthDto) {
@@ -26,9 +28,23 @@ export class AuthService {
         ...dto,
       });
 
-    return this.authRepository.create({
-      ...dto,
-    });
+    const newUser = await this.authRepository.create(dto);
+
+    await this.mailProducer.execute(
+      {
+        to: newUser.email,
+        type: 'welcome-email',
+        content: [
+          {
+            key: 'name',
+            value: newUser.name,
+          },
+        ],
+      },
+      { attempts: 3 },
+    );
+
+    return newUser;
   }
 
   async login(payload: AuthPayload) {
