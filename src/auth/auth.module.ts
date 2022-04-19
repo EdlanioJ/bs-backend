@@ -6,17 +6,22 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { RefreshJwtStrategy } from './strategies/refresh-jwt.strategy';
-import { AuthRepository } from './auth.repository';
 import { PrismaModule } from '../prisma/prisma.module';
 import { RolesGuard } from './guards/roles.guard';
 import { MailModule } from '../mail/mail.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [PassportModule, MailModule, JwtModule.register({}), PrismaModule],
+  imports: [
+    PassportModule,
+    MailModule,
+    UserModule,
+    JwtModule.register({}),
+    PrismaModule,
+  ],
   exports: [AuthService, JwtStrategy],
   providers: [
     AuthService,
-    AuthRepository,
     GoogleStrategy,
     JwtStrategy,
     RolesGuard,

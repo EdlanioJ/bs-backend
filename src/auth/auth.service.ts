@@ -7,28 +7,28 @@ import * as bcrypt from 'bcrypt';
 import { OauthDto } from './dto/oauth.dto';
 import { Tokens } from './dto/tokens.dto';
 import { AuthPayload } from './dto/payload.dto';
-import { AuthRepository } from './auth.repository';
-import { SendMailProducerService } from 'src/mail/service/send-mail-producer.service';
+import { SendMailProducerService } from '../mail/service/send-mail-producer.service';
+import { UserRepository } from '../user/user.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly authRepository: AuthRepository,
+    private readonly userRepo: UserRepository,
     private readonly configService: ConfigService,
     private readonly mailProducer: SendMailProducerService,
   ) {}
 
   async validateOAuth(dto: OauthDto) {
-    const user = await this.authRepository.findByThirdPartyId(dto.thirdPartyId);
+    const user = await this.userRepo.findOneByThirdPartyId(dto.thirdPartyId);
     console.log('chegou');
 
     if (user)
-      return this.authRepository.update(user.id, {
+      return this.userRepo.update(user.id, {
         ...dto,
       });
 
-    const newUser = await this.authRepository.create(dto);
+    const newUser = await this.userRepo.create(dto);
 
     await this.mailProducer.execute(
       {
@@ -59,13 +59,13 @@ export class AuthService {
   }
 
   async logout(userId: string) {
-    await this.authRepository.update(userId, {
+    await this.userRepo.update(userId, {
       refreshToken: null,
     });
   }
 
   async refreshTokens(userId: string, refreshToken: string) {
-    const user = await this.authRepository.getById(userId);
+    const user = await this.userRepo.findOne(userId);
     if (!user || !user.refreshToken)
       throw new ForbiddenException('access denied');
 
@@ -116,7 +116,7 @@ export class AuthService {
   private async updateRefreshToken(userId: string, refreshToken: string) {
     const hash = await this.hashData(refreshToken);
 
-    await this.authRepository.update(userId, {
+    await this.userRepo.update(userId, {
       refreshToken: hash,
     });
   }
