@@ -6,5 +6,5 @@ type Content = {
 export class SendMailDto {
   to: string;
   type: string;
-  content: [Content];
+  content: Content[];
 }

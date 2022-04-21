@@ -3,7 +3,7 @@ import {
   UnauthorizedException,
   BadRequestException,
 } from '@nestjs/common';
-import { UserRepository } from '../user/user.repository';
+import { UserRepository } from '../user/repository/user.repository';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { startOfHour, isBefore, addMinutes } from 'date-fns';
 import { AppointmentRepository } from './appointment.repository';

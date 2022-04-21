@@ -33,7 +33,48 @@ model User {
   templates        Template[]       @relation("Template")
   serviceProvicer  ServiceProvider? @relation("Provider")
 
+  connectionToProvider ProviderEmployeeConnection?         @relation("ConnectionToProvider")
+  connectionRequest    ProviderEmployeeConnectionRequest[] @relation("ConnectionRequest")
+  managerRequest       ManagerRequest?                     @relation("ManagerRequest")
+
+  manager      Manager?  @relation("Manager")
+  authorizedBy Manager[] @relation("AuthorizedBy")
+
   @@map("users")
+}
+
+enum ManagerRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model ManagerRequest {
+  id     String               @id @default(auto()) @map("_id") @db.ObjectId
+  status ManagerRequestStatus @default(PENDING) @map("status")
+
+  user   User   @relation("ManagerRequest", fields: [userId], references: [id])
+  userId String @unique @map("user_id")
+
+  rejectReason String? @map("reject_reason")
+
+  rejectBy   Manager? @relation("RejectBy", fields: [rejectById], references: [id])
+  rejectById String   @map("reject_by_id") @db.ObjectId
+
+  @@map("manager_requests")
+}
+
+model Manager {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  user   User   @relation("Manager", fields: [userId], references: [id])
+  userId String @unique @map("user_id")
+
+  authorizedBy   User   @relation("AuthorizedBy", fields: [authorizedById], references: [id])
+  authorizedById String @map("authorized_by_id")
+
+  managerRequest ManagerRequest[] @relation("RejectBy")
+  @@map("managers")
 }
 
 enum AppointmentStatus {
@@ -71,6 +112,10 @@ model ServiceProvider {
   userId String @unique @map("user_id") @db.ObjectId
 
   services Service[] @relation("ServiceProvider")
+
+  connectionToEmployees ProviderEmployeeConnection[]        @relation("ConnectionToEmployees")
+  connectionRequest     ProviderEmployeeConnectionRequest[] @relation("ConnectionRequestToProvider")
+
   @@map("services_provider")
 }
 
@@ -86,6 +131,36 @@ model Service {
   appointments Appointment[] @relation("Service")
 
   @@map("services")
+}
+
+enum ConnectionRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model ProviderEmployeeConnectionRequest {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  status ConnectionRequestStatus @default(PENDING)
+
+  provider   ServiceProvider @relation("ConnectionRequestToProvider", fields: [providerId], references: [id])
+  providerId String          @map("provider_id") @db.ObjectId
+
+  employee   User   @relation("ConnectionRequest", fields: [employeeId], references: [id])
+  employeeId String @map("employee_id") @db.ObjectId
+}
+
+model ProviderEmployeeConnection {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  provider   ServiceProvider @relation("ConnectionToEmployees", fields: [providerId], references: [id])
+  providerId String          @map("provider_id") @db.ObjectId
+
+  user   User   @relation("ConnectionToProvider", fields: [userId], references: [id])
+  userId String @unique @map("user_id") @db.ObjectId
+
+  @@map("connection_provider")
 }
 
 model Template {

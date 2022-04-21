@@ -1,5 +1,5 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { UserRepository } from '../user/user.repository';
+import { UserRepository } from '../user/repository/user.repository';
 import { CreateTemplateDto } from './dto/create-template.dto';
 import { FindAllTemplateDto } from './dto/find-all-template.dto';
 import { TemplateRepository } from './template.repository';

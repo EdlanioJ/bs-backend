@@ -9,16 +9,10 @@ import { RefreshJwtStrategy } from './strategies/refresh-jwt.strategy';
 import { PrismaModule } from '../prisma/prisma.module';
 import { RolesGuard } from './guards/roles.guard';
 import { MailModule } from '../mail/mail.module';
-import { UserModule } from '../user/user.module';
+import { UserRepository } from '../user/repository/user.repository';
 
 @Module({
-  imports: [
-    PassportModule,
-    MailModule,
-    UserModule,
-    JwtModule.register({}),
-    PrismaModule,
-  ],
+  imports: [PassportModule, MailModule, JwtModule.register({}), PrismaModule],
   exports: [AuthService, JwtStrategy],
   providers: [
     AuthService,
@@ -26,6 +20,7 @@ import { UserModule } from '../user/user.module';
     JwtStrategy,
     RolesGuard,
     RefreshJwtStrategy,
+    UserRepository,
   ],
   controllers: [AuthController],
 })

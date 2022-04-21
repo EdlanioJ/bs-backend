@@ -6,12 +6,13 @@ import { SendMailProcessor } from './processor/send-mail.processor';
 import { SendMailProducerService } from './service/send-mail-producer.service';
 import { SendMailProcessorService } from './service/send-mail-processor.service';
 
-import { TemplateModule } from '../template/template.module';
 import { BullModule } from '@nestjs/bull';
+import { TemplateRepository } from '../template/template.repository';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
   imports: [
-    TemplateModule,
+    PrismaModule,
     BullModule.registerQueue({
       name: 'send-mail-queue',
     }),
@@ -39,6 +40,7 @@ import { BullModule } from '@nestjs/bull';
     SendMailProcessorService,
     SendMailProducerService,
     SendMailProcessor,
+    TemplateRepository,
   ],
   exports: [SendMailProducerService],
 })
