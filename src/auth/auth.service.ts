@@ -7,7 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { OauthDto } from './dto/oauth.dto';
 import { Tokens } from './dto/tokens.dto';
 import { AuthPayload } from './dto/payload.dto';
-import { SendMailProducerService } from '../mail/service/send-mail-producer.service';
+import { SendMailProducerService } from '../mail/services/send-mail-producer.service';
 import { UserRepository } from '../user/repository/user.repository';
 
 @Injectable()

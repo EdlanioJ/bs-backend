@@ -3,8 +3,8 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { SendMailProcessor } from './processor/send-mail.processor';
-import { SendMailProducerService } from './service/send-mail-producer.service';
-import { SendMailProcessorService } from './service/send-mail-processor.service';
+import { SendMailProducerService } from './services/send-mail-producer.service';
+import { SendMailProcessorService } from './services/send-mail-processor.service';
 
 import { BullModule } from '@nestjs/bull';
 import { TemplateRepository } from '../template/template.repository';
