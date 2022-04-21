@@ -10,31 +10,50 @@ import {
 } from '@nestjs/common';
 import { GetCurrentUser } from '../auth/decorators/get-current-user.decorator';
 import { JwtGuard } from '../auth/guards/jwt.guard';
-import { AppointmentService } from './appointment.service';
 import { CancelAppointmentBody } from './dto/cancel-appointment.dto';
 import { CreateAppointmentBody } from './dto/create-appointment.dto';
+import { CancelAppointmentService } from './services/cancel-appointment.service';
+import { CompleteAppointmentService } from './services/complete-appointment.service';
+import { CreateAppointmentService } from './services/create-appointment.service';
+import { GetAppointmentService } from './services/get-appointment.service';
+import { ListAppointmentByCustomerService } from './services/list-appointment-by-customer.service';
+import { ListAppointmentByEmployeeService } from './services/list-appointment-by-employee.service';
+import { ListAppointmentService } from './services/list-appointment.service';
 
 @UseGuards(JwtGuard)
 @Controller('appointment')
 export class AppointmentController {
-  constructor(private readonly appointmentService: AppointmentService) {}
+  constructor(
+    private readonly cancelAppointment: CancelAppointmentService,
+    private readonly completeAppointment: CompleteAppointmentService,
+    private readonly createAppointment: CreateAppointmentService,
+    private readonly getAppointment: GetAppointmentService,
+    private readonly listAppointment: ListAppointmentService,
+    private readonly listAppointmentByCustomer: ListAppointmentByCustomerService,
+    private readonly listAppointmentByEmployee: ListAppointmentByEmployeeService,
+  ) {}
 
   @Post()
   create(
     @Body() body: CreateAppointmentBody,
     @GetCurrentUser('sub') userId: string,
   ) {
-    return this.appointmentService.create({
+    return this.createAppointment.execute({
       customerId: userId,
       employeeId: body.employeeId,
       serviceId: body.serviceId,
-      start: body.date,
+      startTime: body.date,
     });
+  }
+
+  @Get(':id')
+  get(@Param('id') id: string) {
+    return this.getAppointment.execute(id);
   }
 
   @Get()
   list(@Query('page') page: number, @Query('limit') limit: number) {
-    return this.appointmentService.list({ page, limit });
+    return this.listAppointment.execute({ page, limit });
   }
 
   @Get('employee/:id')
@@ -45,10 +64,10 @@ export class AppointmentController {
     @Query('page') page: number,
     @Query('limit') limit: number,
   ) {
-    return this.appointmentService.listByEmployee({
-      id: employeeId,
-      startFrom: new Date(fromDate),
-      startTo: new Date(toDate),
+    return this.listAppointmentByEmployee.execute({
+      employeeId,
+      fromDate: new Date(fromDate),
+      toDate: new Date(toDate),
       page,
       limit,
     });
@@ -62,10 +81,10 @@ export class AppointmentController {
     @Query('page') page: number,
     @Query('limit') limit: number,
   ) {
-    return this.appointmentService.listByCustomer({
-      id: userId,
-      startFrom: new Date(fromDate),
-      startTo: new Date(toDate),
+    return this.listAppointmentByCustomer.execute({
+      customerId: userId,
+      fromDate: new Date(fromDate),
+      toDate: new Date(toDate),
       page,
       limit,
     });
@@ -77,7 +96,7 @@ export class AppointmentController {
     @Param('id') appointmentId: string,
     @GetCurrentUser('sub') userId: string,
   ) {
-    return this.appointmentService.cancel({
+    return this.cancelAppointment.execute({
       appointmentId,
       userId,
       reason: body.cancelReason,
@@ -89,7 +108,7 @@ export class AppointmentController {
     @Param('id') appointmentId: string,
     @GetCurrentUser('sub') userId: string,
   ) {
-    return this.appointmentService.complete({
+    return this.completeAppointment.execute({
       appointmentId,
       userId,
     });
