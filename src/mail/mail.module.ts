@@ -7,7 +7,7 @@ import { SendMailProducerService } from './services/send-mail-producer.service';
 import { SendMailProcessorService } from './services/send-mail-processor.service';
 
 import { BullModule } from '@nestjs/bull';
-import { TemplateRepository } from '../template/template.repository';
+import { TemplateRepository } from '../template/repositories/template.repository';
 import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({

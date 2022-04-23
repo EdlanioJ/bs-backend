@@ -1,6 +1,6 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
-import { TemplateRepository } from '../../template/template.repository';
+import { TemplateRepository } from '../../template/repositories/template.repository';
 import { SendMailDto } from '../dto/send-mail.dto';
 
 @Injectable()

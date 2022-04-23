@@ -50,8 +50,9 @@ enum ManagerRequestStatus {
 }
 
 model ManagerRequest {
-  id     String               @id @default(auto()) @map("_id") @db.ObjectId
-  status ManagerRequestStatus @default(PENDING) @map("status")
+  id        String               @id @default(auto()) @map("_id") @db.ObjectId
+  status    ManagerRequestStatus @default(PENDING) @map("status")
+  createdAt DateTime             @default(now()) @map("created_at")
 
   user   User   @relation("ManagerRequest", fields: [userId], references: [id])
   userId String @unique @map("user_id")
@@ -65,7 +66,8 @@ model ManagerRequest {
 }
 
 model Manager {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now()) @map("created_at")
 
   user   User   @relation("Manager", fields: [userId], references: [id])
   userId String @unique @map("user_id")
@@ -105,8 +107,9 @@ model Appointment {
 }
 
 model ServiceProvider {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
 
   user   User   @relation("Provider", fields: [userId], references: [id])
   userId String @unique @map("user_id") @db.ObjectId
@@ -120,8 +123,9 @@ model ServiceProvider {
 }
 
 model Service {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
 
   appointmentDuration Int @default(60) @map("appointment_duration")
 
@@ -142,17 +146,21 @@ enum ConnectionRequestStatus {
 model ProviderEmployeeConnectionRequest {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  status ConnectionRequestStatus @default(PENDING)
+  status    ConnectionRequestStatus @default(PENDING)
+  createdAt DateTime                @default(now()) @map("created_at")
 
   provider   ServiceProvider @relation("ConnectionRequestToProvider", fields: [providerId], references: [id])
   providerId String          @map("provider_id") @db.ObjectId
 
   employee   User   @relation("ConnectionRequest", fields: [employeeId], references: [id])
   employeeId String @map("employee_id") @db.ObjectId
+
+  @@map("connection_request_to_provider")
 }
 
 model ProviderEmployeeConnection {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now()) @map("created_at")
 
   provider   ServiceProvider @relation("ConnectionToEmployees", fields: [providerId], references: [id])
   providerId String          @map("provider_id") @db.ObjectId
@@ -164,12 +172,14 @@ model ProviderEmployeeConnection {
 }
 
 model Template {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  type    String @unique
-  subject String
-  body    String
-  user    User   @relation("Template", fields: [userId], references: [id])
-  userId  String @map("user_id") @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  type      String   @unique
+  subject   String
+  body      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user   User   @relation("Template", fields: [userId], references: [id])
+  userId String @map("user_id") @db.ObjectId
 
   @@map("templates")
 }
