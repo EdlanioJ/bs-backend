@@ -15,8 +15,8 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return Welcome message', () => {
+      expect(appController.getHello()).toBe('Welcome to Beauty Spaces API');
     });
   });
 });
