@@ -1,8 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { SendMailProducerService } from '../../mail/services/send-mail-producer.service';
-import { ManagerRequestRepository } from '../repository/manager-request.repository';
-import { UserRepository } from '../repository/user.repository';
 
+import { ManagerRequestRepository } from '../repositories/manager-request.repository';
+import { UserRepository } from '../repositories/user.repository';
+
+import { SendMailProducerService } from '../../mail/services/send-mail-producer.service';
+
+type Input = {
+  id: string;
+  userId: string;
+  reason: string;
+};
 @Injectable()
 export class RejectManagerService {
   constructor(
@@ -11,15 +18,7 @@ export class RejectManagerService {
     private readonly mailProducer: SendMailProducerService,
   ) {}
 
-  async execute({
-    id,
-    userId,
-    reason,
-  }: {
-    id: string;
-    userId: string;
-    reason: string;
-  }) {
+  async execute({ id, userId, reason }: Input): Promise<void> {
     const user = await this.userRepo.findOne(id);
     if (!user) throw new BadRequestException('User not found');
 

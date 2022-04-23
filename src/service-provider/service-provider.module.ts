@@ -13,7 +13,7 @@ import { DeleteConnectionService } from './services/delete-connection.service';
 import { ListConnectionByManagerService } from './services/list-connection-by-manager.service';
 import { ListConnectionService } from './services/list-connection.service';
 import { ServiceProviderRepository } from './service-provider.repository';
-import { UserRepository } from 'src/user/repository/user.repository';
+import { UserRepository } from 'src/user/repositories/user.repository';
 
 @Module({
   imports: [PrismaModule, AuthModule, MailModule],

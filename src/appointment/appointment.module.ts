@@ -4,7 +4,7 @@ import { AppointmentRepository } from './repository/appointment.repository';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AuthModule } from '../auth/auth.module';
 import { ServiceModule } from '../service/service.module';
-import { UserRepository } from '../user/repository/user.repository';
+import { UserRepository } from '../user/repositories/user.repository';
 import { CancelAppointmentService } from './services/cancel-appointment.service';
 import { CompleteAppointmentService } from './services/complete-appointment.service';
 import { CreateAppointmentService } from './services/create-appointment.service';

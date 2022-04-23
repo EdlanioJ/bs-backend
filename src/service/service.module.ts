@@ -3,7 +3,7 @@ import { ServiceService } from './service.service';
 import { ServiceController } from './service.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { ServiceRepository } from './service.repository';
-import { UserRepository } from '../user/repository/user.repository';
+import { UserRepository } from '../user/repositories/user.repository';
 import { ServiceProviderRepository } from '../service-provider/service-provider.repository';
 
 @Module({

@@ -8,7 +8,7 @@ import { OauthDto } from './dto/oauth.dto';
 import { Tokens } from './dto/tokens.dto';
 import { AuthPayload } from './dto/payload.dto';
 import { SendMailProducerService } from '../mail/services/send-mail-producer.service';
-import { UserRepository } from '../user/repository/user.repository';
+import { UserRepository } from '../user/repositories/user.repository';
 
 @Injectable()
 export class AuthService {

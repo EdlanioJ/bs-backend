@@ -9,7 +9,7 @@ import { RefreshJwtStrategy } from './strategies/refresh-jwt.strategy';
 import { PrismaModule } from '../prisma/prisma.module';
 import { RolesGuard } from './guards/roles.guard';
 import { MailModule } from '../mail/mail.module';
-import { UserRepository } from '../user/repository/user.repository';
+import { UserRepository } from '../user/repositories/user.repository';
 
 @Module({
   imports: [PassportModule, MailModule, JwtModule.register({}), PrismaModule],

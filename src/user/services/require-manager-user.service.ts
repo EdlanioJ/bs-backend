@@ -1,6 +1,11 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { ManagerRequestRepository } from '../repository/manager-request.repository';
-import { UserRepository } from '../repository/user.repository';
+
+import { ManagerRequestRepository } from '../repositories/manager-request.repository';
+import { UserRepository } from '../repositories/user.repository';
+
+type Input = {
+  userId: string;
+};
 
 @Injectable()
 export class RequireManagerUserService {
@@ -8,7 +13,8 @@ export class RequireManagerUserService {
     private readonly userRepo: UserRepository,
     private readonly managerRequestRepo: ManagerRequestRepository,
   ) {}
-  async execute({ userId }: { userId: string }) {
+
+  async execute({ userId }: Input): Promise<void> {
     const user = await this.userRepo.findOne(userId);
     if (!user) throw new BadRequestException('User not found');
     if (user.role !== 'USER')

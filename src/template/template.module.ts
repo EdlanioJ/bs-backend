@@ -9,7 +9,7 @@ import { DeleteTemplateService } from './services/delete-template.service';
 
 import { AuthModule } from '../auth/auth.module';
 import { PrismaModule } from '../prisma/prisma.module';
-import { UserRepository } from '../user/repository/user.repository';
+import { UserRepository } from '../user/repositories/user.repository';
 
 @Module({
   imports: [AuthModule, PrismaModule],

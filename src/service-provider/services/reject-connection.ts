@@ -1,5 +1,5 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { UserRepository } from 'src/user/repository/user.repository';
+import { UserRepository } from 'src/user/repositories/user.repository';
 import { RequestConnectionRepository } from '../repositories/request-connection.repository';
 
 @Injectable()

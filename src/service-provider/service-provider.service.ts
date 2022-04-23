@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserRepository } from '../user/repository/user.repository';
+import { UserRepository } from '../user/repositories/user.repository';
 import { CreateServiceProviderDto } from './dto/create-provider.dto';
 import { ServiceProviderRepository } from './service-provider.repository';
 

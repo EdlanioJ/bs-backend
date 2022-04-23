@@ -3,7 +3,8 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserRepository } from '../../user/repository/user.repository';
+
+import { UserRepository } from '../../user/repositories/user.repository';
 import { TemplateRepository } from '../repositories/template.repository';
 
 type Input = {
