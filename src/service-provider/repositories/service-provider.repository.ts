@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
+
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class ServiceProviderRepository {
@@ -28,11 +29,10 @@ export class ServiceProviderRepository {
     });
   }
 
-  async delete(id: string, userId: string) {
+  async delete(id: string) {
     return this.prisma.serviceProvider.delete({
       where: {
         id,
-        userId,
       },
     });
   }

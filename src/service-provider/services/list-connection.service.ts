@@ -1,5 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { ProviderConnectionRepository } from '../repositories/provider-connection.repository';
+import { ProviderConnectionModel } from '../models/connection-provider.model';
+import { ProviderConnectionRepository } from '../repositories';
+
+type Input = {
+  page: number;
+  limit: number;
+};
+
+type Output = {
+  total: number;
+  data: ProviderConnectionModel[];
+};
 
 @Injectable()
 export class ListConnectionService {
@@ -7,10 +18,18 @@ export class ListConnectionService {
     private readonly providerConnectionRepo: ProviderConnectionRepository,
   ) {}
 
-  async execute({ page, limit }: { page?: number; limit?: number }) {
-    return this.providerConnectionRepo.findAll({
-      skip: (page - 1) * limit,
-      take: limit,
-    });
+  async execute({ page, limit }: Input): Promise<Output> {
+    const [total, providerConnections] = await Promise.all([
+      this.providerConnectionRepo.count(),
+      this.providerConnectionRepo.findAll({
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+    ]);
+
+    return {
+      total,
+      data: ProviderConnectionModel.mapCollection(providerConnections),
+    };
   }
 }

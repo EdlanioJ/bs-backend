@@ -1,8 +1,14 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { UserRepository } from 'src/user/repositories/user.repository';
-import { ProviderConnectionRepository } from '../repositories/provider-connection.repository';
-import { RequestConnectionRepository } from '../repositories/request-connection.repository';
+import { UserRepository } from '../../user/repositories/user.repository';
+import {
+  ProviderConnectionRepository,
+  RequestConnectionRepository,
+} from '../repositories';
 
+type Input = {
+  userId: string;
+  requestId: string;
+};
 @Injectable()
 export class AcceptConnectionService {
   constructor(
@@ -10,20 +16,14 @@ export class AcceptConnectionService {
     private readonly providerConnectionRepo: ProviderConnectionRepository,
     private readonly requestConnectionRepo: RequestConnectionRepository,
   ) {}
-  async execute({
-    userId,
-    connectionId,
-  }: {
-    userId: string;
-    connectionId: string;
-  }) {
+  async execute({ userId, requestId }: Input): Promise<void> {
     const user = await this.useRepo.findOne(userId);
     if (!user) throw new BadRequestException('User not found');
 
     if (user.role !== 'USER') throw new BadRequestException('Not a valid user');
 
     const requestConnection = await this.requestConnectionRepo.findOne(
-      connectionId,
+      requestId,
     );
     if (!requestConnection)
       throw new BadRequestException('Connection not found');
@@ -34,7 +34,7 @@ export class AcceptConnectionService {
     if (requestConnection.employeeId !== userId)
       throw new BadRequestException('You are not the employee');
 
-    await this.requestConnectionRepo.update(connectionId, {
+    await this.requestConnectionRepo.update(requestId, {
       status: 'ACCEPTED',
     });
 

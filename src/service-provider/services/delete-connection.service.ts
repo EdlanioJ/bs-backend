@@ -1,7 +1,14 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { ProviderConnectionRepository } from '../repositories/provider-connection.repository';
-import { RequestConnectionRepository } from '../repositories/request-connection.repository';
-import { ServiceProviderRepository } from '../service-provider.repository';
+import {
+  ProviderConnectionRepository,
+  RequestConnectionRepository,
+  ServiceProviderRepository,
+} from '../repositories';
+
+type Input = {
+  connectionId: string;
+  userId: string;
+};
 
 @Injectable()
 export class DeleteConnectionService {
@@ -11,13 +18,7 @@ export class DeleteConnectionService {
     private readonly requestConnectionRepo: RequestConnectionRepository,
   ) {}
 
-  async execute({
-    connectionId,
-    userId,
-  }: {
-    connectionId: string;
-    userId: string;
-  }) {
+  async execute({ connectionId, userId }: Input): Promise<void> {
     const provider = await this.providerRepo.findByUserId(userId);
     if (!provider) throw new BadRequestException('Provider not found');
 

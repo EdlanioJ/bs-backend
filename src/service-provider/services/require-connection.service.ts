@@ -1,9 +1,15 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { SendMailProducerService } from '../../mail/services/send-mail-producer.service';
 import { UserRepository } from '../../user/repositories/user.repository';
-import { RequestConnectionRepository } from '../repositories/request-connection.repository';
-import { ServiceProviderRepository } from '../service-provider.repository';
+import {
+  RequestConnectionRepository,
+  ServiceProviderRepository,
+} from '../repositories';
 
+type Input = {
+  providerOwnerId: string;
+  userToConnectId: string;
+};
 @Injectable()
 export class RequireConnectionService {
   constructor(
@@ -13,13 +19,7 @@ export class RequireConnectionService {
     private readonly mailProducer: SendMailProducerService,
   ) {}
 
-  async execute({
-    providerOwnerId,
-    userToConnectId,
-  }: {
-    providerOwnerId: string;
-    userToConnectId: string;
-  }) {
+  async execute({ providerOwnerId, userToConnectId }: Input): Promise<void> {
     const providerOwner = await this.userRepo.findOne(providerOwnerId);
 
     if (!providerOwner)

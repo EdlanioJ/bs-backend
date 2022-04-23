@@ -24,6 +24,9 @@ export class ProviderConnectionRepository {
     return this.prisma.providerEmployeeConnection.findMany(filter);
   }
 
+  async count(args?: Prisma.ProviderEmployeeConnectionCountArgs) {
+    return this.prisma.providerEmployeeConnection.count(args);
+  }
   async delete(id: string) {
     return this.prisma.providerEmployeeConnection.delete({
       where: {

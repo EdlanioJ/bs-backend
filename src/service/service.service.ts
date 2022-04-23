@@ -1,5 +1,5 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { ServiceProviderRepository } from '../service-provider/service-provider.repository';
+import { ServiceProviderRepository } from '../service-provider/repositories/service-provider.repository';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { ServiceRepository } from './service.repository';
 

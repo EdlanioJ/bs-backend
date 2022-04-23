@@ -4,7 +4,7 @@ import { ServiceController } from './service.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { ServiceRepository } from './service.repository';
 import { UserRepository } from '../user/repositories/user.repository';
-import { ServiceProviderRepository } from '../service-provider/service-provider.repository';
+import { ServiceProviderRepository } from '../service-provider/repositories/service-provider.repository';
 
 @Module({
   imports: [PrismaModule],
