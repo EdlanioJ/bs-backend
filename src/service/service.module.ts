@@ -1,19 +1,25 @@
 import { Module } from '@nestjs/common';
-import { ServiceService } from './service.service';
-import { ServiceController } from './service.controller';
+import { ServiceController } from './controllers';
 import { PrismaModule } from '../prisma/prisma.module';
-import { ServiceRepository } from './service.repository';
+import { ServiceRepository } from './repositories/service.repository';
 import { UserRepository } from '../user/repositories/user.repository';
-import { ServiceProviderRepository } from '../service-provider/repositories/service-provider.repository';
+import { ServiceProviderRepository } from '../service-provider/repositories';
+import {
+  CreateProviderServiceService,
+  GetProviderServiceService,
+  ListProviderServiceService,
+} from './services';
 
 @Module({
   imports: [PrismaModule],
   exports: [ServiceRepository],
   controllers: [ServiceController],
   providers: [
-    ServiceService,
-    ServiceRepository,
+    CreateProviderServiceService,
+    ListProviderServiceService,
+    GetProviderServiceService,
     UserRepository,
+    ServiceRepository,
     ServiceProviderRepository,
   ],
 })

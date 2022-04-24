@@ -127,7 +127,7 @@ model Service {
   name      String
   createdAt DateTime @default(now()) @map("created_at")
 
-  appointmentDuration Int @default(60) @map("appointment_duration")
+  appointmentDurationInMinutes Int @default(60) @map("appointment_duration_in_minutes")
 
   provider   ServiceProvider @relation("ServiceProvider", fields: [providerId], references: [id])
   providerId String          @unique @map("provider_id") @db.ObjectId

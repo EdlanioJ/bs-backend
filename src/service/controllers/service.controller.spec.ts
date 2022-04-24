@@ -1,6 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import {
+  CreateProviderServiceService,
+  ListProviderServiceService,
+  GetProviderServiceService,
+} from '../services';
 import { ServiceController } from './service.controller';
-import { ServiceService } from './service.service';
+
+jest.mock('../services');
 
 describe('ServiceController', () => {
   let controller: ServiceController;
@@ -8,7 +14,11 @@ describe('ServiceController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ServiceController],
-      providers: [ServiceService],
+      providers: [
+        CreateProviderServiceService,
+        ListProviderServiceService,
+        GetProviderServiceService,
+      ],
     }).compile();
 
     controller = module.get<ServiceController>(ServiceController);

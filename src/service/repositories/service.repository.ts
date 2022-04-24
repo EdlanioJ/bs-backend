@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class ServiceRepository {
@@ -16,6 +16,9 @@ export class ServiceRepository {
     return this.prisma.service.findMany(filter);
   }
 
+  async count(args?: Prisma.ServiceCountArgs) {
+    return this.prisma.service.count(args);
+  }
   async findOne(id: string) {
     return this.prisma.service.findFirst({
       where: {

@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { addMinutes, isBefore, startOfHour } from 'date-fns';
-import { ServiceRepository } from 'src/service/service.repository';
+import { ServiceRepository } from 'src/service/repositories/service.repository';
 import { UserRepository } from 'src/user/repositories/user.repository';
 import { AppointmentRepository } from '../repository/appointment.repository';
 
@@ -43,7 +43,7 @@ export class CreateAppointmentService {
     const service = await this.serviceRepo.findOne(serviceId);
     if (!service) throw new BadRequestException('Service not found');
 
-    const endTime = addMinutes(startTime, service.appointmentDuration);
+    const endTime = addMinutes(startTime, service.appointmentDurationInMinutes);
     const checkAvailability = await this.appointmentRepo.findAvailable(
       employeeId,
       startTime,
