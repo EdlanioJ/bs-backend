@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { addMinutes, isBefore, startOfHour } from 'date-fns';
 import { ServiceRepository } from '../../service/repositories';
-import { UserRepository } from '../../user/repositories/user.repository';
+import { UserRepository } from '../../user/repositories';
 import { AppointmentRepository } from '../repositories';
 
 type Input = {

@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
-import { UserRepository } from '../../user/repositories/user.repository';
+import { UserRepository } from '../../user/repositories';
 import { TemplateRepository } from '../repositories/template.repository';
 
 type Input = {

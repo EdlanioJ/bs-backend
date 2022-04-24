@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AuthModule } from '../auth/auth.module';
-import { UserRepository } from '../user/repositories/user.repository';
+import { UserRepository } from '../user/repositories';
 
 import { AppointmentController } from './controllers';
 import { AppointmentRepository } from './repositories';

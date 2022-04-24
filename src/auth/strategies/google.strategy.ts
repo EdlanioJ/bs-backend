@@ -3,13 +3,13 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { Profile, Strategy } from 'passport-google-oauth20';
-import { AuthService } from '../auth.service';
-import { AuthPayload } from '../dto/payload.dto';
+import { AuthPayloadDto } from '../dto/auth-payload.dto';
+import { ValidateOAuthService } from '../services';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(
-    private readonly authService: AuthService,
+    private readonly validateOauthService: ValidateOAuthService,
     private readonly configService: ConfigService,
   ) {
     super({
@@ -26,21 +26,20 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     _accessToken: string,
     _refreshToken: string,
     profile: Profile,
-    done: (error: any, payload: AuthPayload) => void,
+    done: (error: any, payload: AuthPayloadDto) => void,
   ) {
     try {
       const { id, displayName, photos, emails, provider } = profile;
 
-      const details = {
+      const user = await this.validateOauthService.execute({
         thirdPartyId: id,
         avatar: photos[0].value,
         name: displayName,
         email: emails[0].value,
         provider,
-      };
-      const user = await this.authService.validateOAuth(details);
+      });
 
-      const payload = new AuthPayload({
+      const payload = new AuthPayloadDto({
         sub: user.id,
         username: user.name,
         role: user.role,

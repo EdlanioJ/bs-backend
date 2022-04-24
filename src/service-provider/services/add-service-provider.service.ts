@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
-import { UserRepository } from '../../user/repositories/user.repository';
+import { UserRepository } from '../../user/repositories';
 import { ServiceProviderRepository } from '../repositories';
 
 type Input = {

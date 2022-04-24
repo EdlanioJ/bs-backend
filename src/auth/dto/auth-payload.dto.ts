@@ -1,11 +1,11 @@
-export class AuthPayload {
+export class AuthPayloadDto {
   sub: string;
 
   username: string;
 
   role: string;
 
-  constructor(payload: AuthPayload) {
+  constructor(payload: AuthPayloadDto) {
     Object.assign(this, payload);
   }
 }

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ServiceController } from './controllers';
 import { PrismaModule } from '../prisma/prisma.module';
 import { ServiceRepository } from './repositories/service.repository';
-import { UserRepository } from '../user/repositories/user.repository';
+import { UserRepository } from '../user/repositories';
 import { ServiceProviderRepository } from '../service-provider/repositories';
 import {
   CreateProviderServiceService,

@@ -26,7 +26,7 @@ import {
   ListConnectionService,
 } from './services';
 
-import { UserRepository } from '../user/repositories/user.repository';
+import { UserRepository } from '../user/repositories';
 @Module({
   imports: [PrismaModule, AuthModule, MailModule],
   providers: [
