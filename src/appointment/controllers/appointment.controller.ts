@@ -7,18 +7,21 @@ import {
   Get,
   Query,
   UseGuards,
+  Res,
 } from '@nestjs/common';
-import { GetCurrentUser } from '../auth/decorators/get-current-user.decorator';
-import { JwtGuard } from '../auth/guards/jwt.guard';
-import { CancelAppointmentBody } from './dto/cancel-appointment.dto';
-import { CreateAppointmentBody } from './dto/create-appointment.dto';
-import { CancelAppointmentService } from './services/cancel-appointment.service';
-import { CompleteAppointmentService } from './services/complete-appointment.service';
-import { CreateAppointmentService } from './services/create-appointment.service';
-import { GetAppointmentService } from './services/get-appointment.service';
-import { ListAppointmentByCustomerService } from './services/list-appointment-by-customer.service';
-import { ListAppointmentByEmployeeService } from './services/list-appointment-by-employee.service';
-import { ListAppointmentService } from './services/list-appointment.service';
+import { GetCurrentUser } from '../../auth/decorators/get-current-user.decorator';
+import { JwtGuard } from '../../auth/guards/jwt.guard';
+import {
+  CancelAppointmentService,
+  CompleteAppointmentService,
+  CreateAppointmentService,
+  GetAppointmentService,
+  ListAppointmentService,
+  ListAppointmentByCustomerService,
+  ListAppointmentByEmployeeService,
+} from '../services';
+import { CancelAppointmentDto, CreateAppointmentDto } from '../dto';
+import { Response } from 'express';
 
 @UseGuards(JwtGuard)
 @Controller('appointment')
@@ -35,71 +38,107 @@ export class AppointmentController {
 
   @Post()
   create(
-    @Body() body: CreateAppointmentBody,
+    @Body() { employeeId, serviceId, startAt }: CreateAppointmentDto,
     @GetCurrentUser('sub') userId: string,
   ) {
     return this.createAppointment.execute({
       customerId: userId,
-      employeeId: body.employeeId,
-      serviceId: body.serviceId,
-      startTime: body.date,
+      employeeId: employeeId,
+      serviceId: serviceId,
+      startTime: startAt,
     });
   }
 
   @Get(':id')
   get(@Param('id') id: string) {
-    return this.getAppointment.execute(id);
+    return this.getAppointment.execute({ id });
   }
 
   @Get()
-  list(@Query('page') page: number, @Query('limit') limit: number) {
-    return this.listAppointment.execute({ page, limit });
+  async list(
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Res() res: Response,
+  ) {
+    const {
+      data,
+      limit: Limit,
+      page: Page,
+      total,
+    } = await this.listAppointment.execute({ page, limit });
+
+    res.setHeader('x-total-count', total);
+    res.setHeader('x-page', Page);
+    res.setHeader('x-limit', Limit);
+    return data;
   }
 
   @Get('employee/:id')
-  listByEmployee(
+  async listByEmployee(
     @Param('id') employeeId: string,
     @Query('from_date') fromDate: string,
     @Query('to_date') toDate: string,
     @Query('page') page: number,
     @Query('limit') limit: number,
+    @Res() res: Response,
   ) {
-    return this.listAppointmentByEmployee.execute({
+    const {
+      data,
+      limit: Limit,
+      page: Page,
+      total,
+    } = await this.listAppointmentByEmployee.execute({
       employeeId,
       fromDate: new Date(fromDate),
       toDate: new Date(toDate),
       page,
       limit,
     });
+
+    res.setHeader('x-total-count', total);
+    res.setHeader('x-page', Page);
+    res.setHeader('x-limit', Limit);
+    return data;
   }
 
   @Get('customer')
-  listByCustomer(
+  async listByCustomer(
     @GetCurrentUser('sub') userId: string,
     @Query('from_date') fromDate: string,
     @Query('to_date') toDate: string,
     @Query('page') page: number,
     @Query('limit') limit: number,
+    @Res() res: Response,
   ) {
-    return this.listAppointmentByCustomer.execute({
+    const {
+      data,
+      limit: Limit,
+      page: Page,
+      total,
+    } = await this.listAppointmentByCustomer.execute({
       customerId: userId,
       fromDate: new Date(fromDate),
       toDate: new Date(toDate),
       page,
       limit,
     });
+
+    res.setHeader('x-total-count', total);
+    res.setHeader('x-page', Page);
+    res.setHeader('x-limit', Limit);
+    return data;
   }
 
   @Patch(':id/cancel')
   cancel(
-    @Body() body: CancelAppointmentBody,
+    @Body() { cancelReason }: CancelAppointmentDto,
     @Param('id') appointmentId: string,
     @GetCurrentUser('sub') userId: string,
   ) {
     return this.cancelAppointment.execute({
       appointmentId,
       userId,
-      reason: body.cancelReason,
+      reason: cancelReason,
     });
   }
 

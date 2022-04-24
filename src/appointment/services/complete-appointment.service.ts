@@ -5,18 +5,16 @@ import {
 } from '@nestjs/common';
 
 import { isBefore } from 'date-fns';
+import { AppointmentRepository } from '../repositories';
 
-import { AppointmentRepository } from '../repository/appointment.repository';
+type Input = {
+  userId: string;
+  appointmentId: string;
+};
 @Injectable()
 export class CompleteAppointmentService {
   constructor(private readonly appointmentRepo: AppointmentRepository) {}
-  async execute({
-    appointmentId,
-    userId,
-  }: {
-    userId: string;
-    appointmentId: string;
-  }) {
+  async execute({ appointmentId, userId }: Input): Promise<void> {
     const appointment = await this.appointmentRepo.findOne(appointmentId);
     if (!appointment) throw new UnauthorizedException('Appointment not found');
 

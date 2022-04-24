@@ -52,6 +52,10 @@ export class AppointmentRepository {
     return this.prisma.appointment.findFirst({ where: { id } });
   }
 
+  async count(args?: Prisma.AppointmentCountArgs) {
+    return this.prisma.appointment.count(args);
+  }
+
   async findAll(filter: Prisma.AppointmentFindManyArgs) {
     return this.prisma.appointment.findMany(filter);
   }

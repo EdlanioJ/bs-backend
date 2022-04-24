@@ -3,20 +3,18 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AppointmentRepository } from '../repository/appointment.repository';
+import { AppointmentRepository } from '../repositories';
+
+type Input = {
+  appointmentId: string;
+  userId: string;
+  reason: string;
+};
 
 @Injectable()
 export class CancelAppointmentService {
   constructor(private readonly appointmentRepo: AppointmentRepository) {}
-  async execute({
-    appointmentId,
-    userId,
-    reason,
-  }: {
-    appointmentId: string;
-    userId: string;
-    reason: string;
-  }) {
+  async execute({ appointmentId, userId, reason }: Input): Promise<void> {
     const appointment = await this.appointmentRepo.findOne(appointmentId);
     if (!appointment) throw new UnauthorizedException('Appointment not found');
 

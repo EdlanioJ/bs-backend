@@ -4,9 +4,16 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { addMinutes, isBefore, startOfHour } from 'date-fns';
-import { ServiceRepository } from 'src/service/repositories/service.repository';
-import { UserRepository } from 'src/user/repositories/user.repository';
-import { AppointmentRepository } from '../repository/appointment.repository';
+import { ServiceRepository } from '../../service/repositories';
+import { UserRepository } from '../../user/repositories/user.repository';
+import { AppointmentRepository } from '../repositories';
+
+type Input = {
+  employeeId: string;
+  customerId: string;
+  serviceId: string;
+  startTime: Date;
+};
 
 @Injectable()
 export class CreateAppointmentService {
@@ -21,12 +28,7 @@ export class CreateAppointmentService {
     employeeId,
     serviceId,
     startTime,
-  }: {
-    employeeId: string;
-    customerId: string;
-    serviceId: string;
-    startTime: Date;
-  }) {
+  }: Input): Promise<void> {
     const employee = await this.userRepo.findOne(employeeId);
     if (!employee) throw new UnauthorizedException('Employee not found');
 
