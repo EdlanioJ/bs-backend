@@ -15,6 +15,7 @@ import {
   RefreshTokensService,
   ValidateOAuthService,
 } from './services';
+import { AuthHelpers } from './helpers';
 
 @Module({
   imports: [PassportModule, MailModule, JwtModule.register({}), PrismaModule],
@@ -22,6 +23,7 @@ import {
   providers: [
     GoogleStrategy,
     JwtStrategy,
+    AuthHelpers,
     ValidateOAuthService,
     LoginService,
     LogoutService,
