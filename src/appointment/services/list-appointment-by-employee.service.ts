@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { AppointmentModel } from '../models/appointment.models';
+
+import { AppointmentModel } from '../models';
 import { AppointmentRepository } from '../repositories';
 
 type Input = {

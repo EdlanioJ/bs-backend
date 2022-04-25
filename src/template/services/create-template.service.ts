@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 
 import { UserRepository } from '../../user/repositories';
-import { TemplateRepository } from '../repositories/template.repository';
+import { TemplateRepository } from '../repositories';
 
 type Input = {
   body: string;

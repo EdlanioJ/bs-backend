@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { ProviderConnectionModel } from '../models/connection-provider.model';
+
+import { ProviderConnectionModel } from '../models';
 import {
   ProviderConnectionRepository,
   ServiceProviderRepository,

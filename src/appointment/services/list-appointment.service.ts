@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { AppointmentModel } from '../models/appointment.models';
 
+import { AppointmentModel } from '../models';
 import { AppointmentRepository } from '../repositories';
 
 type Input = {
@@ -14,6 +14,7 @@ type Output = {
   limit: number;
   data: AppointmentModel[];
 };
+
 @Injectable()
 export class ListAppointmentService {
   constructor(private readonly appointmentRepo: AppointmentRepository) {}

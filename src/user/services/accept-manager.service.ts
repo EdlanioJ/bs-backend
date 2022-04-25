@@ -1,10 +1,12 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 
-import { ManagerRequestRepository } from '../repositories/manager-request.repository';
-import { ManagerRepository } from '../repositories/manager.repository';
-import { UserRepository } from '../repositories/user.repository';
+import {
+  ManagerRepository,
+  ManagerRequestRepository,
+  UserRepository,
+} from '../repositories';
 
-import { SendMailProducerService } from '../../mail/services/send-mail-producer.service';
+import { SendMailProducerService } from '../../mail/services';
 
 type Input = {
   userId: string;

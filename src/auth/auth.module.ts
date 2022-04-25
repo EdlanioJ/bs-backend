@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 
-import { PrismaModule } from '../prisma/prisma.module';
-import { MailModule } from '../mail/mail.module';
+import { PrismaModule } from '../prisma';
+import { MailModule } from '../mail';
 import { UserRepository } from '../user/repositories';
 
 import { RolesGuard } from './guards';

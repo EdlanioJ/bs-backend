@@ -9,13 +9,12 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { Role } from '../../auth/entities/role.enum';
-import { Roles } from '../../auth/decorators/roles.decorator';
-import { JwtGuard } from '../../auth/guards/jwt.guard';
 
-import { RolesGuard } from '../../auth/guards/roles.guard';
-import { GetCurrentUser } from '../../auth/decorators/get-current-user.decorator';
-import { AddServiceProviderDto } from '../dto/add-service-provider.dto';
+import { Role } from '../../auth/entities';
+import { RolesGuard, JwtGuard } from '../../auth/guards';
+import { GetCurrentUser, Roles } from '../../auth/decorators';
+
+import { AddServiceProviderDto } from '../dto';
 import {
   AddServiceProviderService,
   DeleteServiceProviderService,

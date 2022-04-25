@@ -1,7 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 
-import { ManagerRequestRepository } from '../repositories/manager-request.repository';
-import { UserRepository } from '../repositories/user.repository';
+import { ManagerRequestRepository, UserRepository } from '../repositories';
 
 type Input = {
   userId: string;

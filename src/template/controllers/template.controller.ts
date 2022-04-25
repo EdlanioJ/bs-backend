@@ -13,17 +13,17 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import { CreateTemplateDto } from '../dto/create-template.dto';
-import { ListTemplateService } from '../services/list-template.service';
-import { CreateTemplateService } from '../services/create-template.service';
-import { GetTemplateService } from '../services/get-template.service';
-import { DeleteTemplateService } from '../services/delete-template.service';
+import { CreateTemplateDto } from '../dto';
+import {
+  CreateTemplateService,
+  DeleteTemplateService,
+  ListTemplateService,
+  GetTemplateService,
+} from '../services';
 
-import { GetCurrentUser } from '../../auth/decorators/get-current-user.decorator';
-import { JwtGuard } from '../../auth/guards/jwt.guard';
-import { Roles } from '../../auth/decorators/roles.decorator';
-import { Role } from '../../auth/entities/role.enum';
-import { RolesGuard } from '../../auth/guards/roles.guard';
+import { GetCurrentUser, Roles } from '../../auth/decorators';
+import { JwtGuard, RolesGuard } from '../../auth/guards';
+import { Role } from '../../auth/entities';
 
 @Controller('template')
 @Roles(Role.ADMIN)
@@ -66,7 +66,7 @@ export class TemplateController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  findOne(@Param('id') id: string) {
+  get(@Param('id') id: string) {
     return this.getTemplate.execute({ id });
   }
 

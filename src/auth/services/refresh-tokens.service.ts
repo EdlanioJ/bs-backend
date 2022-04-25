@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import { UserRepository } from '../../user/repositories';
-import { TokensModel } from '../models/tokens.model';
+import { TokensModel } from '../models';
 
 type Input = {
   userId: string;

@@ -1,15 +1,16 @@
 import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
 
-import { RejectManagerDto } from '../dto/reject-manager.dto';
-import { AcceptManagerService } from '../services/accept-manager.service';
-import { RejectManagerService } from '../services/reject-manager.service';
-import { RequireManagerUserService } from '../services/require-manager-user.service';
+import { RejectManagerDto } from '../dto';
+import {
+  AcceptManagerService,
+  RejectManagerService,
+  RequireManagerUserService,
+} from '../services';
 
-import { GetCurrentUser } from '../../auth/decorators/get-current-user.decorator';
-import { Roles } from '../../auth/decorators/roles.decorator';
-import { Role } from '../../auth/entities/role.enum';
-import { JwtGuard } from '../../auth/guards/jwt.guard';
-import { RolesGuard } from '../../auth/guards/roles.guard';
+import { GetCurrentUser, Roles } from '../../auth/decorators';
+import { RolesGuard, JwtGuard } from '../../auth/guards';
+
+import { Role } from '../../auth/entities';
 
 @Controller('user/manager')
 export class UserManagerController {

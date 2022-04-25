@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TemplateRepository } from '../repositories/template.repository';
+import { TemplateRepository } from '../repositories';
 
 type Input = {
   id: string;

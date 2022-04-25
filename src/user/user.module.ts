@@ -1,16 +1,21 @@
 import { Module } from '@nestjs/common';
 
-import { UserManagerController } from './controllers/user-manager.controller';
-import { ManagerRepository } from './repositories/manager.repository';
-import { UserRepository } from './repositories/user.repository';
-import { ManagerRequestRepository } from './repositories/manager-request.repository';
-import { RequireManagerUserService } from './services/require-manager-user.service';
-import { AcceptManagerService } from './services/accept-manager.service';
-import { RejectManagerService } from './services/reject-manager.service';
+import { UserManagerController } from './controllers';
+import {
+  ManagerRepository,
+  ManagerRequestRepository,
+  UserRepository,
+} from './repositories';
 
-import { AuthModule } from '../auth/auth.module';
-import { MailModule } from '../mail/mail.module';
-import { PrismaModule } from '../prisma/prisma.module';
+import {
+  AcceptManagerService,
+  RejectManagerService,
+  RequireManagerUserService,
+} from './services';
+
+import { AuthModule } from '../auth';
+import { MailModule } from '../mail';
+import { PrismaModule } from '../prisma';
 
 @Module({
   imports: [PrismaModule, AuthModule, MailModule],

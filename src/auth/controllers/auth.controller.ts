@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 
 import { GetCurrentUser } from '../decorators';
-import { AuthPayloadDto } from '../dto/auth-payload.dto';
+import { AuthPayloadDto } from '../dto';
 import { GoogleGuard, JwtGuard, RefreshJwtGuard } from '../guards';
 
 import {

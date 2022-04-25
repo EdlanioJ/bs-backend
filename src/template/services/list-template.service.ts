@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { TemplateRepository } from '../repositories/template.repository';
-import { TemplateModel } from '../models/template.model';
+import { TemplateRepository } from '../repositories';
+import { TemplateModel } from '../models';
 
 type Input = {
   page: number;

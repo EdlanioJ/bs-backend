@@ -2,15 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { TemplateController } from './template.controller';
 
-import { CreateTemplateService } from '../services/create-template.service';
-import { DeleteTemplateService } from '../services/delete-template.service';
-import { GetTemplateService } from '../services/get-template.service';
-import { ListTemplateService } from '../services/list-template.service';
+import {
+  CreateTemplateService,
+  DeleteTemplateService,
+  GetTemplateService,
+  ListTemplateService,
+} from '../services';
 
-jest.mock('../services/create-template.service');
-jest.mock('../services/delete-template.service');
-jest.mock('../services/get-template.service');
-jest.mock('../services/list-template.service');
+jest.mock('../services');
 
 describe('TemplateController', () => {
   let controller: TemplateController;

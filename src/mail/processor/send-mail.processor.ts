@@ -1,7 +1,8 @@
 import { Processor, Process } from '@nestjs/bull';
 import { Job } from 'bull';
-import { SendMailDto } from '../dto/send-mail.dto';
-import { SendMailProcessorService } from '../services/send-mail-processor.service';
+
+import { SendMailDto } from '../dto';
+import { SendMailProcessorService } from '../services';
 
 @Processor('send-mail-queue')
 export class SendMailProcessor {

@@ -1,4 +1,5 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
+
 import { UserRepository } from '../../user/repositories';
 import { RequestConnectionRepository } from '../repositories';
 
@@ -6,6 +7,7 @@ type Input = {
   userId: string;
   requestId: string;
 };
+
 @Injectable()
 export class RejectConnectionService {
   constructor(

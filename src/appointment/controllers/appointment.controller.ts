@@ -9,8 +9,8 @@ import {
   UseGuards,
   Res,
 } from '@nestjs/common';
-import { GetCurrentUser } from '../../auth/decorators/get-current-user.decorator';
-import { JwtGuard } from '../../auth/guards/jwt.guard';
+import { GetCurrentUser } from '../../auth/decorators';
+import { JwtGuard } from '../../auth/guards';
 import {
   CancelAppointmentService,
   CompleteAppointmentService,

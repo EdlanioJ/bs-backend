@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from '../prisma/prisma.module';
-import { AuthModule } from '../auth/auth.module';
-import { MailModule } from '../mail/mail.module';
+
+import { PrismaModule } from '../prisma';
+import { AuthModule } from '../auth';
+import { MailModule } from '../mail';
 
 import {
   ConnectionProviderController,
@@ -27,6 +28,7 @@ import {
 } from './services';
 
 import { UserRepository } from '../user/repositories';
+
 @Module({
   imports: [PrismaModule, AuthModule, MailModule],
   providers: [

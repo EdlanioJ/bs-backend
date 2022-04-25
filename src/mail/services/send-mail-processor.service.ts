@@ -1,7 +1,8 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
-import { TemplateRepository } from '../../template/repositories/template.repository';
-import { SendMailDto } from '../dto/send-mail.dto';
+
+import { TemplateRepository } from '../../template/repositories';
+import { SendMailDto } from '../dto';
 
 @Injectable()
 export class SendMailProcessorService {
@@ -9,17 +10,17 @@ export class SendMailProcessorService {
     private readonly mailerService: MailerService,
     private readonly templateRepo: TemplateRepository,
   ) {}
-  async execute(dto: SendMailDto) {
-    const template = await this.templateRepo.findOneByType(dto.type);
+  async execute({ content, to, type }: SendMailDto): Promise<void> {
+    const template = await this.templateRepo.findOneByType(type);
 
     let html = template.body;
-    dto.content.forEach(({ key, value }) => {
+    content.forEach(({ key, value }) => {
       html = html.replace(`{{${key}}}`, value);
     });
 
     await this.mailerService.sendMail({
-      to: dto.to,
-      html: html,
+      to,
+      html,
       subject: template.subject,
     });
   }

@@ -5,13 +5,15 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import { UserRepository } from '../../user/repositories';
-import { TokensModel } from '../models/tokens.model';
+import { TokensModel } from '../models';
 
 type Input = {
   sub: string;
   username: string;
   role: string;
 };
+
+type Output = TokensModel;
 
 @Injectable()
 export class LoginService {
@@ -21,7 +23,7 @@ export class LoginService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async execute({ sub, username, role }: Input): Promise<TokensModel> {
+  async execute({ sub, username, role }: Input): Promise<Output> {
     const tokens = await this.getTokens(sub, username, role);
     // update salt to an env var
     const hash = await bcrypt.hash(tokens.refreshToken, 12);

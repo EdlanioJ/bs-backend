@@ -13,11 +13,10 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import { GetCurrentUser } from '../../auth/decorators/get-current-user.decorator';
-import { Roles } from '../../auth/decorators/roles.decorator';
-import { Role } from '../../auth/entities/role.enum';
-import { RolesGuard } from '../../auth/guards/roles.guard';
-import { JwtGuard } from '../../auth/guards/jwt.guard';
+import { Role } from '../../auth/entities';
+import { GetCurrentUser, Roles } from '../../auth/decorators';
+import { RolesGuard, JwtGuard } from '../../auth/guards';
+
 import {
   AcceptConnectionService,
   DeleteConnectionService,

@@ -1,14 +1,16 @@
 import { Module } from '@nestjs/common';
 
-import { TemplateRepository } from './repositories/template.repository';
-import { TemplateController } from './controllers/template.controller';
-import { ListTemplateService } from './services/list-template.service';
-import { CreateTemplateService } from './services/create-template.service';
-import { GetTemplateService } from './services/get-template.service';
-import { DeleteTemplateService } from './services/delete-template.service';
+import { TemplateRepository } from './repositories';
+import { TemplateController } from './controllers';
+import {
+  CreateTemplateService,
+  DeleteTemplateService,
+  GetTemplateService,
+  ListTemplateService,
+} from './services';
 
-import { AuthModule } from '../auth/auth.module';
-import { PrismaModule } from '../prisma/prisma.module';
+import { AuthModule } from '../auth';
+import { PrismaModule } from '../prisma';
 import { UserRepository } from '../user/repositories';
 
 @Module({
@@ -16,8 +18,8 @@ import { UserRepository } from '../user/repositories';
   providers: [
     CreateTemplateService,
     DeleteTemplateService,
-    GetTemplateService,
     ListTemplateService,
+    GetTemplateService,
     TemplateRepository,
     UserRepository,
   ],

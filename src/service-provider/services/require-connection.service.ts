@@ -1,5 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { SendMailProducerService } from '../../mail/services/send-mail-producer.service';
+
+import { SendMailProducerService } from '../../mail/services';
 import { UserRepository } from '../../user/repositories';
 import {
   RequestConnectionRepository,

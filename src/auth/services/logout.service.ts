@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from 'src/user/repositories';
+
+import { UserRepository } from '../../user/repositories';
 
 type Input = {
   userId: string;

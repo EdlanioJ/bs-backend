@@ -4,14 +4,15 @@ import { Module } from '@nestjs/common';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AppointmentModule } from './appointment/appointment.module';
-import { AuthModule } from './auth/auth.module';
-import { PrismaModule } from './prisma/prisma.module';
-import { UserModule } from './user/user.module';
-import { ServiceProviderModule } from './service-provider/service-provider.module';
-import { ServiceModule } from './service/service.module';
-import { MailModule } from './mail/mail.module';
-import { TemplateModule } from './template/template.module';
+
+import { AppointmentModule } from './appointment';
+import { UserModule } from './user';
+import { ServiceProviderModule } from './service-provider';
+import { ServiceModule } from './service';
+import { AuthModule } from './auth';
+import { PrismaModule } from './prisma';
+import { MailModule } from './mail';
+import { TemplateModule } from './template';
 
 @Module({
   imports: [

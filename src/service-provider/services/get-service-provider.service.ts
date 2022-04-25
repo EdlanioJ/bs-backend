@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ServiceProviderModel } from '../models/service-provider.model';
+
+import { ServiceProviderModel } from '../models';
 import { ServiceProviderRepository } from '../repositories';
 
 type Input = {

@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../../prisma';
 
 export class AppointmentRepository {
   constructor(private readonly prisma: PrismaService) {}

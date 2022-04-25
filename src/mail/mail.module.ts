@@ -1,14 +1,13 @@
 import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-
-import { SendMailProcessor } from './processor/send-mail.processor';
-import { SendMailProducerService } from './services/send-mail-producer.service';
-import { SendMailProcessorService } from './services/send-mail-processor.service';
-
 import { BullModule } from '@nestjs/bull';
-import { TemplateRepository } from '../template/repositories/template.repository';
-import { PrismaModule } from '../prisma/prisma.module';
+
+import { SendMailProcessor } from './processor';
+import { SendMailProducerService, SendMailProcessorService } from './services';
+
+import { TemplateRepository } from '../template/repositories';
+import { PrismaModule } from '../prisma';
 
 @Module({
   imports: [

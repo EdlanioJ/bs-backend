@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from '../prisma/prisma.module';
-import { AuthModule } from '../auth/auth.module';
+
+import { PrismaModule } from '../prisma';
+import { AuthModule } from '../auth';
+import { ServiceRepository } from '../service/repositories';
 import { UserRepository } from '../user/repositories';
 
 import { AppointmentController } from './controllers';
@@ -14,8 +16,6 @@ import {
   ListAppointmentByEmployeeService,
   ListAppointmentService,
 } from './services';
-
-import { ServiceRepository } from '../service/repositories';
 
 @Module({
   controllers: [AppointmentController],

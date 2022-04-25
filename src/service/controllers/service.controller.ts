@@ -10,15 +10,16 @@ import {
   Query,
   Res,
 } from '@nestjs/common';
-import { CreateServiceDto } from '../dto/create-service.dto';
-import { GetCurrentUser } from '../../auth/decorators/get-current-user.decorator';
-import { JwtGuard } from '../../auth/guards/jwt.guard';
+import { Response } from 'express';
+
+import { CreateServiceDto } from '../dto';
+import { GetCurrentUser } from '../../auth/decorators';
+import { JwtGuard } from '../../auth/guards';
 import {
   CreateProviderServiceService,
   GetProviderServiceService,
   ListProviderServiceService,
 } from '../services';
-import { Response } from 'express';
 
 @UseGuards(JwtGuard)
 @Controller('service')

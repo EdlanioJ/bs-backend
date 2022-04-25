@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+
 import { SendMailProducerService } from '../../mail/services';
 import { UserRepository } from '../../user/repositories';
 

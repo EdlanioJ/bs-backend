@@ -2,13 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { UserManagerController } from './user-manager.controller';
 
-import { AcceptManagerService } from '../services/accept-manager.service';
-import { RejectManagerService } from '../services/reject-manager.service';
-import { RequireManagerUserService } from '../services/require-manager-user.service';
+import {
+  AcceptManagerService,
+  RejectManagerService,
+  RequireManagerUserService,
+} from '../services';
 
-jest.mock('../services/accept-manager.service');
-jest.mock('../services/reject-manager.service');
-jest.mock('../services/require-manager-user.service');
+jest.mock('../services');
 
 describe('UserManagerController', () => {
   let controller: UserManagerController;
