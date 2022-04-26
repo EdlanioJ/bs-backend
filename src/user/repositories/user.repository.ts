@@ -14,6 +14,13 @@ export class UserRepository {
     return this.prisma.user.findFirst({ where: { email } });
   }
 
+  async findOneByResetToken(token: string) {
+    return this.prisma.user.findFirst({
+      where: {
+        resetPasswordToken: token,
+      },
+    });
+  }
   async findOneByThirdPartyId(thirdPartyId: string) {
     return this.prisma.user.findFirst({
       where: {

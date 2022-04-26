@@ -20,6 +20,7 @@ import {
   RegisterService,
   RefreshTokensService,
   ValidateOAuthService,
+  ResetPasswordService,
   ForgotPasswordService,
   ValidateWithCredentialsService,
 } from './services';
@@ -36,6 +37,7 @@ import { AuthHelpers } from './helpers';
     AuthHelpers,
     ValidateWithCredentialsService,
     ForgotPasswordService,
+    ResetPasswordService,
     ValidateOAuthService,
     RefreshTokensService,
     RegisterService,

@@ -5,3 +5,4 @@ export * from './refresh-tokens.service';
 export * from './validate-with-credentials.service';
 export * from './register.service';
 export * from './forgot-password.service';
+export * from './reset-password.service';

@@ -5,12 +5,18 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
 
 import { GetCurrentUser } from '../decorators';
-import { AuthPayloadDto, ForgotPasswordDto, RegisterDto } from '../dto';
+import {
+  AuthPayloadDto,
+  ForgotPasswordDto,
+  RegisterDto,
+  ResetPasswordDto,
+} from '../dto';
 import { GoogleGuard, JwtGuard, LocalGuard, RefreshJwtGuard } from '../guards';
 
 import {
@@ -19,6 +25,7 @@ import {
   RegisterService,
   RefreshTokensService,
   ForgotPasswordService,
+  ResetPasswordService,
 } from '../services';
 
 @Controller('auth')
@@ -29,6 +36,7 @@ export class AuthController {
     private readonly loginService: LoginService,
     private readonly logoutService: LogoutService,
     private readonly refreshTokensService: RefreshTokensService,
+    private readonly resetPasswordService: ResetPasswordService,
   ) {}
 
   @Get('google')
@@ -60,6 +68,15 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   forgotPassword(@Body() { email }: ForgotPasswordDto) {
     return this.forgotPasswordService.execute({ email });
+  }
+
+  @Post('password/reset/:token')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  resetPassword(
+    @Body() { password }: ResetPasswordDto,
+    @Param('token') token: string,
+  ) {
+    return this.resetPasswordService.execute({ password, token });
   }
 
   @Post('refresh')

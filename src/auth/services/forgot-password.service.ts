@@ -22,7 +22,7 @@ export class ForgotPasswordService {
     if (!user) throw new BadRequestException('User not found');
 
     const resetPasswordToken = crypto.randomBytes(48).toString('hex');
-    const resetPasswordExpires = addHours(new Date(), 1);
+    const resetPasswordExpires = addHours(Date.now(), 1);
 
     await this.userRepo.update(user.id, {
       resetPasswordExpires,
