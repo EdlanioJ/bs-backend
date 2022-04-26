@@ -10,6 +10,10 @@ export class UserRepository {
     return this.prisma.user.findFirst({ where: { id } });
   }
 
+  async findOneByEmail(email: string) {
+    return this.prisma.user.findFirst({ where: { email } });
+  }
+
   async findOneByThirdPartyId(thirdPartyId: string) {
     return this.prisma.user.findFirst({
       where: {

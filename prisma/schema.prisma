@@ -21,10 +21,11 @@ model User {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   name         String
   email        String
+  password     String?
   avatar       String
   provider     String?
   role         Role     @default(USER)
-  thirdPartyId String   @unique @map("third_party_id")
+  thirdPartyId String?  @unique @map("third_party_id")
   refreshToken String?  @map("refresh_token")
   createdAt    DateTime @default(now()) @map("created_at")
 

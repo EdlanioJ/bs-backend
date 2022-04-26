@@ -10,21 +10,15 @@ import {
 
 import { GetCurrentUser } from '../decorators';
 import { AuthPayloadDto } from '../dto';
-import { GoogleGuard, JwtGuard, RefreshJwtGuard } from '../guards';
+import { GoogleGuard, JwtGuard, LocalGuard, RefreshJwtGuard } from '../guards';
 
-import {
-  LoginService,
-  LogoutService,
-  RefreshTokensService,
-  ValidateOAuthService,
-} from '../services';
+import { LoginService, LogoutService, RefreshTokensService } from '../services';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly loginService: LoginService,
     private readonly logoutService: LogoutService,
-    private readonly validateOAutService: ValidateOAuthService,
     private readonly refreshTokensService: RefreshTokensService,
   ) {}
 
@@ -38,6 +32,12 @@ export class AuthController {
   googleAuthCallback(
     @GetCurrentUser() { role, sub, username }: AuthPayloadDto,
   ) {
+    return this.loginService.execute({ role, sub, username });
+  }
+
+  @Get('login')
+  @UseGuards(LocalGuard)
+  localAuth(@GetCurrentUser() { role, sub, username }: AuthPayloadDto) {
     return this.loginService.execute({ role, sub, username });
   }
 

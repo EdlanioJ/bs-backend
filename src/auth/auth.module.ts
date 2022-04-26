@@ -8,12 +8,18 @@ import { UserRepository } from '../user/repositories';
 
 import { RolesGuard } from './guards';
 import { AuthController } from './controllers';
-import { GoogleStrategy, JwtStrategy, RefreshJwtStrategy } from './strategies';
+import {
+  RefreshJwtStrategy,
+  GoogleStrategy,
+  LocalStrategy,
+  JwtStrategy,
+} from './strategies';
 import {
   LoginService,
   LogoutService,
   RefreshTokensService,
   ValidateOAuthService,
+  ValidateWithCredentialsService,
 } from './services';
 import { AuthHelpers } from './helpers';
 
@@ -21,15 +27,17 @@ import { AuthHelpers } from './helpers';
   imports: [PassportModule, MailModule, JwtModule.register({}), PrismaModule],
   exports: [JwtStrategy, RolesGuard],
   providers: [
+    RefreshJwtStrategy,
     GoogleStrategy,
+    LocalStrategy,
     JwtStrategy,
     AuthHelpers,
+    ValidateWithCredentialsService,
     ValidateOAuthService,
-    LoginService,
-    LogoutService,
     RefreshTokensService,
+    LogoutService,
+    LoginService,
     RolesGuard,
-    RefreshJwtStrategy,
     UserRepository,
   ],
   controllers: [AuthController],
