@@ -20,6 +20,7 @@ import {
   RegisterService,
   RefreshTokensService,
   ValidateOAuthService,
+  ForgotPasswordService,
   ValidateWithCredentialsService,
 } from './services';
 import { AuthHelpers } from './helpers';
@@ -34,6 +35,7 @@ import { AuthHelpers } from './helpers';
     JwtStrategy,
     AuthHelpers,
     ValidateWithCredentialsService,
+    ForgotPasswordService,
     ValidateOAuthService,
     RefreshTokensService,
     RegisterService,

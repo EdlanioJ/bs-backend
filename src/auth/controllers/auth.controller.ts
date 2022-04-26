@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 
 import { GetCurrentUser } from '../decorators';
-import { AuthPayloadDto, RegisterDto } from '../dto';
+import { AuthPayloadDto, ForgotPasswordDto, RegisterDto } from '../dto';
 import { GoogleGuard, JwtGuard, LocalGuard, RefreshJwtGuard } from '../guards';
 
 import {
@@ -18,11 +18,13 @@ import {
   LogoutService,
   RegisterService,
   RefreshTokensService,
+  ForgotPasswordService,
 } from '../services';
 
 @Controller('auth')
 export class AuthController {
   constructor(
+    private readonly forgotPasswordService: ForgotPasswordService,
     private readonly registerService: RegisterService,
     private readonly loginService: LoginService,
     private readonly logoutService: LogoutService,
@@ -52,6 +54,12 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   register(@Body() { email, name, password }: RegisterDto) {
     return this.registerService.execute({ email, name, password });
+  }
+
+  @Post('password/forgot')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  forgotPassword(@Body() { email }: ForgotPasswordDto) {
+    return this.forgotPasswordService.execute({ email });
   }
 
   @Post('refresh')
