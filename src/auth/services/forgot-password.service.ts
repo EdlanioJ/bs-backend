@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { addHours } from 'date-fns';
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 
 import { UserRepository } from '../../user/repositories';
 import { SendMailProducerService } from '../../mail/services';
