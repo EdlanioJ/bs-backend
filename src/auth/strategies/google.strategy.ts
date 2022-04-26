@@ -31,7 +31,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     try {
       const { id, displayName, photos, emails, provider } = profile;
 
-      const user = await this.validateOauthService.execute({
+      const output = await this.validateOauthService.execute({
         thirdPartyId: id,
         avatar: photos[0].value,
         name: displayName,
@@ -40,9 +40,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       });
 
       const payload = new AuthPayloadDto({
-        sub: user.id,
-        username: user.name,
-        role: user.role,
+        sub: output.id,
+        username: output.username,
+        role: output.role,
       });
 
       done(null, payload);

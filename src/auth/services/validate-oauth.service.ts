@@ -11,6 +11,12 @@ type Input = {
   provider: string;
 };
 
+type Output = {
+  id: string;
+  username: string;
+  role: string;
+};
+
 @Injectable()
 export class ValidateOAuthService {
   constructor(
@@ -18,11 +24,17 @@ export class ValidateOAuthService {
     private readonly mailProducer: SendMailProducerService,
   ) {}
 
-  async execute({ avatar, email, name, provider, thirdPartyId }: Input) {
+  async execute({
+    avatar,
+    email,
+    name,
+    provider,
+    thirdPartyId,
+  }: Input): Promise<Output> {
     const user = await this.userRepo.findOneByThirdPartyId(thirdPartyId);
 
-    if (user)
-      return this.userRepo.update(user.id, {
+    if (user) {
+      const updatedUser = await this.userRepo.update(user.id, {
         avatar,
         email,
         name,
@@ -30,6 +42,12 @@ export class ValidateOAuthService {
         thirdPartyId,
       });
 
+      return {
+        id: updatedUser.id,
+        username: updatedUser.name,
+        role: updatedUser.role,
+      };
+    }
     const newUser = await this.userRepo.create({
       avatar,
       email,
@@ -52,6 +70,10 @@ export class ValidateOAuthService {
       { attempts: 3 },
     );
 
-    return newUser;
+    return {
+      id: newUser.id,
+      username: newUser.name,
+      role: newUser.role,
+    };
   }
 }
