@@ -17,6 +17,7 @@ import {
 import {
   LoginService,
   LogoutService,
+  RegisterService,
   RefreshTokensService,
   ValidateOAuthService,
   ValidateWithCredentialsService,
@@ -35,6 +36,7 @@ import { AuthHelpers } from './helpers';
     ValidateWithCredentialsService,
     ValidateOAuthService,
     RefreshTokensService,
+    RegisterService,
     LogoutService,
     LoginService,
     RolesGuard,

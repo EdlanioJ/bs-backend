@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
@@ -9,14 +10,20 @@ import {
 } from '@nestjs/common';
 
 import { GetCurrentUser } from '../decorators';
-import { AuthPayloadDto } from '../dto';
+import { AuthPayloadDto, RegisterDto } from '../dto';
 import { GoogleGuard, JwtGuard, LocalGuard, RefreshJwtGuard } from '../guards';
 
-import { LoginService, LogoutService, RefreshTokensService } from '../services';
+import {
+  LoginService,
+  LogoutService,
+  RegisterService,
+  RefreshTokensService,
+} from '../services';
 
 @Controller('auth')
 export class AuthController {
   constructor(
+    private readonly registerService: RegisterService,
     private readonly loginService: LoginService,
     private readonly logoutService: LogoutService,
     private readonly refreshTokensService: RefreshTokensService,
@@ -39,6 +46,12 @@ export class AuthController {
   @UseGuards(LocalGuard)
   localAuth(@GetCurrentUser() { role, sub, username }: AuthPayloadDto) {
     return this.loginService.execute({ role, sub, username });
+  }
+
+  @Post('register')
+  @HttpCode(HttpStatus.CREATED)
+  register(@Body() { email, name, password }: RegisterDto) {
+    return this.registerService.execute({ email, name, password });
   }
 
   @Post('refresh')

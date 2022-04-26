@@ -22,7 +22,7 @@ model User {
   name         String
   email        String
   password     String?
-  avatar       String
+  avatar       String?
   provider     String?
   role         Role     @default(USER)
   thirdPartyId String?  @unique @map("third_party_id")
