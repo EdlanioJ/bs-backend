@@ -9,6 +9,7 @@ import {
 
 import {
   AcceptManagerService,
+  ListManagerRequestService,
   RejectManagerService,
   RequireManagerUserService,
 } from './services';
@@ -21,6 +22,7 @@ import { PrismaModule } from '../prisma';
   imports: [PrismaModule, AuthModule, MailModule],
   providers: [
     RequireManagerUserService,
+    ListManagerRequestService,
     AcceptManagerService,
     RejectManagerService,
     UserRepository,
