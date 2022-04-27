@@ -9,15 +9,27 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiBearerAuth,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 import { GetCurrentUser } from '../decorators';
 import {
   AuthPayloadDto,
   ForgotPasswordDto,
+  LoginDto,
   RegisterDto,
   ResetPasswordDto,
 } from '../dto';
 import { GoogleGuard, JwtGuard, LocalGuard, RefreshJwtGuard } from '../guards';
+import { TokensModel } from '../models';
 
 import {
   LoginService,
@@ -28,6 +40,7 @@ import {
   ResetPasswordService,
 } from '../services';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -52,24 +65,32 @@ export class AuthController {
     return this.loginService.execute({ role, sub, username });
   }
 
-  @Get('login')
+  @ApiBody({ type: LoginDto })
+  @ApiOkResponse({ type: TokensModel })
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(LocalGuard)
   localAuth(@GetCurrentUser() { role, sub, username }: AuthPayloadDto) {
     return this.loginService.execute({ role, sub, username });
   }
 
+  @ApiCreatedResponse({ description: 'register user' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   register(@Body() { email, name, password }: RegisterDto) {
     return this.registerService.execute({ email, name, password });
   }
 
+  @ApiNoContentResponse({ description: 'No Content' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
   @Post('password/forgot')
   @HttpCode(HttpStatus.NO_CONTENT)
   forgotPassword(@Body() { email }: ForgotPasswordDto) {
     return this.forgotPasswordService.execute({ email });
   }
 
+  @ApiNoContentResponse()
   @Post('password/reset/:token')
   @HttpCode(HttpStatus.NO_CONTENT)
   resetPassword(
@@ -79,6 +100,9 @@ export class AuthController {
     return this.resetPasswordService.execute({ password, token });
   }
 
+  @ApiBearerAuth('refresh-token')
+  @ApiOkResponse({ type: TokensModel })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @UseGuards(RefreshJwtGuard)
@@ -89,7 +113,10 @@ export class AuthController {
     return this.refreshTokensService.execute({ userId, refreshToken });
   }
 
-  @Get('logout')
+  @ApiBearerAuth('access-token')
+  @ApiNoContentResponse()
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @Post('logout')
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   logout(@GetCurrentUser('sub') userId: string) {

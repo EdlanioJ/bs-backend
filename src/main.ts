@@ -15,12 +15,37 @@ async function bootstrap() {
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Beauty Spaces API')
     .setVersion('0.0.1')
-    .setDescription('API for Beauty Spaces')
+    .setDescription('API Doc for Beauty Spaces')
     .setExternalDoc('GitHub', 'https://github.com/EdlanioJ/bs-backend')
+    .addBearerAuth(
+      {
+        type: 'http',
+        name: 'Authorization',
+        scheme: 'Bearer',
+        bearerFormat: 'Bearer',
+        in: 'header',
+      },
+      'refresh-token',
+    )
+    .addBearerAuth(
+      {
+        type: 'http',
+        name: 'Authorization',
+        scheme: 'Bearer',
+        bearerFormat: 'Bearer',
+        in: 'header',
+      },
+      'access-token',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('docs', app, document, {
+    customSiteTitle: 'Beauty Spaces API',
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
 
   await app.listen(port, () => {
     console.log(`App is running on port: ${port}`);

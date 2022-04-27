@@ -24,7 +24,18 @@ import {
 import { GetCurrentUser, Roles } from '../../auth/decorators';
 import { JwtGuard, RolesGuard } from '../../auth/guards';
 import { Role } from '../../auth/entities';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { TemplateModel } from '../models';
 
+@ApiTags('template')
+@ApiBearerAuth('access-token')
 @Controller('template')
 @Roles(Role.ADMIN)
 @UseGuards(JwtGuard, RolesGuard)
@@ -36,6 +47,11 @@ export class TemplateController {
     private readonly deleteTemplate: DeleteTemplateService,
   ) {}
 
+  @ApiCreatedResponse({
+    description: 'template has been successfully created.',
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(
@@ -48,6 +64,8 @@ export class TemplateController {
     });
   }
 
+  @ApiOkResponse({ type: TemplateModel, isArray: true })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(
@@ -64,6 +82,8 @@ export class TemplateController {
     return data;
   }
 
+  @ApiOkResponse({ type: TemplateModel })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   get(@Param('id') id: string) {
@@ -71,6 +91,8 @@ export class TemplateController {
   }
 
   @Delete(':id')
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string) {
     return this.deleteTemplate.execute({ id });

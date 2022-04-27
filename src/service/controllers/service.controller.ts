@@ -20,7 +20,18 @@ import {
   GetProviderServiceService,
   ListProviderServiceService,
 } from '../services';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { ServiceModel } from '../models';
 
+@ApiTags('provider-service')
+@ApiBearerAuth('access-token')
 @UseGuards(JwtGuard)
 @Controller('service')
 export class ServiceController {
@@ -30,6 +41,11 @@ export class ServiceController {
     private readonly getService: GetProviderServiceService,
   ) {}
 
+  @ApiCreatedResponse({
+    description: 'The service has been successfully created.',
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(
@@ -43,6 +59,9 @@ export class ServiceController {
     });
   }
 
+  @ApiOkResponse({ type: ServiceModel, isArray: true })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @HttpCode(HttpStatus.OK)
   @Get()
   async list(
     @Query('page') page: number,
@@ -58,6 +77,9 @@ export class ServiceController {
     return data;
   }
 
+  @ApiOkResponse({ type: ServiceModel })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @HttpCode(HttpStatus.OK)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.getService.execute({ id });

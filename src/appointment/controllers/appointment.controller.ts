@@ -8,6 +8,8 @@ import {
   Query,
   UseGuards,
   Res,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { GetCurrentUser } from '../../auth/decorators';
 import { JwtGuard } from '../../auth/guards';
@@ -22,7 +24,19 @@ import {
 } from '../services';
 import { CancelAppointmentDto, CreateAppointmentDto } from '../dto';
 import { Response } from 'express';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { AppointmentModel } from '../models';
 
+@ApiTags('appointment')
+@ApiBearerAuth('access-token')
 @UseGuards(JwtGuard)
 @Controller('appointment')
 export class AppointmentController {
@@ -36,7 +50,11 @@ export class AppointmentController {
     private readonly listAppointmentByEmployee: ListAppointmentByEmployeeService,
   ) {}
 
+  @ApiCreatedResponse({ description: 'create appointment' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   create(
     @Body() { employeeId, serviceId, startAt }: CreateAppointmentDto,
     @GetCurrentUser('sub') userId: string,
@@ -49,12 +67,18 @@ export class AppointmentController {
     });
   }
 
+  @ApiOkResponse({ type: AppointmentModel })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get(':id')
+  @HttpCode(HttpStatus.OK)
   get(@Param('id') id: string) {
     return this.getAppointment.execute({ id });
   }
 
+  @ApiOkResponse({ type: AppointmentModel, isArray: true })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get()
+  @HttpCode(HttpStatus.OK)
   async list(
     @Query('page') page: number,
     @Query('limit') limit: number,
@@ -73,11 +97,14 @@ export class AppointmentController {
     return data;
   }
 
+  @ApiOkResponse({ type: AppointmentModel, isArray: true })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get('employee/:id')
+  @HttpCode(HttpStatus.OK)
   async listByEmployee(
     @Param('id') employeeId: string,
-    @Query('from_date') fromDate: string,
-    @Query('to_date') toDate: string,
+    @Query('from_date') fromDate: Date,
+    @Query('to_date') toDate: Date,
     @Query('page') page: number,
     @Query('limit') limit: number,
     @Res() res: Response,
@@ -101,7 +128,10 @@ export class AppointmentController {
     return data;
   }
 
+  @ApiOkResponse({ type: AppointmentModel, isArray: true })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get('customer')
+  @HttpCode(HttpStatus.OK)
   async listByCustomer(
     @GetCurrentUser('sub') userId: string,
     @Query('from_date') fromDate: string,
@@ -129,7 +159,11 @@ export class AppointmentController {
     return data;
   }
 
+  @ApiNoContentResponse({ description: 'cancel appointment' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Patch(':id/cancel')
+  @HttpCode(HttpStatus.NO_CONTENT)
   cancel(
     @Body() { cancelReason }: CancelAppointmentDto,
     @Param('id') appointmentId: string,
@@ -142,7 +176,11 @@ export class AppointmentController {
     });
   }
 
+  @ApiNoContentResponse({ description: 'complete appointment' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Patch(':id/complete')
+  @HttpCode(HttpStatus.NO_CONTENT)
   complete(
     @Param('id') appointmentId: string,
     @GetCurrentUser('sub') userId: string,

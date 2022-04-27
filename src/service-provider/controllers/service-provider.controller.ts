@@ -20,7 +20,11 @@ import {
   DeleteServiceProviderService,
   GetServiceProviderService,
 } from '../services';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ServiceProviderModel } from '../models';
 
+@ApiTags('provider')
+@ApiBearerAuth('access-token')
 @Controller('provider')
 @UseGuards(JwtGuard)
 export class ServiceProviderController {
@@ -41,6 +45,7 @@ export class ServiceProviderController {
     return this.addProvider.execute({ name, userId });
   }
 
+  @ApiResponse({ status: HttpStatus.OK, type: ServiceProviderModel })
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   get(@Param('id') id: string) {

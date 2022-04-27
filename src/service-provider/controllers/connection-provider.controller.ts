@@ -25,7 +25,11 @@ import {
   RejectConnectionService,
   RequireConnectionService,
 } from '../services';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ProviderConnectionModel } from '../models';
 
+@ApiTags('provider-connection')
+@ApiBearerAuth('access-token')
 @Controller('provider/connection')
 @UseGuards(JwtGuard)
 export class ConnectionProviderController {
@@ -94,6 +98,11 @@ export class ConnectionProviderController {
     });
   }
 
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: ProviderConnectionModel,
+    isArray: true,
+  })
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
   @Get()
@@ -109,6 +118,11 @@ export class ConnectionProviderController {
     return data;
   }
 
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: ProviderConnectionModel,
+    isArray: true,
+  })
   @Roles(Role.MANAGER)
   @UseGuards(RolesGuard)
   @Get('manager')
