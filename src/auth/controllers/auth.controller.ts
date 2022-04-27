@@ -67,6 +67,7 @@ export class AuthController {
 
   @ApiBody({ type: LoginDto })
   @ApiOkResponse({ type: TokensModel })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalGuard)

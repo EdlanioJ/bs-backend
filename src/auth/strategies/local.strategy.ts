@@ -9,12 +9,14 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
   constructor(
     private readonly validateWithCredentials: ValidateWithCredentialsService,
   ) {
-    super();
+    super({
+      usernameField: 'email',
+    });
   }
 
-  async validate(username: string, password: string): Promise<AuthPayloadDto> {
+  async validate(email: string, password: string): Promise<AuthPayloadDto> {
     const output = await this.validateWithCredentials.execute({
-      email: username,
+      email,
       password,
     });
 
