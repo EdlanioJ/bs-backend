@@ -13,8 +13,6 @@ type Input = {
 
 type Output = {
   total: number;
-  page: number;
-  limit: number;
   data: AppointmentModel[];
 };
 
@@ -23,8 +21,8 @@ export class ListAppointmentByEmployeeService {
   constructor(private readonly appointmentRepo: AppointmentRepository) {}
 
   async execute({
-    page = 1,
-    limit = 10,
+    page,
+    limit,
     employeeId,
     fromDate,
     toDate,
@@ -54,8 +52,6 @@ export class ListAppointmentByEmployeeService {
 
     return {
       data: AppointmentModel.mapCollection(appointments),
-      limit,
-      page,
       total,
     };
   }

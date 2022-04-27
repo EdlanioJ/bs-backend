@@ -65,7 +65,7 @@ model ManagerRequest {
   rejectReason String? @map("reject_reason")
 
   rejectBy   Manager? @relation("RejectBy", fields: [rejectById], references: [id])
-  rejectById String   @map("reject_by_id") @db.ObjectId
+  rejectById String?  @map("reject_by_id") @db.ObjectId
 
   @@map("manager_requests")
 }

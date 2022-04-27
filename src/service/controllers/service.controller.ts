@@ -64,8 +64,8 @@ export class ServiceController {
   @HttpCode(HttpStatus.OK)
   @Get()
   async list(
-    @Query('page') page: number,
-    @Query('limit') limit: number,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
     @Res() res: Response,
   ) {
     const { data, total } = await this.listService.execute({
@@ -73,8 +73,9 @@ export class ServiceController {
       page,
     });
 
-    res.setHeader('x-total-count', total);
-    return data;
+    return res
+      .set({ 'x-total-count': total, 'x-page': page, 'x-limit': limit })
+      .json(data);
   }
 
   @ApiOkResponse({ type: ServiceModel })

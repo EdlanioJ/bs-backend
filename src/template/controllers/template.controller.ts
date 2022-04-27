@@ -69,8 +69,8 @@ export class TemplateController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(
-    @Query('page') page: number,
-    @Query('limit') limit: number,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
     @Res() res: Response,
   ) {
     const { total, data } = await this.listTemplate.execute({
@@ -78,8 +78,9 @@ export class TemplateController {
       limit,
     });
 
-    res.setHeader('x-total-count', total);
-    return data;
+    return res
+      .set({ 'x-total-count': total, 'x-page': page, 'x-limit': limit })
+      .json(data);
   }
 
   @ApiOkResponse({ type: TemplateModel })

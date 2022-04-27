@@ -18,6 +18,14 @@ export class ManagerRequestRepository {
     });
   }
 
+  async count(args?: Prisma.ManagerRequestCountArgs) {
+    return this.prisma.managerRequest.count(args);
+  }
+
+  async findAll(filter: Prisma.ManagerRequestFindManyArgs) {
+    return this.prisma.managerRequest.findMany(filter);
+  }
+
   async findAvailable(userId: string) {
     return this.prisma.managerRequest.findFirst({
       where: {

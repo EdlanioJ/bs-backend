@@ -10,8 +10,6 @@ type Input = {
 
 type Output = {
   total: number;
-  page: number;
-  limit: number;
   data: AppointmentModel[];
 };
 
@@ -19,7 +17,7 @@ type Output = {
 export class ListAppointmentService {
   constructor(private readonly appointmentRepo: AppointmentRepository) {}
 
-  async execute({ page = 1, limit = 10 }: Input): Promise<Output> {
+  async execute({ page, limit }: Input): Promise<Output> {
     const [total, appointments] = await Promise.all([
       this.appointmentRepo.count(),
       this.appointmentRepo.findAll({
@@ -31,8 +29,6 @@ export class ListAppointmentService {
     return {
       data: AppointmentModel.mapCollection(appointments),
       total,
-      page,
-      limit,
     };
   }
 }

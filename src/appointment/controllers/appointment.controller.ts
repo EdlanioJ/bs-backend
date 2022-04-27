@@ -80,21 +80,14 @@ export class AppointmentController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async list(
-    @Query('page') page: number,
-    @Query('limit') limit: number,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
     @Res() res: Response,
   ) {
-    const {
-      data,
-      limit: Limit,
-      page: Page,
-      total,
-    } = await this.listAppointment.execute({ page, limit });
-
-    res.setHeader('x-total-count', total);
-    res.setHeader('x-page', Page);
-    res.setHeader('x-limit', Limit);
-    return data;
+    const { data, total } = await this.listAppointment.execute({ page, limit });
+    return res
+      .set({ 'x-total-count': total, 'x-page': page, 'x-limit': limit })
+      .json(data);
   }
 
   @ApiOkResponse({ type: AppointmentModel, isArray: true })
@@ -105,16 +98,11 @@ export class AppointmentController {
     @Param('id') employeeId: string,
     @Query('from_date') fromDate: Date,
     @Query('to_date') toDate: Date,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
     @Res() res: Response,
   ) {
-    const {
-      data,
-      limit: Limit,
-      page: Page,
-      total,
-    } = await this.listAppointmentByEmployee.execute({
+    const { data, total } = await this.listAppointmentByEmployee.execute({
       employeeId,
       fromDate: new Date(fromDate),
       toDate: new Date(toDate),
@@ -122,10 +110,9 @@ export class AppointmentController {
       limit,
     });
 
-    res.setHeader('x-total-count', total);
-    res.setHeader('x-page', Page);
-    res.setHeader('x-limit', Limit);
-    return data;
+    return res
+      .set({ 'x-total-count': total, 'x-page': page, 'x-limit': limit })
+      .json(data);
   }
 
   @ApiOkResponse({ type: AppointmentModel, isArray: true })
@@ -136,16 +123,11 @@ export class AppointmentController {
     @GetCurrentUser('sub') userId: string,
     @Query('from_date') fromDate: string,
     @Query('to_date') toDate: string,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
     @Res() res: Response,
   ) {
-    const {
-      data,
-      limit: Limit,
-      page: Page,
-      total,
-    } = await this.listAppointmentByCustomer.execute({
+    const { data, total } = await this.listAppointmentByCustomer.execute({
       customerId: userId,
       fromDate: new Date(fromDate),
       toDate: new Date(toDate),
@@ -153,10 +135,9 @@ export class AppointmentController {
       limit,
     });
 
-    res.setHeader('x-total-count', total);
-    res.setHeader('x-page', Page);
-    res.setHeader('x-limit', Limit);
-    return data;
+    return res
+      .set({ 'x-total-count': total, 'x-page': page, 'x-limit': limit })
+      .json(data);
   }
 
   @ApiNoContentResponse({ description: 'cancel appointment' })

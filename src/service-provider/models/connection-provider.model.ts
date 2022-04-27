@@ -14,15 +14,20 @@ export class ProviderConnectionModel {
   @ApiProperty()
   userId: string;
 
-  static map(data: ProviderEmployeeConnection): ProviderConnectionModel {
+  static map(
+    providerConnection: ProviderEmployeeConnection,
+  ): ProviderConnectionModel {
     return {
-      ...data,
+      id: providerConnection.id,
+      providerId: providerConnection.providerId,
+      createdAt: providerConnection.createdAt,
+      userId: providerConnection.userId,
     };
   }
 
   static mapCollection(
-    data: ProviderEmployeeConnection[],
+    providerConnections: ProviderEmployeeConnection[],
   ): ProviderConnectionModel[] {
-    return data.map(ProviderConnectionModel.map);
+    return providerConnections.map(ProviderConnectionModel.map);
   }
 }

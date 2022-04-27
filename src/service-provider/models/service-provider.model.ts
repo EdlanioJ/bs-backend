@@ -14,14 +14,18 @@ export class ServiceProviderModel {
   @ApiProperty()
   createdAt: Date;
 
-  static map(data: ServiceProvider): ServiceProviderModel {
+  static map(serviceProvider: ServiceProvider): ServiceProviderModel {
     return {
-      ...data,
-      createdBy: data.userId,
+      id: serviceProvider.id,
+      createdAt: serviceProvider.createdAt,
+      name: serviceProvider.name,
+      createdBy: serviceProvider.userId,
     };
   }
 
-  static mapCollection(data: ServiceProvider[]): ServiceProviderModel[] {
-    return data.map(this.map);
+  static mapCollection(
+    serviceProviders: ServiceProvider[],
+  ): ServiceProviderModel[] {
+    return serviceProviders.map(ServiceProviderModel.map);
   }
 }

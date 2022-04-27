@@ -22,9 +22,6 @@ export class ListTemplateService {
       this.templateRepo.findAll({ take: limit, skip: (page - 1) * limit }),
     ]);
 
-    return {
-      total,
-      data: TemplateModel.mapCollection(templates),
-    };
+    return { total, data: TemplateModel.mapCollection(templates) };
   }
 }

@@ -108,14 +108,15 @@ export class ConnectionProviderController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async list(
-    @Query('page') page: number,
-    @Query('limit') limit: number,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
     @Res() res: Response,
   ) {
     const { data, total } = await this.listConnection.execute({ page, limit });
 
-    res.setHeader('x-total-count', total);
-    return data;
+    return res
+      .set({ 'x-total-count': total, 'x-page': page, 'x-limit': limit })
+      .json(data);
   }
 
   @ApiResponse({
@@ -129,8 +130,8 @@ export class ConnectionProviderController {
   @HttpCode(HttpStatus.OK)
   async listByManager(
     @GetCurrentUser('sub') userId: string,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
     @Res() res: Response,
   ) {
     const { data, total } = await this.listConnectionByManager.execute({
@@ -139,7 +140,8 @@ export class ConnectionProviderController {
       userId,
     });
 
-    res.setHeader('x-total-count', total);
-    return data;
+    return res
+      .set({ 'x-total-count': total, 'x-page': page, 'x-limit': limit })
+      .json(data);
   }
 }

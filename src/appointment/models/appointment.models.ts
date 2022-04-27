@@ -31,20 +31,22 @@ export class AppointmentModel {
 
   @ApiProperty()
   createdAt: Date;
-  static map(data: Appointment): AppointmentModel {
+  static map(appointment: Appointment): AppointmentModel {
     return {
-      ...data,
-      appointmentWith: data.employeeId,
-      userId: data.customerId,
-      canceledAt: data.canceled,
-      endAt: data.end,
-      startAt: data.start,
-      status: data.status,
-      service: data.serviceId,
+      id: appointment.id,
+      createdAt: appointment.createdAt,
+      canceledReason: appointment.canceledReason,
+      appointmentWith: appointment.employeeId,
+      userId: appointment.customerId,
+      canceledAt: appointment.canceled,
+      endAt: appointment.end,
+      startAt: appointment.start,
+      status: appointment.status,
+      service: appointment.serviceId,
     };
   }
 
-  static mapCollection(data: Appointment[]): AppointmentModel[] {
-    return data.map(AppointmentModel.map);
+  static mapCollection(appointments: Appointment[]): AppointmentModel[] {
+    return appointments.map(AppointmentModel.map);
   }
 }
