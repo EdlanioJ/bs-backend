@@ -29,6 +29,7 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -66,6 +67,8 @@ export class TemplateController {
 
   @ApiOkResponse({ type: TemplateModel, isArray: true })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(

@@ -25,7 +25,15 @@ import {
   RejectConnectionService,
   RequireConnectionService,
 } from '../services';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiQuery,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { ProviderConnectionModel } from '../models';
 
 @ApiTags('provider-connection')
@@ -42,6 +50,10 @@ export class ConnectionProviderController {
     private readonly requireConnection: RequireConnectionService,
   ) {}
 
+  @ApiCreatedResponse({
+    description: 'connection request has been successfully created.',
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.MANAGER)
   @UseGuards(RolesGuard)
   @Post('require/:userId')
@@ -56,6 +68,10 @@ export class ConnectionProviderController {
     });
   }
 
+  @ApiCreatedResponse({
+    description: 'connection has been successfully created.',
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.USER)
   @UseGuards(RolesGuard)
   @Post('accept/:id')
@@ -70,6 +86,10 @@ export class ConnectionProviderController {
     });
   }
 
+  @ApiNoContentResponse({
+    description: 'Connection has been rejected.',
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.USER)
   @UseGuards(RolesGuard)
   @Patch('reject/:id')
@@ -84,6 +104,10 @@ export class ConnectionProviderController {
     });
   }
 
+  @ApiNoContentResponse({
+    description: 'Connection has been deleted.',
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.MANAGER)
   @UseGuards(RolesGuard)
   @Delete(':id')
@@ -98,11 +122,13 @@ export class ConnectionProviderController {
     });
   }
 
-  @ApiResponse({
-    status: HttpStatus.OK,
+  @ApiOkResponse({
     type: ProviderConnectionModel,
     isArray: true,
   })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
   @Get()
@@ -119,11 +145,13 @@ export class ConnectionProviderController {
       .json(data);
   }
 
-  @ApiResponse({
-    status: HttpStatus.OK,
+  @ApiOkResponse({
     type: ProviderConnectionModel,
     isArray: true,
   })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
   @Roles(Role.MANAGER)
   @UseGuards(RolesGuard)
   @Get('manager')

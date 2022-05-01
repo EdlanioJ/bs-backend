@@ -25,6 +25,7 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -61,6 +62,8 @@ export class ServiceController {
 
   @ApiOkResponse({ type: ServiceModel, isArray: true })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
   @HttpCode(HttpStatus.OK)
   @Get()
   async list(

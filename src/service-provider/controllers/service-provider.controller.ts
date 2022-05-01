@@ -20,7 +20,14 @@ import {
   DeleteServiceProviderService,
   GetServiceProviderService,
 } from '../services';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { ServiceProviderModel } from '../models';
 
 @ApiTags('provider')
@@ -34,6 +41,10 @@ export class ServiceProviderController {
     private readonly deleteProvider: DeleteServiceProviderService,
   ) {}
 
+  @ApiCreatedResponse({
+    description: 'provider has been successfully created.',
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.MANAGER)
   @UseGuards(RolesGuard)
   @Post()
@@ -45,13 +56,18 @@ export class ServiceProviderController {
     return this.addProvider.execute({ name, userId });
   }
 
-  @ApiResponse({ status: HttpStatus.OK, type: ServiceProviderModel })
+  @ApiOkResponse({ status: HttpStatus.OK, type: ServiceProviderModel })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   get(@Param('id') id: string) {
     return this.getProvider.execute({ id });
   }
 
+  @ApiNoContentResponse({
+    description: 'provider has been successfully deleted.',
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.MANAGER)
   @UseGuards(RolesGuard)
   @Delete(':id')

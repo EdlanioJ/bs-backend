@@ -30,6 +30,7 @@ import {
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOkResponse,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -117,6 +118,8 @@ export class AppointmentController {
 
   @ApiOkResponse({ type: AppointmentModel, isArray: true })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
   @Get('customer')
   @HttpCode(HttpStatus.OK)
   async listByCustomer(

@@ -28,6 +28,7 @@ import {
   ApiBearerAuth,
   ApiNoContentResponse,
   ApiOkResponse,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -47,6 +48,8 @@ export class UserManagerController {
 
   @ApiOkResponse({ type: ManagerRequestModel, isArray: true })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
   @Roles(Role.ADMIN)
   @UseGuards(JwtGuard, RolesGuard)
   @HttpCode(HttpStatus.OK)
