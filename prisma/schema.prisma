@@ -33,8 +33,8 @@ model User {
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  appointmentsFrom appointment[]    @relation("AppointmentFrom")
-  appointmentsTo   appointment[]    @relation("AppointmentTo")
+  appointmentsFrom Appointment[]    @relation("AppointmentFrom")
+  appointmentsTo   Appointment[]    @relation("AppointmentTo")
   templates        Template[]       @relation("Template")
   serviceProvicer  ServiceProvider? @relation("Provider")
 
@@ -92,7 +92,7 @@ enum AppointmentStatus {
   COMPLETED
 }
 
-model appointment {
+model Appointment {
   id             String            @id @default(auto()) @map("_id") @db.ObjectId
   start          DateTime          @map("start_time")
   end            DateTime          @map("end_time")
@@ -138,7 +138,7 @@ model Service {
   provider   ServiceProvider @relation("ServiceProvider", fields: [providerId], references: [id])
   providerId String          @unique @map("provider_id") @db.ObjectId
 
-  appointments appointment[] @relation("Service")
+  appointments Appointment[] @relation("Service")
 
   @@map("services")
 }
