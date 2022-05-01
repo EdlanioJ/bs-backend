@@ -7,36 +7,33 @@ import { PrismaService } from '../../prisma';
 export class RequestConnectionRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: Prisma.ProviderEmployeeConnectionRequestCreateInput) {
-    return this.prisma.providerEmployeeConnectionRequest.create({
+  async create(data: Prisma.ProviderConnectionRequestCreateInput) {
+    return this.prisma.providerConnectionRequest.create({
       data,
     });
   }
 
-  async update(
-    id: string,
-    data: Prisma.ProviderEmployeeConnectionRequestUpdateInput,
-  ) {
-    return this.prisma.providerEmployeeConnectionRequest.update({
+  async update(id: string, data: Prisma.ProviderConnectionRequestUpdateInput) {
+    return this.prisma.providerConnectionRequest.update({
       where: { id },
       data,
     });
   }
 
   async findOne(id: string) {
-    return this.prisma.providerEmployeeConnectionRequest.findFirst({
+    return this.prisma.providerConnectionRequest.findFirst({
       where: { id },
     });
   }
 
   async delete(id: string) {
-    return this.prisma.providerEmployeeConnectionRequest.delete({
+    return this.prisma.providerConnectionRequest.delete({
       where: { id },
     });
   }
 
   async findAvailable(providerId: string, employeeId: string) {
-    return this.prisma.providerEmployeeConnectionRequest.findFirst({
+    return this.prisma.providerConnectionRequest.findFirst({
       where: {
         provider: { id: providerId },
         employee: { id: employeeId },

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ProviderEmployeeConnection } from '@prisma/client';
+import { ProviderConnection } from '@prisma/client';
 
 export class ProviderConnectionModel {
   @ApiProperty()
@@ -14,9 +14,7 @@ export class ProviderConnectionModel {
   @ApiProperty()
   userId: string;
 
-  static map(
-    providerConnection: ProviderEmployeeConnection,
-  ): ProviderConnectionModel {
+  static map(providerConnection: ProviderConnection): ProviderConnectionModel {
     return {
       id: providerConnection.id,
       providerId: providerConnection.providerId,
@@ -26,7 +24,7 @@ export class ProviderConnectionModel {
   }
 
   static mapCollection(
-    providerConnections: ProviderEmployeeConnection[],
+    providerConnections: ProviderConnection[],
   ): ProviderConnectionModel[] {
     return providerConnections.map(ProviderConnectionModel.map);
   }

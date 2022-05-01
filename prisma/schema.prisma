@@ -38,12 +38,14 @@ model User {
   templates        Template[]       @relation("Template")
   serviceProvicer  ServiceProvider? @relation("Provider")
 
-  connectionToProvider ProviderEmployeeConnection?         @relation("ConnectionToProvider")
-  connectionRequest    ProviderEmployeeConnectionRequest[] @relation("ConnectionRequest")
-  managerRequest       ManagerRequest?                     @relation("ManagerRequest")
+  providerConnection         ProviderConnection?         @relation("ProviderConnection")
+  providerConnectionRequests ProviderConnectionRequest[] @relation("ConnectionRequest")
+  managerRequest             ManagerRequest?             @relation("ManagerRequest")
 
-  manager      Manager?  @relation("Manager")
-  authorizedBy Manager[] @relation("AuthorizedBy")
+  manager            Manager?  @relation("Manager")
+  authorizedManagers Manager[] @relation("AuthorizedManager")
+
+  rejectedManagerRequests ManagerRequest[] @relation("RejectBy")
 
   @@map("users")
 }
@@ -64,8 +66,8 @@ model ManagerRequest {
 
   rejectReason String? @map("reject_reason")
 
-  rejectBy   Manager? @relation("RejectBy", fields: [rejectById], references: [id])
-  rejectById String?  @map("reject_by_id") @db.ObjectId
+  rejectBy   User?   @relation("RejectBy", fields: [rejectById], references: [id])
+  rejectById String? @map("reject_by_id") @db.ObjectId
 
   @@map("manager_requests")
 }
@@ -77,10 +79,9 @@ model Manager {
   user   User   @relation("Manager", fields: [userId], references: [id])
   userId String @unique @map("user_id")
 
-  authorizedBy   User   @relation("AuthorizedBy", fields: [authorizedById], references: [id])
+  authorizedBy   User   @relation("AuthorizedManager", fields: [authorizedById], references: [id])
   authorizedById String @map("authorized_by_id")
 
-  managerRequest ManagerRequest[] @relation("RejectBy")
   @@map("managers")
 }
 
@@ -121,10 +122,10 @@ model ServiceProvider {
 
   services Service[] @relation("ServiceProvider")
 
-  connectionToEmployees ProviderEmployeeConnection[]        @relation("ConnectionToEmployees")
-  connectionRequest     ProviderEmployeeConnectionRequest[] @relation("ConnectionRequestToProvider")
+  providerConnections        ProviderConnection[]        @relation("ProviderConnections")
+  providerConnectionRequests ProviderConnectionRequest[] @relation("ConnectionRequestToProvider")
 
-  @@map("services_provider")
+  @@map("services_providers")
 }
 
 model Service {
@@ -148,7 +149,7 @@ enum ConnectionRequestStatus {
   REJECTED
 }
 
-model ProviderEmployeeConnectionRequest {
+model ProviderConnectionRequest {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
   status    ConnectionRequestStatus @default(PENDING)
@@ -160,20 +161,20 @@ model ProviderEmployeeConnectionRequest {
   employee   User   @relation("ConnectionRequest", fields: [employeeId], references: [id])
   employeeId String @map("employee_id") @db.ObjectId
 
-  @@map("connection_request_to_provider")
+  @@map("provider_connection_requests")
 }
 
-model ProviderEmployeeConnection {
+model ProviderConnection {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now()) @map("created_at")
 
-  provider   ServiceProvider @relation("ConnectionToEmployees", fields: [providerId], references: [id])
+  provider   ServiceProvider @relation("ProviderConnections", fields: [providerId], references: [id])
   providerId String          @map("provider_id") @db.ObjectId
 
-  user   User   @relation("ConnectionToProvider", fields: [userId], references: [id])
+  user   User   @relation("ProviderConnection", fields: [userId], references: [id])
   userId String @unique @map("user_id") @db.ObjectId
 
-  @@map("connection_provider")
+  @@map("provider_connections")
 }
 
 model Template {

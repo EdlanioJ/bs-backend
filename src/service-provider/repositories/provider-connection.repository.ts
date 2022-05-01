@@ -7,29 +7,29 @@ import { PrismaService } from '../../prisma';
 export class ProviderConnectionRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: Prisma.ProviderEmployeeConnectionCreateInput) {
-    return this.prisma.providerEmployeeConnection.create({
+  async create(data: Prisma.ProviderConnectionCreateInput) {
+    return this.prisma.providerConnection.create({
       data,
     });
   }
 
   async findOne(id: string) {
-    return this.prisma.providerEmployeeConnection.findFirst({
+    return this.prisma.providerConnection.findFirst({
       where: {
         id,
       },
     });
   }
 
-  async findAll(filter: Prisma.ProviderEmployeeConnectionFindManyArgs) {
-    return this.prisma.providerEmployeeConnection.findMany(filter);
+  async findAll(filter: Prisma.ProviderConnectionFindManyArgs) {
+    return this.prisma.providerConnection.findMany(filter);
   }
 
-  async count(args?: Prisma.ProviderEmployeeConnectionCountArgs) {
-    return this.prisma.providerEmployeeConnection.count(args);
+  async count(args?: Prisma.ProviderConnectionCountArgs) {
+    return this.prisma.providerConnection.count(args);
   }
   async delete(id: string) {
-    return this.prisma.providerEmployeeConnection.delete({
+    return this.prisma.providerConnection.delete({
       where: {
         id,
       },
