@@ -78,6 +78,8 @@ export class AppointmentController {
 
   @ApiOkResponse({ type: AppointmentModel, isArray: true })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
   @Get()
   @HttpCode(HttpStatus.OK)
   async list(
@@ -93,6 +95,8 @@ export class AppointmentController {
 
   @ApiOkResponse({ type: AppointmentModel, isArray: true })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
   @Get('employee/:id')
   @HttpCode(HttpStatus.OK)
   async listByEmployee(
