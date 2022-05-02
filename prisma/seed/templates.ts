@@ -7,7 +7,7 @@ export default [
   {
     subject: 'Forgot password',
     type: 'forgot-password',
-    body: "<strong>Hello, {{name}}, you have requested to reset your password</strong><br/><p>Please click on the link below to reset your password</p><p><a href='https://bs-b.herokuapp.com/auth/password/reset{{token}}'>Reset Password</a></p>",
+    body: "<strong>Hello, {{name}}, you have requested to reset your password</strong><br/><p>Please click on the link below to reset your password</p><p><a href='https://bs-b.herokuapp.com/auth/password/reset/{{token}}'>Reset Password</a></p>",
   },
   {
     subject: 'Appointment Confirmation',
