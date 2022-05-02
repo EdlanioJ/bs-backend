@@ -24,7 +24,6 @@ import { GetCurrentUser } from '../decorators';
 import {
   AuthPayloadDto,
   ForgotPasswordDto,
-  LoginDto,
   RegisterDto,
   ResetPasswordDto,
 } from '../dto';
@@ -65,7 +64,21 @@ export class AuthController {
     return this.loginService.execute({ role, sub, username });
   }
 
-  @ApiBody({ type: LoginDto })
+  @ApiBody({
+    schema: {
+      properties: {
+        email: {
+          type: 'string',
+          format: 'email',
+          example: 'admin@admin.com',
+        },
+        password: {
+          type: 'string',
+          example: 'admin123456',
+        },
+      },
+    },
+  })
   @ApiOkResponse({ type: TokensModel })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @Post('login')
