@@ -12,6 +12,7 @@ type Output = {
   total: number;
   data: ServiceModel[];
 };
+
 @Injectable()
 export class ListProviderServiceService {
   constructor(private readonly serviceRepo: ServiceRepository) {}
@@ -19,8 +20,8 @@ export class ListProviderServiceService {
     const [total, services] = await Promise.all([
       this.serviceRepo.count(),
       this.serviceRepo.findAll({
-        skip: (page - 1) * limit,
-        take: limit,
+        skip: Number((page - 1) * limit),
+        take: Number(limit),
       }),
     ]);
 

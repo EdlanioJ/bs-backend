@@ -21,8 +21,8 @@ export class ListAppointmentService {
     const [total, appointments] = await Promise.all([
       this.appointmentRepo.count(),
       this.appointmentRepo.findAll({
-        skip: (page - 1) * limit,
-        take: limit,
+        skip: Number((page - 1) * limit),
+        take: Number(limit),
       }),
     ]);
 

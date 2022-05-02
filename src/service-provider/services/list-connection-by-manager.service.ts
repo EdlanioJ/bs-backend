@@ -34,8 +34,8 @@ export class ListConnectionByManagerService {
         where: { providerId: provider.id },
       }),
       this.providerConnectionRepo.findAll({
-        skip: (page - 1) * limit,
-        take: limit,
+        skip: Number((page - 1) * limit),
+        take: Number(limit),
         where: {
           providerId: provider.id,
         },

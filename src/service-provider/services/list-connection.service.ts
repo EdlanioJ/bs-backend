@@ -23,8 +23,8 @@ export class ListConnectionService {
     const [total, providerConnections] = await Promise.all([
       this.providerConnectionRepo.count(),
       this.providerConnectionRepo.findAll({
-        skip: (page - 1) * limit,
-        take: limit,
+        skip: Number((page - 1) * limit),
+        take: Number(limit),
       }),
     ]);
 

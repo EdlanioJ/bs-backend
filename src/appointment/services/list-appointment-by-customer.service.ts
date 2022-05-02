@@ -38,8 +38,8 @@ export class ListAppointmentByCustomerService {
         },
       }),
       this.appointmentRepo.findAll({
-        take: limit,
-        skip: (page - 1) * limit,
+        skip: Number((page - 1) * limit),
+        take: Number(limit),
         where: {
           customerId,
           start: {

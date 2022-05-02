@@ -20,11 +20,10 @@ export class ListManagerRequestService {
     const [total, requests] = await Promise.all([
       this.managerRequestRepo.count(),
       this.managerRequestRepo.findAll({
-        take: limit,
-        skip: (page - 1) * limit,
+        skip: Number((page - 1) * limit),
+        take: Number(limit),
       }),
     ]);
-    console.log(total, requests);
 
     return {
       total,
