@@ -31,7 +31,7 @@ import {
 } from '@nestjs/swagger';
 import { ServiceModel } from '../models';
 
-@ApiTags('provider-service')
+@ApiTags('service')
 @ApiBearerAuth('access-token')
 @UseGuards(JwtGuard)
 @Controller('service')
