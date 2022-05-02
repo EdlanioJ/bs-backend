@@ -22,12 +22,6 @@ import { TemplateRepository } from '../template/repositories';
             pass: configService.get('MAIL_PASS'),
           },
         },
-        defaults: {
-          sender: {
-            name: configService.get('MAIL_SENDER_NAME'),
-            address: configService.get('MAIL_SENDER_ADDRESS'),
-          },
-        },
       }),
       inject: [ConfigService],
     }),
