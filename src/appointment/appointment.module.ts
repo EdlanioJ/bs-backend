@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { PrismaModule } from '../prisma';
 import { AuthModule } from '../auth';
 import { ServiceRepository } from '../service/repositories';
 import { UserRepository } from '../user/repositories';
@@ -31,6 +30,6 @@ import {
     ListAppointmentByEmployeeService,
     ListAppointmentByCustomerService,
   ],
-  imports: [PrismaModule, AuthModule],
+  imports: [AuthModule],
 })
 export class AppointmentModule {}

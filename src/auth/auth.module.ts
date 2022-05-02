@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 
-import { PrismaModule } from '../prisma';
 import { MailModule } from '../mail';
 import { UserRepository } from '../user/repositories';
 
@@ -27,7 +26,7 @@ import {
 import { AuthHelpers } from './helpers';
 
 @Module({
-  imports: [PassportModule, MailModule, JwtModule.register({}), PrismaModule],
+  imports: [PassportModule, MailModule, JwtModule.register({})],
   exports: [JwtStrategy, RolesGuard],
   providers: [
     RefreshJwtStrategy,

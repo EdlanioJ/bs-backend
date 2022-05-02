@@ -16,10 +16,9 @@ import {
 
 import { AuthModule } from '../auth';
 import { MailModule } from '../mail';
-import { PrismaModule } from '../prisma';
 
 @Module({
-  imports: [PrismaModule, AuthModule, MailModule],
+  imports: [AuthModule, MailModule],
   providers: [
     RequireManagerUserService,
     ListManagerRequestService,

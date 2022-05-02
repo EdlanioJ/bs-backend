@@ -10,11 +10,10 @@ import {
 } from './services';
 
 import { AuthModule } from '../auth';
-import { PrismaModule } from '../prisma';
 import { UserRepository } from '../user/repositories';
 
 @Module({
-  imports: [AuthModule, PrismaModule],
+  imports: [AuthModule],
   providers: [
     CreateTemplateService,
     DeleteTemplateService,

@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { PrismaModule } from '../prisma';
 import { AuthModule } from '../auth';
 import { MailModule } from '../mail';
 
@@ -30,7 +29,7 @@ import {
 import { UserRepository } from '../user/repositories';
 
 @Module({
-  imports: [PrismaModule, AuthModule, MailModule],
+  imports: [AuthModule, MailModule],
   providers: [
     ListConnectionByManagerService,
     DeleteServiceProviderService,

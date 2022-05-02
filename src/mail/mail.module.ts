@@ -7,11 +7,8 @@ import { SendMailProcessor } from './processor';
 import { SendMailProducerService, SendMailProcessorService } from './services';
 
 import { TemplateRepository } from '../template/repositories';
-import { PrismaModule } from '../prisma';
-
 @Module({
   imports: [
-    PrismaModule,
     BullModule.registerQueue({
       name: 'send-mail-queue',
     }),
