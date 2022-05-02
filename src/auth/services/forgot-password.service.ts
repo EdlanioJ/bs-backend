@@ -31,7 +31,7 @@ export class ForgotPasswordService {
 
     await this.mailProducer.execute({
       to: user.email,
-      type: 'reset-password',
+      type: 'forgot-password',
       content: [
         {
           key: 'name',
