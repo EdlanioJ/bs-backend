@@ -30,11 +30,12 @@ describe('CancelAppointmentService', () => {
     reason: 'any_reason',
     userId: 'any_user_id',
   };
+
   it('should throw if appointment repository findOne return null', () => {
     const spy = jest.spyOn(appointmentRepo, 'findOne').mockResolvedValue(null);
     const output = service.execute(input);
 
-    expect(spy).toBeCalled();
+    expect(spy).toBeCalledTimes(1);
     expect(spy).toBeCalledWith(input.appointmentId);
     expect(output).rejects.toThrowError(
       new UnauthorizedException('Appointment not found'),
@@ -42,58 +43,48 @@ describe('CancelAppointmentService', () => {
   });
 
   it('should throw if userId is different than customerId', () => {
-    const spy = jest
-      .spyOn(appointmentRepo, 'findOne')
-      .mockResolvedValue(appointmentStub());
+    jest.spyOn(appointmentRepo, 'findOne').mockResolvedValue(appointmentStub());
     const output = service.execute(input);
-    expect(spy).toBeCalledWith(input.appointmentId);
     expect(output).rejects.toThrowError(
       new UnauthorizedException('User is not the customer'),
     );
   });
 
   it('should throw if appointment is already cancelled', () => {
-    const spy = jest.spyOn(appointmentRepo, 'findOne').mockResolvedValue({
+    jest.spyOn(appointmentRepo, 'findOne').mockResolvedValue({
       ...appointmentStub(),
       status: 'CANCELLED',
       customerId: input.userId,
     });
 
     const output = service.execute(input);
-    expect(spy).toBeCalledWith(input.appointmentId);
     expect(output).rejects.toThrowError(
       new BadRequestException('Appointment is already cancelled'),
     );
   });
 
   it('should throw BadRequestException if appointment is already completed', () => {
-    const spy = jest.spyOn(appointmentRepo, 'findOne').mockResolvedValue({
+    jest.spyOn(appointmentRepo, 'findOne').mockResolvedValue({
       ...appointmentStub(),
       status: 'COMPLETED',
       customerId: input.userId,
     });
 
     const output = service.execute(input);
-    expect(spy).toBeCalledWith(input.appointmentId);
     expect(output).rejects.toThrowError(
       new BadRequestException('Appointment is already completed'),
     );
   });
 
   it('should successfully cancel appointment', async () => {
-    const spyFindOne = jest
-      .spyOn(appointmentRepo, 'findOne')
-      .mockResolvedValue({
-        ...appointmentStub(),
-        customerId: input.userId,
-      });
+    jest.spyOn(appointmentRepo, 'findOne').mockResolvedValue({
+      ...appointmentStub(),
+      customerId: input.userId,
+    });
 
-    const spyUpdate = jest
-      .spyOn(appointmentRepo, 'update')
-      .mockResolvedValue(null);
+    const spy = jest.spyOn(appointmentRepo, 'update').mockResolvedValue(null);
 
     await service.execute(input);
-    expect(spyFindOne).toBeCalledWith(input.appointmentId);
-    expect(spyUpdate).toBeCalled();
+    expect(spy).toBeCalledTimes(1);
   });
 });
