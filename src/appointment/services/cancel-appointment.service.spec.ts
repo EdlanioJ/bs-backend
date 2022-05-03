@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
 import { CancelAppointmentService } from './cancel-appointment.service';
 import { AppointmentRepository } from '../repositories';
+import { appointmentStub } from '../../../test/mocks/stubs';
 
 jest.mock('../repositories', () =>
   jest.requireActual('../../../test/mocks/repositories/appointment.mock'),
@@ -37,6 +38,17 @@ describe('CancelAppointmentService', () => {
     expect(spy).toBeCalledWith(input.appointmentId);
     expect(output).rejects.toThrowError(
       new UnauthorizedException('Appointment not found'),
+    );
+  });
+
+  it('should throw if userId is different than customerId', () => {
+    const spy = jest
+      .spyOn(appointmentRepo, 'findOne')
+      .mockResolvedValue(appointmentStub());
+    const output = service.execute(input);
+    expect(spy).toBeCalledWith(input.appointmentId);
+    expect(output).rejects.toThrowError(
+      new UnauthorizedException('User is not the customer'),
     );
   });
 });
