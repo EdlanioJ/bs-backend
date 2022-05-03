@@ -79,4 +79,21 @@ describe('CancelAppointmentService', () => {
       new BadRequestException('Appointment is already completed'),
     );
   });
+
+  it('should successfully cancel appointment', async () => {
+    const spyFindOne = jest
+      .spyOn(appointmentRepo, 'findOne')
+      .mockResolvedValue({
+        ...appointmentStub(),
+        customerId: input.userId,
+      });
+
+    const spyUpdate = jest
+      .spyOn(appointmentRepo, 'update')
+      .mockResolvedValue(null);
+
+    await service.execute(input);
+    expect(spyFindOne).toBeCalledWith(input.appointmentId);
+    expect(spyUpdate).toBeCalled();
+  });
 });
