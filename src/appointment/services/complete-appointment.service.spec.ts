@@ -58,4 +58,16 @@ describe('CompleteAppointmentService', () => {
       new BadRequestException('Appointment is already completed'),
     );
   });
+
+  it('should throw UnauthorizedException if appointment status is "CANCELLED"', () => {
+    jest.spyOn(appointmentRepo, 'findOne').mockResolvedValue({
+      ...appointmentStub(),
+      status: 'CANCELLED',
+      employeeId: input.userId,
+    });
+    const output = service.execute(input);
+    expect(output).rejects.toThrowError(
+      new BadRequestException('Appointment is cancelled'),
+    );
+  });
 });
