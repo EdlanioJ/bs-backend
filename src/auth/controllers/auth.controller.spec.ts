@@ -3,6 +3,10 @@ import {
   LoginService,
   LogoutService,
   RefreshTokensService,
+  ForgotPasswordService,
+  ResetPasswordService,
+  RegisterService,
+  ValidateWithCredentialsService,
   ValidateOAuthService,
 } from '../services';
 import { AuthController } from './auth.controller';
@@ -17,6 +21,10 @@ describe('AuthController', () => {
       controllers: [AuthController],
       providers: [
         LoginService,
+        ForgotPasswordService,
+        ResetPasswordService,
+        RegisterService,
+        ValidateWithCredentialsService,
         LogoutService,
         RefreshTokensService,
         ValidateOAuthService,

@@ -5,6 +5,7 @@ import { UserManagerController } from './user-manager.controller';
 import {
   AcceptManagerService,
   RejectManagerService,
+  ListManagerRequestService,
   RequireManagerUserService,
 } from '../services';
 
@@ -19,6 +20,7 @@ describe('UserManagerController', () => {
       providers: [
         AcceptManagerService,
         RejectManagerService,
+        ListManagerRequestService,
         RequireManagerUserService,
       ],
     }).compile();
