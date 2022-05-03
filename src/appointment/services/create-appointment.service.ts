@@ -30,7 +30,7 @@ export class CreateAppointmentService {
     startTime,
   }: Input): Promise<void> {
     const employee = await this.userRepo.findOne(employeeId);
-    if (!employee) throw new UnauthorizedException('Employee not found');
+    if (!employee) throw new BadRequestException('Employee not found');
 
     if (employee.role !== 'EMPLOYEE')
       throw new UnauthorizedException('User is not an employee');
