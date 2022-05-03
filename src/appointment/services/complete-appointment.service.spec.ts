@@ -3,6 +3,7 @@ import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { CompleteAppointmentService } from './complete-appointment.service';
 import { AppointmentRepository } from '../repositories';
 import { appointmentStub } from '../../../test/mocks/stubs';
+import faker from '@faker-js/faker';
 
 jest.mock('../repositories', () =>
   jest.requireActual('../../../test/mocks/repositories/appointment.mock'),
@@ -68,6 +69,18 @@ describe('CompleteAppointmentService', () => {
     const output = service.execute(input);
     expect(output).rejects.toThrowError(
       new BadRequestException('Appointment is cancelled'),
+    );
+  });
+
+  it('should throw BadRequestException if appointment state time is in past', () => {
+    jest.spyOn(appointmentRepo, 'findOne').mockResolvedValue({
+      ...appointmentStub(),
+      start: faker.date.past(),
+      employeeId: input.userId,
+    });
+    const output = service.execute(input);
+    expect(output).rejects.toThrowError(
+      new BadRequestException('Appointment cannot be in the past'),
     );
   });
 });
