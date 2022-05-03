@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { UnauthorizedException } from '@nestjs/common';
 import { CompleteAppointmentService } from './complete-appointment.service';
 import { AppointmentRepository } from '../repositories';
-import { UnauthorizedException } from '@nestjs/common';
+import { appointmentStub } from '../../../test/mocks/stubs';
 
 jest.mock('../repositories', () =>
   jest.requireActual('../../../test/mocks/repositories/appointment.mock'),
@@ -35,6 +36,14 @@ describe('CompleteAppointmentService', () => {
     expect(spy).toBeCalledWith(input.appointmentId);
     expect(output).rejects.toThrowError(
       new UnauthorizedException('Appointment not found'),
+    );
+  });
+
+  it('should throw UnauthorizedException if appointment employeeId is different than userId', () => {
+    jest.spyOn(appointmentRepo, 'findOne').mockResolvedValue(appointmentStub());
+    const output = service.execute(input);
+    expect(output).rejects.toThrowError(
+      new UnauthorizedException('User is not the employee'),
     );
   });
 });
