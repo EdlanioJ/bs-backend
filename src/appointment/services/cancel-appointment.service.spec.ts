@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { CancelAppointmentService } from './cancel-appointment.service';
 import { AppointmentRepository } from '../repositories';
 import { appointmentStub } from '../../../test/mocks/stubs';
@@ -49,6 +49,20 @@ describe('CancelAppointmentService', () => {
     expect(spy).toBeCalledWith(input.appointmentId);
     expect(output).rejects.toThrowError(
       new UnauthorizedException('User is not the customer'),
+    );
+  });
+
+  it('should throw if appointment is already cancelled', () => {
+    const spy = jest.spyOn(appointmentRepo, 'findOne').mockResolvedValue({
+      ...appointmentStub(),
+      status: 'CANCELLED',
+      customerId: input.userId,
+    });
+
+    const output = service.execute(input);
+    expect(spy).toBeCalledWith(input.appointmentId);
+    expect(output).rejects.toThrowError(
+      new BadRequestException('Appointment is already cancelled'),
     );
   });
 });
