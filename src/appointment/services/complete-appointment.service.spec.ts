@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { CompleteAppointmentService } from './complete-appointment.service';
 import { AppointmentRepository } from '../repositories';
 import { appointmentStub } from '../../../test/mocks/stubs';
@@ -44,6 +44,18 @@ describe('CompleteAppointmentService', () => {
     const output = service.execute(input);
     expect(output).rejects.toThrowError(
       new UnauthorizedException('User is not the employee'),
+    );
+  });
+
+  it('should throw UnauthorizedException if appointment status is "COMPLETED"', () => {
+    jest.spyOn(appointmentRepo, 'findOne').mockResolvedValue({
+      ...appointmentStub(),
+      status: 'COMPLETED',
+      employeeId: input.userId,
+    });
+    const output = service.execute(input);
+    expect(output).rejects.toThrowError(
+      new BadRequestException('Appointment is already completed'),
     );
   });
 });
