@@ -83,4 +83,15 @@ describe('CompleteAppointmentService', () => {
       new BadRequestException('Appointment cannot be in the past'),
     );
   });
+
+  it('should successfully complete appointment', async () => {
+    jest.spyOn(appointmentRepo, 'findOne').mockResolvedValue({
+      ...appointmentStub(),
+      start: faker.date.future(),
+      employeeId: input.userId,
+    });
+    const spy = jest.spyOn(appointmentRepo, 'update');
+    await service.execute(input);
+    expect(spy).toBeCalledTimes(1);
+  });
 });
