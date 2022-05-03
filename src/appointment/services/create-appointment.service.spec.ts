@@ -5,6 +5,7 @@ import { ServiceRepository } from '../../service/repositories';
 import { UserRepository } from '../../user/repositories';
 import { AppointmentRepository } from '../repositories';
 import { CreateAppointmentService } from './create-appointment.service';
+import { userStub } from '../../../test/mocks/stubs';
 
 jest.mock('../../service/repositories');
 jest.mock('../../user/repositories');
@@ -39,10 +40,22 @@ describe('CreateAppointmentService', () => {
   };
 
   it('should throw BadRequestException if userRepo.findOne return null', () => {
-    jest.spyOn(userRepo, 'findOne').mockImplementation(() => null);
+    const spy = jest.spyOn(userRepo, 'findOne').mockResolvedValue(null);
     const output = service.execute(input);
+    expect(spy).toBeCalledTimes(1);
+    expect(spy).toBeCalledWith(input.employeeId);
     expect(output).rejects.toThrow(
       new BadRequestException('Employee not found'),
+    );
+  });
+
+  it('should throw BadRequestException if user returned is no an employee', () => {
+    jest
+      .spyOn(userRepo, 'findOne')
+      .mockResolvedValue({ ...userStub(), role: 'ADMIN' });
+    const output = service.execute(input);
+    expect(output).rejects.toThrow(
+      new BadRequestException('User is not an employee'),
     );
   });
 });

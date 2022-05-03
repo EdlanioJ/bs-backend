@@ -33,7 +33,7 @@ export class CreateAppointmentService {
     if (!employee) throw new BadRequestException('Employee not found');
 
     if (employee.role !== 'EMPLOYEE')
-      throw new UnauthorizedException('User is not an employee');
+      throw new BadRequestException('User is not an employee');
 
     if (employee.id === customerId)
       throw new UnauthorizedException('Employee cannot be customer');
