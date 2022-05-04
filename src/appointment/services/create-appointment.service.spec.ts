@@ -120,4 +120,16 @@ describe('CreateAppointmentService', () => {
       new BadRequestException('Appointment is not available'),
     );
   });
+
+  it('should create an appointment successfully', async () => {
+    jest.spyOn(userRepo, 'findOne').mockResolvedValue({
+      ...userStub(),
+      role: 'EMPLOYEE',
+    });
+    jest.spyOn(serviceRepo, 'findOne').mockResolvedValue(serviceStub());
+    jest.spyOn(appointmentRepo, 'findAvailable').mockResolvedValue(null);
+    const spy = jest.spyOn(appointmentRepo, 'create');
+    await service.execute(input);
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
 });
