@@ -63,4 +63,10 @@ describe('AppointmentRepository', () => {
     const result = await repository.findOne(id);
     expect(result).toBe(appointment);
   });
+
+  it('should count appointments', async () => {
+    prisma.appointment.count = jest.fn().mockResolvedValueOnce(1);
+    const result = await repository.count();
+    expect(result).toBe(1);
+  });
 });
