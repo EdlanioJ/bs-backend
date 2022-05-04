@@ -55,4 +55,12 @@ describe('AppointmentRepository', () => {
     });
     expect(result).toBe(appointment);
   });
+
+  it('should find one appointment', async () => {
+    const appointment = appointmentStub();
+    const id = 'appointment_id';
+    prisma.appointment.findFirst = jest.fn().mockResolvedValueOnce(appointment);
+    const result = await repository.findOne(id);
+    expect(result).toBe(appointment);
+  });
 });
