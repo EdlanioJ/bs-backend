@@ -1,6 +1,6 @@
 import faker from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { ServiceRepository } from '../../service/repositories';
 import { UserRepository } from '../../user/repositories';
 import { AppointmentRepository } from '../repositories';
@@ -56,6 +56,18 @@ describe('CreateAppointmentService', () => {
     const output = service.execute(input);
     expect(output).rejects.toThrow(
       new BadRequestException('User is not an employee'),
+    );
+  });
+
+  it('should throw UnauthorizedException if employee is customer', () => {
+    jest.spyOn(userRepo, 'findOne').mockResolvedValue({
+      ...userStub(),
+      role: 'EMPLOYEE',
+      id: input.customerId,
+    });
+    const output = service.execute(input);
+    expect(output).rejects.toThrow(
+      new UnauthorizedException('Employee cannot be customer'),
     );
   });
 });
