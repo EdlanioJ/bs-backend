@@ -46,4 +46,13 @@ describe('AppointmentRepository', () => {
     });
     expect(result).toBe(appointment);
   });
+  it('should update appointment', async () => {
+    const appointment = appointmentStub();
+    const id = 'appointment_id';
+    prisma.appointment.update = jest.fn().mockResolvedValueOnce(appointment);
+    const result = await repository.update(id, {
+      status: 'COMPLETED',
+    });
+    expect(result).toBe(appointment);
+  });
 });
