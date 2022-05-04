@@ -29,4 +29,21 @@ describe('AppointmentRepository', () => {
     const result = await repository.findAvailable(employeeId, start, end);
     expect(result).toBe(appointment);
   });
+
+  it('should create new appointment', async () => {
+    const appointment = appointmentStub();
+
+    prisma.appointment.create = jest.fn().mockResolvedValueOnce(appointment);
+    const result = await repository.create({
+      id: 'appointment_id',
+      customer: { connect: { id: 'customer_id' } },
+      employee: { connect: { id: 'employee_id' } },
+      start: new Date(),
+      end: new Date(),
+      status: 'PENDING',
+      service: { connect: { id: 'service_id' } },
+      createdAt: new Date(),
+    });
+    expect(result).toBe(appointment);
+  });
 });
