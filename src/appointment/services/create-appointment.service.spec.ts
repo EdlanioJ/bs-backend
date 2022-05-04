@@ -70,4 +70,19 @@ describe('CreateAppointmentService', () => {
       new UnauthorizedException('Employee cannot be customer'),
     );
   });
+
+  it('should throw BadRequestException if startTime is before now', () => {
+    jest.spyOn(userRepo, 'findOne').mockResolvedValue({
+      ...userStub(),
+      role: 'EMPLOYEE',
+    });
+    const startTime = faker.date.past();
+    const output = service.execute({
+      ...input,
+      startTime,
+    });
+    expect(output).rejects.toThrow(
+      new BadRequestException('Appointment cannot be in the past'),
+    );
+  });
 });
