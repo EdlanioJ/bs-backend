@@ -14,6 +14,7 @@ jest.mock('../repositories');
 describe('CreateAppointmentService', () => {
   let service: CreateAppointmentService;
   let userRepo: UserRepository;
+  let serviceRepo: ServiceRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,6 +27,7 @@ describe('CreateAppointmentService', () => {
     }).compile();
     service = module.get<CreateAppointmentService>(CreateAppointmentService);
     userRepo = module.get<UserRepository>(UserRepository);
+    serviceRepo = module.get<ServiceRepository>(ServiceRepository);
   });
 
   it('should be defined', () => {
@@ -83,6 +85,18 @@ describe('CreateAppointmentService', () => {
     });
     expect(output).rejects.toThrow(
       new BadRequestException('Appointment cannot be in the past'),
+    );
+  });
+
+  it('should throw BadRequestException if serviceRepo.findOne return null', () => {
+    jest.spyOn(userRepo, 'findOne').mockResolvedValue({
+      ...userStub(),
+      role: 'EMPLOYEE',
+    });
+    jest.spyOn(serviceRepo, 'findOne').mockResolvedValue(null);
+    const output = service.execute(input);
+    expect(output).rejects.toThrow(
+      new BadRequestException('Service not found'),
     );
   });
 });
