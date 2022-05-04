@@ -1,4 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { appointmentStub } from '../../../test/mocks/stubs';
+import { AppointmentModel } from '../models';
 import {
   CancelAppointmentService,
   CompleteAppointmentService,
@@ -15,6 +17,8 @@ jest.mock('../services');
 describe('AppointmentController', () => {
   let controller: AppointmentController;
   let createAppointment: CreateAppointmentService;
+  let getAppointment: GetAppointmentService;
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AppointmentController],
@@ -33,6 +37,7 @@ describe('AppointmentController', () => {
     createAppointment = module.get<CreateAppointmentService>(
       CreateAppointmentService,
     );
+    getAppointment = module.get<GetAppointmentService>(GetAppointmentService);
   });
 
   it('should be defined', () => {
@@ -60,5 +65,26 @@ describe('AppointmentController', () => {
       customerId,
       startTime: start,
     });
+  });
+
+  it('should get an appointment', async () => {
+    const stub = appointmentStub();
+    const result: AppointmentModel = {
+      id: stub.id,
+      appointmentWith: stub.employeeId,
+      service: stub.serviceId,
+      createdAt: stub.createdAt,
+      endAt: stub.end,
+      startAt: stub.start,
+      status: stub.status,
+      userId: stub.customerId,
+    };
+    const spy = jest
+      .spyOn(getAppointment, 'execute')
+      .mockResolvedValueOnce(result);
+    const output = await controller.get(stub.id);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({ id: stub.id });
+    expect(output).toBe(result);
   });
 });
