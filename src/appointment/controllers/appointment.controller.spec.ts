@@ -23,6 +23,7 @@ describe('AppointmentController', () => {
   let listAppointment: ListAppointmentService;
   let listAppointmentByCustomer: ListAppointmentByCustomerService;
   let listAppointmentByEmployee: ListAppointmentByEmployeeService;
+  let cancelAppointment: CancelAppointmentService;
 
   const stub = appointmentStub();
   const page = 1;
@@ -69,6 +70,9 @@ describe('AppointmentController', () => {
     );
     listAppointmentByEmployee = module.get<ListAppointmentByEmployeeService>(
       ListAppointmentByEmployeeService,
+    );
+    cancelAppointment = module.get<CancelAppointmentService>(
+      CancelAppointmentService,
     );
   });
 
@@ -214,5 +218,23 @@ describe('AppointmentController', () => {
         status: stub.status,
       }),
     );
+  });
+
+  it('should call cancelAppointment.execute with correct values', async () => {
+    const userId = 'an_user_id';
+    const spy = jest.spyOn(cancelAppointment, 'execute');
+    await controller.cancel(
+      {
+        cancelReason: 'reason',
+      },
+      stub.id,
+      userId,
+    );
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({
+      appointmentId: stub.id,
+      reason: 'reason',
+      userId,
+    });
   });
 });
