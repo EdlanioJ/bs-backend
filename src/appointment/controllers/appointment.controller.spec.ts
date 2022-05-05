@@ -1,4 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { createResponse } from 'node-mocks-http';
+
 import { appointmentStub } from '../../../test/mocks/stubs';
 import { AppointmentModel } from '../models';
 import {
@@ -18,6 +20,7 @@ describe('AppointmentController', () => {
   let controller: AppointmentController;
   let createAppointment: CreateAppointmentService;
   let getAppointment: GetAppointmentService;
+  let listAppointment: ListAppointmentService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,6 +41,9 @@ describe('AppointmentController', () => {
       CreateAppointmentService,
     );
     getAppointment = module.get<GetAppointmentService>(GetAppointmentService);
+    listAppointment = module.get<ListAppointmentService>(
+      ListAppointmentService,
+    );
   });
 
   it('should be defined', () => {
@@ -86,5 +92,48 @@ describe('AppointmentController', () => {
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({ id: stub.id });
     expect(output).toBe(result);
+  });
+
+  it('should list appointments', async () => {
+    const stub = appointmentStub();
+    const page = 1;
+    const limit = 10;
+    const result = {
+      data: [
+        {
+          id: stub.id,
+          appointmentWith: stub.employeeId,
+          service: stub.serviceId,
+          createdAt: stub.createdAt,
+          endAt: stub.end,
+          startAt: stub.start,
+          status: stub.status,
+          userId: stub.customerId,
+        },
+      ],
+      total: 1,
+    };
+    const spy = jest
+      .spyOn(listAppointment, 'execute')
+      .mockResolvedValueOnce(result);
+    const res = createResponse();
+    await controller.list(page, limit, res);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({ page, limit });
+    expect(res.getHeader('x-total-count')).toBe(result.total);
+    expect(res.getHeader('x-page')).toBe(page);
+    expect(res.getHeader('x-limit')).toBe(limit);
+    const body = res._getJSONData();
+    expect(body[0]).toEqual(
+      expect.objectContaining({
+        id: stub.id,
+        appointmentWith: stub.employeeId,
+        service: stub.serviceId,
+        createdAt: stub.createdAt.toISOString(),
+        endAt: stub.end.toISOString(),
+        startAt: stub.start.toISOString(),
+        status: stub.status,
+      }),
+    );
   });
 });
