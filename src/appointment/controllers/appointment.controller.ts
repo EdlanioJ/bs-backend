@@ -97,6 +97,8 @@ export class AppointmentController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'from_date', required: true, type: Date })
+  @ApiQuery({ name: 'to_date', required: true, type: Date })
   @Get('employee/:id')
   @HttpCode(HttpStatus.OK)
   async listByEmployee(

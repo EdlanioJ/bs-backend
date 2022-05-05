@@ -22,6 +22,7 @@ describe('AppointmentController', () => {
   let getAppointment: GetAppointmentService;
   let listAppointment: ListAppointmentService;
   let listAppointmentByCustomer: ListAppointmentByCustomerService;
+  let listAppointmentByEmployee: ListAppointmentByEmployeeService;
 
   const stub = appointmentStub();
   const page = 1;
@@ -65,6 +66,9 @@ describe('AppointmentController', () => {
     );
     listAppointmentByCustomer = module.get<ListAppointmentByCustomerService>(
       ListAppointmentByCustomerService,
+    );
+    listAppointmentByEmployee = module.get<ListAppointmentByEmployeeService>(
+      ListAppointmentByEmployeeService,
     );
   });
 
@@ -154,6 +158,42 @@ describe('AppointmentController', () => {
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({
       customerId: userId,
+      fromDate,
+      toDate,
+      page,
+      limit,
+    });
+    expect(res.getHeader('x-total-count')).toBe(listResult.total);
+    expect(res.getHeader('x-page')).toBe(page);
+    expect(res.getHeader('x-limit')).toBe(limit);
+    const body = res._getJSONData();
+    expect(body[0]).toEqual(
+      expect.objectContaining({
+        id: stub.id,
+        appointmentWith: stub.employeeId,
+        service: stub.serviceId,
+        createdAt: stub.createdAt.toISOString(),
+        endAt: stub.end.toISOString(),
+        startAt: stub.start.toISOString(),
+        status: stub.status,
+      }),
+    );
+  });
+
+  it('should list appointments by employee', async () => {
+    const userId = 'an_user_id';
+    const fromDate = new Date();
+    const toDate = new Date();
+
+    const spy = jest
+      .spyOn(listAppointmentByEmployee, 'execute')
+      .mockResolvedValueOnce(listResult);
+
+    const res = createResponse();
+    await controller.listByEmployee(userId, fromDate, toDate, page, limit, res);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({
+      employeeId: userId,
       fromDate,
       toDate,
       page,
