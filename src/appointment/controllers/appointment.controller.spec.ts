@@ -24,6 +24,7 @@ describe('AppointmentController', () => {
   let listAppointmentByCustomer: ListAppointmentByCustomerService;
   let listAppointmentByEmployee: ListAppointmentByEmployeeService;
   let cancelAppointment: CancelAppointmentService;
+  let completeAppointment: CompleteAppointmentService;
 
   const stub = appointmentStub();
   const page = 1;
@@ -73,6 +74,9 @@ describe('AppointmentController', () => {
     );
     cancelAppointment = module.get<CancelAppointmentService>(
       CancelAppointmentService,
+    );
+    completeAppointment = module.get<CompleteAppointmentService>(
+      CompleteAppointmentService,
     );
   });
 
@@ -234,6 +238,19 @@ describe('AppointmentController', () => {
     expect(spy).toHaveBeenCalledWith({
       appointmentId: stub.id,
       reason: 'reason',
+      userId,
+    });
+  });
+
+  it('should call competeAppointment.execute with correct values', async () => {
+    const userId = 'an_user_id';
+    const appointmentId = stub.id;
+    const spy = jest.spyOn(completeAppointment, 'execute');
+    await controller.complete(appointmentId, userId);
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({
+      appointmentId,
       userId,
     });
   });
