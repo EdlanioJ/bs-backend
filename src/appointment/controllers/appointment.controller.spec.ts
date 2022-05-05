@@ -21,7 +21,26 @@ describe('AppointmentController', () => {
   let createAppointment: CreateAppointmentService;
   let getAppointment: GetAppointmentService;
   let listAppointment: ListAppointmentService;
+  let listAppointmentByCustomer: ListAppointmentByCustomerService;
 
+  const stub = appointmentStub();
+  const page = 1;
+  const limit = 10;
+  const listResult = {
+    data: [
+      {
+        id: stub.id,
+        appointmentWith: stub.employeeId,
+        service: stub.serviceId,
+        createdAt: stub.createdAt,
+        endAt: stub.end,
+        startAt: stub.start,
+        status: stub.status,
+        userId: stub.customerId,
+      },
+    ],
+    total: 1,
+  };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AppointmentController],
@@ -43,6 +62,9 @@ describe('AppointmentController', () => {
     getAppointment = module.get<GetAppointmentService>(GetAppointmentService);
     listAppointment = module.get<ListAppointmentService>(
       ListAppointmentService,
+    );
+    listAppointmentByCustomer = module.get<ListAppointmentByCustomerService>(
+      ListAppointmentByCustomerService,
     );
   });
 
@@ -74,7 +96,6 @@ describe('AppointmentController', () => {
   });
 
   it('should get an appointment', async () => {
-    const stub = appointmentStub();
     const result: AppointmentModel = {
       id: stub.id,
       appointmentWith: stub.employeeId,
@@ -95,32 +116,50 @@ describe('AppointmentController', () => {
   });
 
   it('should list appointments', async () => {
-    const stub = appointmentStub();
-    const page = 1;
-    const limit = 10;
-    const result = {
-      data: [
-        {
-          id: stub.id,
-          appointmentWith: stub.employeeId,
-          service: stub.serviceId,
-          createdAt: stub.createdAt,
-          endAt: stub.end,
-          startAt: stub.start,
-          status: stub.status,
-          userId: stub.customerId,
-        },
-      ],
-      total: 1,
-    };
     const spy = jest
       .spyOn(listAppointment, 'execute')
-      .mockResolvedValueOnce(result);
+      .mockResolvedValueOnce(listResult);
     const res = createResponse();
     await controller.list(page, limit, res);
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({ page, limit });
-    expect(res.getHeader('x-total-count')).toBe(result.total);
+    expect(res.getHeader('x-total-count')).toBe(listResult.total);
+    expect(res.getHeader('x-page')).toBe(page);
+    expect(res.getHeader('x-limit')).toBe(limit);
+    const body = res._getJSONData();
+    expect(body[0]).toEqual(
+      expect.objectContaining({
+        id: stub.id,
+        appointmentWith: stub.employeeId,
+        service: stub.serviceId,
+        createdAt: stub.createdAt.toISOString(),
+        endAt: stub.end.toISOString(),
+        startAt: stub.start.toISOString(),
+        status: stub.status,
+      }),
+    );
+  });
+
+  it('should list appointments by customer', async () => {
+    const userId = 'an_user_id';
+    const fromDate = new Date();
+    const toDate = new Date();
+
+    const spy = jest
+      .spyOn(listAppointmentByCustomer, 'execute')
+      .mockResolvedValueOnce(listResult);
+
+    const res = createResponse();
+    await controller.listByCustomer(userId, fromDate, toDate, page, limit, res);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({
+      customerId: userId,
+      fromDate,
+      toDate,
+      page,
+      limit,
+    });
+    expect(res.getHeader('x-total-count')).toBe(listResult.total);
     expect(res.getHeader('x-page')).toBe(page);
     expect(res.getHeader('x-limit')).toBe(limit);
     const body = res._getJSONData();

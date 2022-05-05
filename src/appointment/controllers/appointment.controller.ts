@@ -124,12 +124,14 @@ export class AppointmentController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'from_date', required: true, type: Date })
+  @ApiQuery({ name: 'to_date', required: true, type: Date })
   @Get('customer')
   @HttpCode(HttpStatus.OK)
   async listByCustomer(
     @GetCurrentUser('sub') userId: string,
-    @Query('from_date') fromDate: string,
-    @Query('to_date') toDate: string,
+    @Query('from_date') fromDate: Date,
+    @Query('to_date') toDate: Date,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
     @Res() res: Response,
