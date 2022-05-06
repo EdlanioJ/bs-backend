@@ -95,47 +95,51 @@ describe('AppointmentController', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should create appointment', async () => {
-    const spy = jest.spyOn(createAppointment, 'execute');
-    const employeeId = 'employee_id';
-    const customerId = 'customer_id';
-    const serviceId = 'service_id';
-    const start = new Date();
-    await controller.create(
-      {
+  describe('CreateAppointment', () => {
+    it('should call execute with correct values', async () => {
+      const spy = jest.spyOn(createAppointment, 'execute');
+      const employeeId = 'employee_id';
+      const customerId = 'customer_id';
+      const serviceId = 'service_id';
+      const start = new Date();
+      await controller.create(
+        {
+          employeeId,
+          serviceId,
+          startAt: start,
+        },
+        customerId,
+      );
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith({
         employeeId,
         serviceId,
-        startAt: start,
-      },
-      customerId,
-    );
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({
-      employeeId,
-      serviceId,
-      customerId,
-      startTime: start,
+        customerId,
+        startTime: start,
+      });
     });
   });
 
-  it('should get an appointment', async () => {
-    const result: AppointmentModel = {
-      id: stub.id,
-      appointmentWith: stub.employeeId,
-      service: stub.serviceId,
-      createdAt: stub.createdAt,
-      endAt: stub.end,
-      startAt: stub.start,
-      status: stub.status,
-      userId: stub.customerId,
-    };
-    const spy = jest
-      .spyOn(getAppointment, 'execute')
-      .mockResolvedValueOnce(result);
-    const output = await controller.get(stub.id);
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({ id: stub.id });
-    expect(output).toBe(result);
+  describe('GetAppointment', () => {
+    it('should return an appointment', async () => {
+      const result: AppointmentModel = {
+        id: stub.id,
+        appointmentWith: stub.employeeId,
+        service: stub.serviceId,
+        createdAt: stub.createdAt,
+        endAt: stub.end,
+        startAt: stub.start,
+        status: stub.status,
+        userId: stub.customerId,
+      };
+      const spy = jest
+        .spyOn(getAppointment, 'execute')
+        .mockResolvedValueOnce(result);
+      const output = await controller.get(stub.id);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith({ id: stub.id });
+      expect(output).toBe(result);
+    });
   });
 
   describe('ListAppointment', () => {
@@ -208,34 +212,38 @@ describe('AppointmentController', () => {
     });
   });
 
-  it('should call cancelAppointment.execute with correct values', async () => {
-    const userId = 'an_user_id';
-    const spy = jest.spyOn(cancelAppointment, 'execute');
-    await controller.cancel(
-      {
-        cancelReason: 'reason',
-      },
-      stub.id,
-      userId,
-    );
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({
-      appointmentId: stub.id,
-      reason: 'reason',
-      userId,
+  describe('CancelAppointment', () => {
+    it('should call execute with correct values', async () => {
+      const userId = 'an_user_id';
+      const spy = jest.spyOn(cancelAppointment, 'execute');
+      await controller.cancel(
+        {
+          cancelReason: 'reason',
+        },
+        stub.id,
+        userId,
+      );
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith({
+        appointmentId: stub.id,
+        reason: 'reason',
+        userId,
+      });
     });
   });
 
-  it('should call competeAppointment.execute with correct values', async () => {
-    const userId = 'an_user_id';
-    const appointmentId = stub.id;
-    const spy = jest.spyOn(completeAppointment, 'execute');
-    await controller.complete(appointmentId, userId);
+  describe('CompleteAppointment', () => {
+    it('should call execute with correct values', async () => {
+      const userId = 'an_user_id';
+      const appointmentId = stub.id;
+      const spy = jest.spyOn(completeAppointment, 'execute');
+      await controller.complete(appointmentId, userId);
 
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({
-      appointmentId,
-      userId,
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith({
+        appointmentId,
+        userId,
+      });
     });
   });
 });
