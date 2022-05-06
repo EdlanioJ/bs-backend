@@ -44,6 +44,17 @@ describe('AppointmentController', () => {
     ],
     total: 1,
   };
+
+  const expectedListObject = {
+    id: stub.id,
+    appointmentWith: stub.employeeId,
+    service: stub.serviceId,
+    createdAt: stub.createdAt.toISOString(),
+    endAt: stub.end.toISOString(),
+    startAt: stub.start.toISOString(),
+    status: stub.status,
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AppointmentController],
@@ -127,29 +138,21 @@ describe('AppointmentController', () => {
     expect(output).toBe(result);
   });
 
-  it('should list appointments', async () => {
-    const spy = jest
-      .spyOn(listAppointment, 'execute')
-      .mockResolvedValueOnce(listResult);
-    const res = createResponse();
-    await controller.list(res);
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({ page, limit });
-    expect(res.getHeader('x-total-count')).toBe(listResult.total);
-    expect(res.getHeader('x-page')).toBe(page);
-    expect(res.getHeader('x-limit')).toBe(limit);
-    const body = res._getJSONData();
-    expect(body[0]).toEqual(
-      expect.objectContaining({
-        id: stub.id,
-        appointmentWith: stub.employeeId,
-        service: stub.serviceId,
-        createdAt: stub.createdAt.toISOString(),
-        endAt: stub.end.toISOString(),
-        startAt: stub.start.toISOString(),
-        status: stub.status,
-      }),
-    );
+  describe('ListAppointment', () => {
+    it('should return appointments and total', async () => {
+      const spy = jest
+        .spyOn(listAppointment, 'execute')
+        .mockResolvedValueOnce(listResult);
+      const res = createResponse();
+      await controller.list(res);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith({ page, limit });
+      expect(res.getHeader('x-total-count')).toBe(listResult.total);
+      expect(res.getHeader('x-page')).toBe(page);
+      expect(res.getHeader('x-limit')).toBe(limit);
+      const body = res._getJSONData();
+      expect(body[0]).toEqual(expect.objectContaining(expectedListObject));
+    });
   });
 
   describe('ListAppointmentByCustomer', () => {
