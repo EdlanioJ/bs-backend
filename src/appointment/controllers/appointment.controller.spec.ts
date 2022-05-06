@@ -178,17 +178,7 @@ describe('AppointmentController', () => {
       expect(res.getHeader('x-page')).toBe(page);
       expect(res.getHeader('x-limit')).toBe(limit);
       const body = res._getJSONData();
-      expect(body[0]).toEqual(
-        expect.objectContaining({
-          id: stub.id,
-          appointmentWith: stub.employeeId,
-          service: stub.serviceId,
-          createdAt: stub.createdAt.toISOString(),
-          endAt: stub.end.toISOString(),
-          startAt: stub.start.toISOString(),
-          status: stub.status,
-        }),
-      );
+      expect(body[0]).toEqual(expect.objectContaining(expectedListObject));
     });
   });
 
@@ -214,17 +204,7 @@ describe('AppointmentController', () => {
       expect(res.getHeader('x-page')).toBe(page);
       expect(res.getHeader('x-limit')).toBe(limit);
       const body = res._getJSONData();
-      expect(body[0]).toEqual(
-        expect.objectContaining({
-          id: stub.id,
-          appointmentWith: stub.employeeId,
-          service: stub.serviceId,
-          createdAt: stub.createdAt.toISOString(),
-          endAt: stub.end.toISOString(),
-          startAt: stub.start.toISOString(),
-          status: stub.status,
-        }),
-      );
+      expect(body[0]).toEqual(expect.objectContaining(expectedListObject));
     });
   });
 
