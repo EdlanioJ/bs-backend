@@ -83,9 +83,9 @@ export class AppointmentController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async list(
+    @Res() res: Response,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
-    @Res() res: Response,
   ) {
     const { data, total } = await this.listAppointment.execute({ page, limit });
     return res
@@ -102,12 +102,12 @@ export class AppointmentController {
   @Get('employee/:id')
   @HttpCode(HttpStatus.OK)
   async listByEmployee(
+    @Res() res: Response,
     @Param('id') employeeId: string,
     @Query('from_date') fromDate: Date,
     @Query('to_date') toDate: Date,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
-    @Res() res: Response,
   ) {
     const { data, total } = await this.listAppointmentByEmployee.execute({
       employeeId,
@@ -131,12 +131,12 @@ export class AppointmentController {
   @Get('customer')
   @HttpCode(HttpStatus.OK)
   async listByCustomer(
+    @Res() res: Response,
     @GetCurrentUser('sub') userId: string,
     @Query('from_date') fromDate: Date,
     @Query('to_date') toDate: Date,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
-    @Res() res: Response,
   ) {
     const { data, total } = await this.listAppointmentByCustomer.execute({
       customerId: userId,

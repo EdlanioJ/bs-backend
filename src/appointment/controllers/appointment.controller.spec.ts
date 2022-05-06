@@ -132,7 +132,7 @@ describe('AppointmentController', () => {
       .spyOn(listAppointment, 'execute')
       .mockResolvedValueOnce(listResult);
     const res = createResponse();
-    await controller.list(page, limit, res);
+    await controller.list(res);
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({ page, limit });
     expect(res.getHeader('x-total-count')).toBe(listResult.total);
@@ -152,44 +152,45 @@ describe('AppointmentController', () => {
     );
   });
 
-  it('should list appointments by customer', async () => {
-    const userId = 'an_user_id';
-    const fromDate = new Date();
-    const toDate = new Date();
+  describe('ListAppointmentByCustomer', () => {
+    it('should return appointments and total', async () => {
+      const customerId = 'an_user_id';
+      const fromDate = new Date();
+      const toDate = new Date();
+      const res = createResponse();
+      const spy = jest
+        .spyOn(listAppointmentByCustomer, 'execute')
+        .mockResolvedValueOnce(listResult);
 
-    const spy = jest
-      .spyOn(listAppointmentByCustomer, 'execute')
-      .mockResolvedValueOnce(listResult);
-
-    const res = createResponse();
-    await controller.listByCustomer(userId, fromDate, toDate, page, limit, res);
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({
-      customerId: userId,
-      fromDate,
-      toDate,
-      page,
-      limit,
+      await controller.listByCustomer(res, customerId, fromDate, toDate);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith({
+        customerId,
+        fromDate,
+        toDate,
+        page,
+        limit,
+      });
+      expect(res.getHeader('x-total-count')).toBe(listResult.total);
+      expect(res.getHeader('x-page')).toBe(page);
+      expect(res.getHeader('x-limit')).toBe(limit);
+      const body = res._getJSONData();
+      expect(body[0]).toEqual(
+        expect.objectContaining({
+          id: stub.id,
+          appointmentWith: stub.employeeId,
+          service: stub.serviceId,
+          createdAt: stub.createdAt.toISOString(),
+          endAt: stub.end.toISOString(),
+          startAt: stub.start.toISOString(),
+          status: stub.status,
+        }),
+      );
     });
-    expect(res.getHeader('x-total-count')).toBe(listResult.total);
-    expect(res.getHeader('x-page')).toBe(page);
-    expect(res.getHeader('x-limit')).toBe(limit);
-    const body = res._getJSONData();
-    expect(body[0]).toEqual(
-      expect.objectContaining({
-        id: stub.id,
-        appointmentWith: stub.employeeId,
-        service: stub.serviceId,
-        createdAt: stub.createdAt.toISOString(),
-        endAt: stub.end.toISOString(),
-        startAt: stub.start.toISOString(),
-        status: stub.status,
-      }),
-    );
   });
 
   it('should list appointments by employee', async () => {
-    const userId = 'an_user_id';
+    const employeeId = 'an_user_id';
     const fromDate = new Date();
     const toDate = new Date();
 
@@ -198,10 +199,10 @@ describe('AppointmentController', () => {
       .mockResolvedValueOnce(listResult);
 
     const res = createResponse();
-    await controller.listByEmployee(userId, fromDate, toDate, page, limit, res);
-    expect(spy).toHaveBeenCalledTimes(1);
+
+    await controller.listByEmployee(res, employeeId, fromDate, toDate);
     expect(spy).toHaveBeenCalledWith({
-      employeeId: userId,
+      employeeId,
       fromDate,
       toDate,
       page,
