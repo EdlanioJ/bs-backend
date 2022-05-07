@@ -1,3 +1,4 @@
+import { ForbiddenException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserRepository } from '../../user/repositories';
 import { AuthHelpers } from '../helpers';
@@ -8,6 +9,7 @@ jest.mock('../helpers');
 
 describe('RefreshTokensService', () => {
   let service: RefreshTokensService;
+  let userRepo: UserRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -15,9 +17,21 @@ describe('RefreshTokensService', () => {
     }).compile();
 
     service = module.get<RefreshTokensService>(RefreshTokensService);
+    userRepo = module.get<UserRepository>(UserRepository);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  it('should throw ForbiddenException if userRepo.findOne returns null', async () => {
+    const userId = 'userId';
+    const refreshToken = 'refreshToken';
+    const spy = jest.spyOn(userRepo, 'findOne').mockResolvedValueOnce(null);
+    const output = service.execute({ userId, refreshToken });
+    await expect(output).rejects.toThrow(
+      new ForbiddenException('access denied'),
+    );
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 });
