@@ -82,7 +82,7 @@ describe('ValidateWithCredentialsService', () => {
     expect(compareSpy).toHaveBeenCalledWith(password, user.password);
   });
 
-  it('should return user data if password is correct', async () => {
+  it('should return user data', async () => {
     const email = 'any_email';
     const password = 'any_password';
 
