@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserRepository } from '../../user/repositories';
 import { AuthHelpers } from '../helpers';
@@ -8,6 +9,7 @@ jest.mock('../helpers');
 
 describe('ValidateWithCredentialsService', () => {
   let service: ValidateWithCredentialsService;
+  let userRepo: UserRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -17,9 +19,23 @@ describe('ValidateWithCredentialsService', () => {
     service = module.get<ValidateWithCredentialsService>(
       ValidateWithCredentialsService,
     );
+    userRepo = module.get<UserRepository>(UserRepository);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  it('should throw BadRequestException if user not found', async () => {
+    const email = 'any_email';
+    const password = 'any_password';
+
+    const spy = jest.spyOn(userRepo, 'findOneByEmail').mockResolvedValue(null);
+
+    const out = service.execute({ email, password });
+
+    await expect(out).rejects.toThrowError(
+      new BadRequestException('email or password is incorrect'),
+    );
   });
 });

@@ -23,8 +23,7 @@ export class ValidateWithCredentialsService {
 
   async execute({ email, password }: Input): Promise<Output> {
     const user = await this.userRepo.findOneByEmail(email);
-    if (!user) throw new BadRequestException('email or password is incorrect');
-    if (!user.password)
+    if (!user || !user.password)
       throw new BadRequestException('email or password is incorrect');
 
     const isValid = await this.authHelpers.compareData(password, user.password);
