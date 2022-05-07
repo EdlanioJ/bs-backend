@@ -68,4 +68,44 @@ describe('RefreshTokensService', () => {
     expect(compareSpy).toHaveBeenCalledTimes(1);
     expect(compareSpy).toHaveBeenCalledWith(refreshToken, user.refreshToken);
   });
+
+  it('should return tokens', async () => {
+    const userId = 'userId';
+    const refreshToken = 'refreshToken';
+    const user = { ...userStub(), refreshToken };
+    const findOneSpy = jest
+      .spyOn(userRepo, 'findOne')
+      .mockResolvedValueOnce(user);
+    const compareSpy = jest
+      .spyOn(authHelpers, 'compareData')
+      .mockResolvedValueOnce(true);
+    const generateTokensSpy = jest
+      .spyOn(authHelpers, 'generateTokens')
+      .mockResolvedValueOnce({
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken',
+      });
+    const hashSpy = jest
+      .spyOn(authHelpers, 'hashData')
+      .mockResolvedValueOnce('hashedValue');
+
+    const updateSpy = jest.spyOn(userRepo, 'update');
+    const output = await service.execute({ userId, refreshToken });
+
+    expect(output).toEqual({
+      accessToken: 'accessToken',
+      refreshToken: 'refreshToken',
+    });
+    expect(findOneSpy).toHaveBeenCalledTimes(1);
+    expect(findOneSpy).toHaveBeenCalledWith(userId);
+    expect(compareSpy).toHaveBeenCalledTimes(1);
+    expect(compareSpy).toHaveBeenCalledWith(refreshToken, user.refreshToken);
+    expect(generateTokensSpy).toHaveBeenCalledTimes(1);
+    expect(hashSpy).toHaveBeenCalledTimes(1);
+    expect(hashSpy).toHaveBeenCalledWith(refreshToken);
+    expect(updateSpy).toHaveBeenCalledTimes(1);
+    expect(updateSpy).toHaveBeenCalledWith(userId, {
+      refreshToken: 'hashedValue',
+    });
+  });
 });
