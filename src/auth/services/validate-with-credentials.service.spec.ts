@@ -81,4 +81,22 @@ describe('ValidateWithCredentialsService', () => {
     expect(findSpy).toHaveBeenCalledWith(email);
     expect(compareSpy).toHaveBeenCalledWith(password, user.password);
   });
+
+  it('should return user data if password is correct', async () => {
+    const email = 'any_email';
+    const password = 'any_password';
+
+    const user = userStub();
+
+    jest.spyOn(userRepo, 'findOneByEmail').mockResolvedValue(user);
+    jest.spyOn(authHelpers, 'compareData').mockResolvedValue(true);
+
+    const out = await service.execute({ email, password });
+
+    expect(out).toEqual({
+      id: user.id,
+      username: user.name,
+      role: user.role,
+    });
+  });
 });
