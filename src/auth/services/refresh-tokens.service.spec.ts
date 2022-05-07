@@ -11,6 +11,7 @@ jest.mock('../helpers');
 describe('RefreshTokensService', () => {
   let service: RefreshTokensService;
   let userRepo: UserRepository;
+  let authHelpers: AuthHelpers;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -19,6 +20,7 @@ describe('RefreshTokensService', () => {
 
     service = module.get<RefreshTokensService>(RefreshTokensService);
     userRepo = module.get<UserRepository>(UserRepository);
+    authHelpers = module.get<AuthHelpers>(AuthHelpers);
   });
 
   it('should be defined', () => {
@@ -48,5 +50,22 @@ describe('RefreshTokensService', () => {
       new ForbiddenException('access denied'),
     );
     expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should throw ForbiddenException if authHelpers.compareData return false', async () => {
+    const userId = 'userId';
+    const refreshToken = 'refreshToken';
+    const user = { ...userStub(), refreshToken };
+    const spy = jest.spyOn(userRepo, 'findOne').mockResolvedValueOnce(user);
+    const compareSpy = jest
+      .spyOn(authHelpers, 'compareData')
+      .mockResolvedValueOnce(false);
+    const output = service.execute({ userId, refreshToken });
+    await expect(output).rejects.toThrow(
+      new ForbiddenException('access denied'),
+    );
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(compareSpy).toHaveBeenCalledTimes(1);
+    expect(compareSpy).toHaveBeenCalledWith(refreshToken, user.refreshToken);
   });
 });
