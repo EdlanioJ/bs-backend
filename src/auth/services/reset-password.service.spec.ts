@@ -31,7 +31,7 @@ describe('ResetPasswordService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should throw BadRequestException if userRepo.findOneByResetToken return null', async () => {
+  it('should throw BadRequestException if invalid token', async () => {
     const spy = jest
       .spyOn(userRepo, 'findOneByResetToken')
       .mockResolvedValueOnce(null);
