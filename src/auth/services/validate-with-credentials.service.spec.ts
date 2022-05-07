@@ -11,6 +11,7 @@ jest.mock('../helpers');
 describe('ValidateWithCredentialsService', () => {
   let service: ValidateWithCredentialsService;
   let userRepo: UserRepository;
+  let authHelpers: AuthHelpers;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -21,6 +22,7 @@ describe('ValidateWithCredentialsService', () => {
       ValidateWithCredentialsService,
     );
     userRepo = module.get<UserRepository>(UserRepository);
+    authHelpers = module.get<AuthHelpers>(AuthHelpers);
   });
 
   it('should be defined', () => {
@@ -56,5 +58,27 @@ describe('ValidateWithCredentialsService', () => {
       new BadRequestException('email or password is incorrect'),
     );
     expect(spy).toHaveBeenCalledWith(email);
+  });
+
+  it('should throw BadRequestException if password is incorrect', async () => {
+    const email = 'any_email';
+    const password = 'any_password';
+
+    const user = userStub();
+
+    const findSpy = jest
+      .spyOn(userRepo, 'findOneByEmail')
+      .mockResolvedValue(user);
+    const compareSpy = jest
+      .spyOn(authHelpers, 'compareData')
+      .mockResolvedValue(false);
+
+    const out = service.execute({ email, password });
+
+    await expect(out).rejects.toThrowError(
+      new BadRequestException('email or password is incorrect'),
+    );
+    expect(findSpy).toHaveBeenCalledWith(email);
+    expect(compareSpy).toHaveBeenCalledWith(password, user.password);
   });
 });
