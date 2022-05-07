@@ -1,5 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { faker } from '@faker-js/faker';
+
+import { userStub } from '../../../test/mocks/stubs';
 import { SendMailProducerService } from '../../mail/services';
 import { UserRepository } from '../../user/repositories';
 import { AuthHelpers } from '../helpers';
@@ -43,6 +46,22 @@ describe('ResetPasswordService', () => {
     expect(spy).toHaveBeenCalledWith(token);
     await expect(out).rejects.toThrowError(
       new BadRequestException('Invalid token'),
+    );
+  });
+
+  it('should throw BadRequestException if token expired', async () => {
+    const user = { ...userStub(), resetPasswordExpires: faker.date.past() };
+    const spy = jest
+      .spyOn(userRepo, 'findOneByResetToken')
+      .mockResolvedValueOnce(user);
+    const token = 'token';
+    const password = 'password';
+
+    const out = service.execute({ token, password });
+
+    expect(spy).toHaveBeenCalledWith(token);
+    await expect(out).rejects.toThrowError(
+      new BadRequestException('Token expired'),
     );
   });
 });
