@@ -64,4 +64,30 @@ describe('AuthController', () => {
       });
     });
   });
+
+  describe('LocalAuth', () => {
+    it('should LoginService return tokens', async () => {
+      const spy = jest.spyOn(loginService, 'execute').mockResolvedValueOnce({
+        accessToken: 'any_access_token',
+        refreshToken: 'any_refresh_token',
+      });
+
+      const out = await controller.localAuth({
+        role: 'any_role',
+        sub: 'any_sub',
+        username: 'any_username',
+      });
+
+      expect(out).toEqual({
+        accessToken: 'any_access_token',
+        refreshToken: 'any_refresh_token',
+      });
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith({
+        role: 'any_role',
+        sub: 'any_sub',
+        username: 'any_username',
+      });
+    });
+  });
 });
