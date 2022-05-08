@@ -16,6 +16,7 @@ jest.mock('../services');
 describe('AuthController', () => {
   let controller: AuthController;
   let loginService: LoginService;
+  let registerService: RegisterService;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
@@ -33,6 +34,7 @@ describe('AuthController', () => {
 
     controller = module.get<AuthController>(AuthController);
     loginService = module.get<LoginService>(LoginService);
+    registerService = module.get<RegisterService>(RegisterService);
   });
 
   it('should be defined', () => {
@@ -87,6 +89,25 @@ describe('AuthController', () => {
         role: 'any_role',
         sub: 'any_sub',
         username: 'any_username',
+      });
+    });
+  });
+
+  describe('Register', () => {
+    it('should call registerService.execute with correct values', async () => {
+      const spy = jest.spyOn(registerService, 'execute');
+      await controller.register({
+        email: 'any_email',
+        password: 'any_password',
+        confirmPassword: 'any_password',
+        name: 'any_username',
+      });
+
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith({
+        email: 'any_email',
+        password: 'any_password',
+        name: 'any_username',
       });
     });
   });
