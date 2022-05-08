@@ -6,8 +6,6 @@ import {
   ForgotPasswordService,
   ResetPasswordService,
   RegisterService,
-  ValidateWithCredentialsService,
-  ValidateOAuthService,
 } from '../services';
 import { AuthController } from './auth.controller';
 
@@ -20,6 +18,8 @@ describe('AuthController', () => {
   let forgotPasswordService: ForgotPasswordService;
   let resetPasswordService: ResetPasswordService;
   let refreshTokensService: RefreshTokensService;
+  let logoutService: LogoutService;
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
@@ -28,10 +28,8 @@ describe('AuthController', () => {
         ForgotPasswordService,
         ResetPasswordService,
         RegisterService,
-        ValidateWithCredentialsService,
         LogoutService,
         RefreshTokensService,
-        ValidateOAuthService,
       ],
     }).compile();
 
@@ -45,6 +43,7 @@ describe('AuthController', () => {
       module.get<ResetPasswordService>(ResetPasswordService);
     refreshTokensService =
       module.get<RefreshTokensService>(RefreshTokensService);
+    logoutService = module.get<LogoutService>(LogoutService);
   });
 
   it('should be defined', () => {
@@ -167,6 +166,15 @@ describe('AuthController', () => {
         userId: 'any_user_id',
         refreshToken: 'any_token',
       });
+    });
+  });
+
+  describe('LogoutService', () => {
+    it('should call logoutService with correct values', async () => {
+      const spy = jest.spyOn(logoutService, 'execute');
+      await controller.logout('any_user_id');
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith({ userId: 'any_user_id' });
     });
   });
 });
