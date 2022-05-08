@@ -19,6 +19,7 @@ describe('AuthController', () => {
   let registerService: RegisterService;
   let forgotPasswordService: ForgotPasswordService;
   let resetPasswordService: ResetPasswordService;
+  let refreshTokensService: RefreshTokensService;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
@@ -42,6 +43,8 @@ describe('AuthController', () => {
     );
     resetPasswordService =
       module.get<ResetPasswordService>(ResetPasswordService);
+    refreshTokensService =
+      module.get<RefreshTokensService>(RefreshTokensService);
   });
 
   it('should be defined', () => {
@@ -142,6 +145,27 @@ describe('AuthController', () => {
       expect(spy).toHaveBeenCalledWith({
         password: 'any_password',
         token: 'any_token',
+      });
+    });
+  });
+
+  describe('RefreshTokens', () => {
+    it('should refreshTokensService return tokens', async () => {
+      const spy = jest
+        .spyOn(refreshTokensService, 'execute')
+        .mockResolvedValueOnce({
+          accessToken: 'any_access_token',
+          refreshToken: 'any_refresh_token',
+        });
+      const out = await controller.refreshTokens('any_user_id', 'any_token');
+      expect(out).toEqual({
+        accessToken: 'any_access_token',
+        refreshToken: 'any_refresh_token',
+      });
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith({
+        userId: 'any_user_id',
+        refreshToken: 'any_token',
       });
     });
   });
