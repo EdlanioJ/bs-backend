@@ -17,6 +17,7 @@ describe('AuthController', () => {
   let controller: AuthController;
   let loginService: LoginService;
   let registerService: RegisterService;
+  let forgotPasswordService: ForgotPasswordService;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
@@ -35,6 +36,9 @@ describe('AuthController', () => {
     controller = module.get<AuthController>(AuthController);
     loginService = module.get<LoginService>(LoginService);
     registerService = module.get<RegisterService>(RegisterService);
+    forgotPasswordService = module.get<ForgotPasswordService>(
+      ForgotPasswordService,
+    );
   });
 
   it('should be defined', () => {
@@ -109,6 +113,15 @@ describe('AuthController', () => {
         password: 'any_password',
         name: 'any_username',
       });
+    });
+  });
+
+  describe('ForgotPassword', () => {
+    it('should call forgotPasswordService with correct values', async () => {
+      const spy = jest.spyOn(forgotPasswordService, 'execute');
+      await controller.forgotPassword({ email: 'any_email' });
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith({ email: 'any_email' });
     });
   });
 });
