@@ -48,4 +48,15 @@ describe('DeleteServiceProviderService', () => {
       new UnauthorizedException('Invalid user'),
     );
   });
+
+  it('should delete service provider', async () => {
+    const providerId = 'providerId';
+    const userId = 'userId';
+    const serviceProvider = serviceProviderStub();
+    serviceProvider.userId = userId;
+    jest.spyOn(providerRepo, 'findOne').mockResolvedValueOnce(serviceProvider);
+    const spy = jest.spyOn(providerRepo, 'delete');
+    await service.execute({ id: providerId, userId });
+    expect(spy).toHaveBeenCalledWith(providerId);
+  });
 });
