@@ -17,6 +17,7 @@ describe('DeleteConnectionService', () => {
   let service: DeleteConnectionService;
   let providerRepo: ServiceProviderRepository;
   let providerConnectionRepo: ProviderConnectionRepository;
+  let requestConnectionRepo: RequestConnectionRepository;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -33,6 +34,9 @@ describe('DeleteConnectionService', () => {
     );
     providerConnectionRepo = module.get<ProviderConnectionRepository>(
       ProviderConnectionRepository,
+    );
+    requestConnectionRepo = module.get<RequestConnectionRepository>(
+      RequestConnectionRepository,
     );
   });
 
@@ -84,6 +88,30 @@ describe('DeleteConnectionService', () => {
     const out = service.execute({ connectionId, userId });
     await expect(out).rejects.toThrow(
       new BadRequestException('Connection not found'),
+    );
+  });
+
+  it('should delete the provider connection', async () => {
+    const connectionId = 'connectionId';
+    const userId = 'userId';
+    const serviceProvider = serviceProviderStub();
+    const providerConnection = providerConnectionStub();
+    providerConnection.providerId = serviceProvider.id;
+    jest
+      .spyOn(providerRepo, 'findByUserId')
+      .mockResolvedValueOnce(serviceProvider);
+    jest
+      .spyOn(providerConnectionRepo, 'findOne')
+      .mockResolvedValueOnce(providerConnection);
+    const deleteSpy = jest.spyOn(providerConnectionRepo, 'delete');
+    const findRequestSpy = jest
+      .spyOn(requestConnectionRepo, 'findAvailable')
+      .mockResolvedValueOnce(null);
+    await service.execute({ connectionId, userId });
+    expect(deleteSpy).toHaveBeenCalledWith(connectionId);
+    expect(findRequestSpy).toHaveBeenCalledWith(
+      serviceProvider.id,
+      providerConnection.userId,
     );
   });
 });
