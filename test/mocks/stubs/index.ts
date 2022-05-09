@@ -4,3 +4,4 @@ export * from './service.stub';
 export * from './template.stub';
 export * from './service-provider.stub';
 export * from './connection-request.stub';
+export * from './provider-connection.stub';
