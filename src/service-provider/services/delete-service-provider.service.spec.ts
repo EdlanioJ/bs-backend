@@ -1,5 +1,6 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { serviceProviderStub } from '../../../test/mocks/stubs';
 import { ServiceProviderRepository } from '../repositories';
 import { DeleteServiceProviderService } from './delete-service-provider.service';
 
@@ -25,7 +26,7 @@ describe('DeleteServiceProviderService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should throw a BadRequestException if the provider not found', async () => {
+  it('should throw a BadRequestException if service provider not found', async () => {
     const providerId = 'providerId';
     const userId = 'userId';
     const spy = jest.spyOn(providerRepo, 'findOne').mockResolvedValueOnce(null);
@@ -34,5 +35,17 @@ describe('DeleteServiceProviderService', () => {
       new BadRequestException('Service Provider not found'),
     );
     expect(spy).toHaveBeenCalledWith(providerId);
+  });
+
+  it('should throw a UnauthorizedException if user not owner', async () => {
+    const providerId = 'providerId';
+    const userId = 'userId';
+    const serviceProvider = serviceProviderStub();
+    serviceProvider.userId = 'otherUserId';
+    jest.spyOn(providerRepo, 'findOne').mockResolvedValueOnce(serviceProvider);
+    const out = service.execute({ id: providerId, userId });
+    await expect(out).rejects.toThrow(
+      new UnauthorizedException('Invalid user'),
+    );
   });
 });

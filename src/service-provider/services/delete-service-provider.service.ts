@@ -18,7 +18,7 @@ export class DeleteServiceProviderService {
 
     if (!provider) throw new BadRequestException('Service Provider not found');
     if (provider.userId !== userId)
-      throw new UnauthorizedException('Only who create can delete');
+      throw new UnauthorizedException('Invalid user');
 
     await this.providerRepo.delete(id);
   }
