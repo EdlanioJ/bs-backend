@@ -31,6 +31,9 @@ export class AcceptConnectionService {
     if (requestConnection.status === 'ACCEPTED')
       throw new BadRequestException('Connection already accepted');
 
+    if (requestConnection.status === 'REJECTED')
+      throw new BadRequestException('Connection Request rejected');
+
     if (requestConnection.employeeId !== userId)
       throw new BadRequestException('You are not the employee');
 
