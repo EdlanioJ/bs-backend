@@ -1,5 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { userStub } from '../../../test/mocks/stubs';
+
 import { UserRepository } from '../../user/repositories';
 import { ServiceProviderRepository } from '../repositories';
 import { AddServiceProviderService } from './add-service-provider.service';
@@ -36,5 +38,17 @@ describe('AddServiceProviderService', () => {
       new BadRequestException('User not found'),
     );
     expect(spy).toHaveBeenCalledWith(userId);
+  });
+
+  it('should throw a BadRequestException if user is not a manager', async () => {
+    const userId = 'userId';
+    const name = 'name';
+    const user = userStub();
+    user.role = 'USER';
+    jest.spyOn(userRepo, 'findOne').mockResolvedValueOnce(user);
+    const out = service.execute({ userId, name });
+    await expect(out).rejects.toThrow(
+      new BadRequestException('User is not a manager'),
+    );
   });
 });
