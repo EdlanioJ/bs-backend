@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing';
 import {
   serviceProviderStub,
   providerConnectionStub,
+  connectionRequestStub,
 } from '../../../test/mocks/stubs';
 import {
   ProviderConnectionRepository,
@@ -113,5 +114,27 @@ describe('DeleteConnectionService', () => {
       serviceProvider.id,
       providerConnection.userId,
     );
+  });
+
+  it('should delete provider connection request if available', async () => {
+    const connectionId = 'connectionId';
+    const userId = 'userId';
+    const serviceProvider = serviceProviderStub();
+    const providerConnection = providerConnectionStub();
+    providerConnection.providerId = serviceProvider.id;
+    jest
+      .spyOn(providerRepo, 'findByUserId')
+      .mockResolvedValueOnce(serviceProvider);
+    jest
+      .spyOn(providerConnectionRepo, 'findOne')
+      .mockResolvedValueOnce(providerConnection);
+    jest.spyOn(providerConnectionRepo, 'delete');
+    const requestConnection = connectionRequestStub();
+    jest
+      .spyOn(requestConnectionRepo, 'findAvailable')
+      .mockResolvedValueOnce(requestConnection);
+    const deleteSpy = jest.spyOn(requestConnectionRepo, 'delete');
+    await service.execute({ connectionId, userId });
+    expect(deleteSpy).toHaveBeenCalledWith(requestConnection.id);
   });
 });
