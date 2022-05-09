@@ -12,6 +12,7 @@ jest.mock('../repositories');
 describe('AddServiceProviderService', () => {
   let service: AddServiceProviderService;
   let userRepo: UserRepository;
+  let providerRepo: ServiceProviderRepository;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -23,6 +24,9 @@ describe('AddServiceProviderService', () => {
     }).compile();
     service = module.get<AddServiceProviderService>(AddServiceProviderService);
     userRepo = module.get<UserRepository>(UserRepository);
+    providerRepo = module.get<ServiceProviderRepository>(
+      ServiceProviderRepository,
+    );
   });
 
   it('should be defined', () => {
@@ -50,5 +54,19 @@ describe('AddServiceProviderService', () => {
     await expect(out).rejects.toThrow(
       new BadRequestException('User is not a manager'),
     );
+  });
+
+  it('should create a service provider', async () => {
+    const userId = 'userId';
+    const name = 'name';
+    const user = userStub();
+    user.role = 'MANAGER';
+    jest.spyOn(userRepo, 'findOne').mockResolvedValueOnce(user);
+    const spy = jest.spyOn(providerRepo, 'create');
+    await service.execute({ userId, name });
+    expect(spy).toHaveBeenCalledWith({
+      user: { connect: { id: userId } },
+      name,
+    });
   });
 });
