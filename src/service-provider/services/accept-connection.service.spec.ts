@@ -109,4 +109,22 @@ describe('AcceptConnectionService', () => {
       new BadRequestException('Connection Request rejected'),
     );
   });
+
+  it('should throw BadRequestException if user not the employee', async () => {
+    const userId = 'userId';
+    const requestId = 'requestId';
+    const user = userStub();
+    user.role = 'USER';
+    const requestConnection = connectionRequestStub();
+    requestConnection.status = 'PENDING';
+    requestConnection.employeeId = 'employeeId';
+    jest.spyOn(userRepo, 'findOne').mockResolvedValue(user);
+    jest
+      .spyOn(requestConnectionRepo, 'findOne')
+      .mockResolvedValue(requestConnection);
+    const out = service.execute({ userId, requestId });
+    await expect(out).rejects.toThrow(
+      new BadRequestException('User not the employee'),
+    );
+  });
 });
