@@ -26,8 +26,11 @@ export class RejectConnectionService {
     if (!requestConnection)
       throw new BadRequestException('Connection not found');
 
-    if (requestConnection.status !== 'PENDING')
+    if (requestConnection.status === 'ACCEPTED')
       throw new BadRequestException('Connection already accepted');
+
+    if (requestConnection.status === 'REJECTED')
+      throw new BadRequestException('Connection already rejected');
 
     if (requestConnection.employeeId !== userId)
       throw new BadRequestException('You are not the employee');

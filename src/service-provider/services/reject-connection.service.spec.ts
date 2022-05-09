@@ -88,4 +88,21 @@ describe('RejectConnectionService', () => {
       new BadRequestException('Connection already accepted'),
     );
   });
+
+  it('should throw BadRequestException if connection already rejected', async () => {
+    const userId = 'userId';
+    const requestId = 'requestId';
+    const user = userStub();
+    user.role = 'USER';
+    const requestConnection = connectionRequestStub();
+    requestConnection.status = 'REJECTED';
+    jest.spyOn(userRepo, 'findOne').mockResolvedValueOnce(user);
+    jest
+      .spyOn(requestConnectionRepo, 'findOne')
+      .mockResolvedValueOnce(requestConnection);
+    const out = service.execute({ userId, requestId });
+    await expect(out).rejects.toThrowError(
+      new BadRequestException('Connection already rejected'),
+    );
+  });
 });
