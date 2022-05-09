@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common';
 
 import { UserRepository } from '../../user/repositories';
 import { RequestConnectionRepository } from '../repositories';
@@ -33,7 +37,7 @@ export class RejectConnectionService {
       throw new BadRequestException('Connection already rejected');
 
     if (requestConnection.employeeId !== userId)
-      throw new BadRequestException('You are not the employee');
+      throw new UnauthorizedException('User not authorized');
 
     await this.requestConnectionRepo.update(requestId, {
       status: 'REJECTED',

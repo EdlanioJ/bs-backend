@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { connectionRequestStub, userStub } from '../../../test/mocks/stubs';
 import { UserRepository } from '../../user/repositories';
@@ -103,6 +103,24 @@ describe('RejectConnectionService', () => {
     const out = service.execute({ userId, requestId });
     await expect(out).rejects.toThrowError(
       new BadRequestException('Connection already rejected'),
+    );
+  });
+
+  it('should throw UnauthorizedException if user not authorized', async () => {
+    const userId = 'userId';
+    const requestId = 'requestId';
+    const user = userStub();
+    user.role = 'USER';
+    const requestConnection = connectionRequestStub();
+    requestConnection.status = 'PENDING';
+    requestConnection.employeeId = 'userId2';
+    jest.spyOn(userRepo, 'findOne').mockResolvedValueOnce(user);
+    jest
+      .spyOn(requestConnectionRepo, 'findOne')
+      .mockResolvedValueOnce(requestConnection);
+    const out = service.execute({ userId, requestId });
+    await expect(out).rejects.toThrowError(
+      new UnauthorizedException('User not authorized'),
     );
   });
 });
