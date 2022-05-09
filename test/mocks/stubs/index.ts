@@ -2,3 +2,4 @@ export * from './appointment.stub';
 export * from './user.stub';
 export * from './service.stub';
 export * from './template.stub';
+export * from './service-provider.stub';
