@@ -123,4 +123,22 @@ describe('RejectConnectionService', () => {
       new UnauthorizedException('User not authorized'),
     );
   });
+
+  it('should reject connection', async () => {
+    const userId = 'userId';
+    const requestId = 'requestId';
+    const user = userStub();
+    user.role = 'USER';
+    const requestConnection = connectionRequestStub();
+    requestConnection.status = 'PENDING';
+    requestConnection.employeeId = userId;
+    jest.spyOn(userRepo, 'findOne').mockResolvedValueOnce(user);
+    jest
+      .spyOn(requestConnectionRepo, 'findOne')
+      .mockResolvedValueOnce(requestConnection);
+    const spy = jest.spyOn(requestConnectionRepo, 'update');
+    const out = service.execute({ userId, requestId });
+    await expect(out).resolves.toBeUndefined();
+    expect(spy).toHaveBeenCalledWith(requestId, { status: 'REJECTED' });
+  });
 });
