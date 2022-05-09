@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { ServiceProviderRepository } from '../repositories';
 import { DeleteServiceProviderService } from './delete-service-provider.service';
@@ -6,6 +7,7 @@ jest.mock('../repositories');
 
 describe('DeleteServiceProviderService', () => {
   let service: DeleteServiceProviderService;
+  let providerRepo: ServiceProviderRepository;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -14,9 +16,23 @@ describe('DeleteServiceProviderService', () => {
     service = module.get<DeleteServiceProviderService>(
       DeleteServiceProviderService,
     );
+    providerRepo = module.get<ServiceProviderRepository>(
+      ServiceProviderRepository,
+    );
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  it('should throw a BadRequestException if the provider not found', async () => {
+    const providerId = 'providerId';
+    const userId = 'userId';
+    const spy = jest.spyOn(providerRepo, 'findOne').mockResolvedValueOnce(null);
+    const out = service.execute({ id: providerId, userId });
+    await expect(out).rejects.toThrow(
+      new BadRequestException('Service Provider not found'),
+    );
+    expect(spy).toHaveBeenCalledWith(providerId);
   });
 });

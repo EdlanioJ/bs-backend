@@ -16,7 +16,7 @@ export class DeleteServiceProviderService {
   async execute({ id, userId }: Input): Promise<void> {
     const provider = await this.providerRepo.findOne(id);
 
-    if (!provider) throw new BadRequestException('service provider not found');
+    if (!provider) throw new BadRequestException('Service Provider not found');
     if (provider.userId !== userId)
       throw new UnauthorizedException('Only who create can delete');
 
