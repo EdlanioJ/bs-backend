@@ -14,6 +14,7 @@ jest.mock('../repositories');
 describe('AcceptConnectionService', () => {
   let service: AcceptConnectionService;
   let userRepo: UserRepository;
+  let requestConnectionRepo: RequestConnectionRepository;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -26,6 +27,9 @@ describe('AcceptConnectionService', () => {
     }).compile();
     service = module.get<AcceptConnectionService>(AcceptConnectionService);
     userRepo = module.get<UserRepository>(UserRepository);
+    requestConnectionRepo = module.get<RequestConnectionRepository>(
+      RequestConnectionRepository,
+    );
   });
 
   it('should be defined', () => {
@@ -54,5 +58,21 @@ describe('AcceptConnectionService', () => {
     await expect(out).rejects.toThrow(
       new BadRequestException('Not a valid user'),
     );
+  });
+
+  it('should throw BadRequestException if connection request not found', async () => {
+    const userId = 'userId';
+    const requestId = 'requestId';
+    const user = userStub();
+    user.role = 'USER';
+    jest.spyOn(userRepo, 'findOne').mockResolvedValue(user);
+    const spy = jest
+      .spyOn(requestConnectionRepo, 'findOne')
+      .mockResolvedValue(null);
+    const out = service.execute({ userId, requestId });
+    await expect(out).rejects.toThrow(
+      new BadRequestException('Connection Request not found'),
+    );
+    expect(spy).toHaveBeenCalledWith(requestId);
   });
 });

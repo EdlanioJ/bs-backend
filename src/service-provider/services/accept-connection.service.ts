@@ -26,7 +26,7 @@ export class AcceptConnectionService {
       requestId,
     );
     if (!requestConnection)
-      throw new BadRequestException('Connection not found');
+      throw new BadRequestException('Connection Request not found');
 
     if (requestConnection.status !== 'PENDING')
       throw new BadRequestException('Connection already accepted');
