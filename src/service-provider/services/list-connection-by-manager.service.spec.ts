@@ -1,6 +1,10 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import {
+  providerConnectionStub,
+  serviceProviderStub,
+} from '../../../test/mocks/stubs';
+import {
   ProviderConnectionRepository,
   ServiceProviderRepository,
 } from '../repositories';
@@ -11,6 +15,7 @@ jest.mock('../repositories');
 describe('ListConnectionByManagerService', () => {
   let service: ListConnectionByManagerService;
   let providerRepo: ServiceProviderRepository;
+  let providerConnectionRepo: ProviderConnectionRepository;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -25,6 +30,9 @@ describe('ListConnectionByManagerService', () => {
     );
     providerRepo = module.get<ServiceProviderRepository>(
       ServiceProviderRepository,
+    );
+    providerConnectionRepo = module.get<ProviderConnectionRepository>(
+      ProviderConnectionRepository,
     );
   });
 
@@ -44,5 +52,35 @@ describe('ListConnectionByManagerService', () => {
       new BadRequestException('user has not a provider'),
     );
     expect(spy).toHaveBeenCalledWith(userId);
+  });
+
+  it('should return provider connections', async () => {
+    const userId = 'userId';
+    const page = 1;
+    const limit = 10;
+    const serviceProvider = serviceProviderStub();
+    const providerConnection = providerConnectionStub();
+    jest.spyOn(providerRepo, 'findByUserId').mockResolvedValue(serviceProvider);
+    const findSpy = jest
+      .spyOn(providerConnectionRepo, 'findAll')
+      .mockResolvedValue([providerConnection]);
+    const countSpy = jest
+      .spyOn(providerConnectionRepo, 'count')
+      .mockResolvedValue(1);
+    const out = await service.execute({ userId, page, limit });
+    expect(out.total).toBe(1);
+    expect(out.data).toHaveLength(1);
+    expect(findSpy).toHaveBeenCalledWith({
+      skip: Number((page - 1) * limit),
+      take: Number(limit),
+      where: {
+        providerId: serviceProvider.id,
+      },
+    });
+    expect(countSpy).toHaveBeenCalledWith({
+      where: {
+        providerId: serviceProvider.id,
+      },
+    });
   });
 });
