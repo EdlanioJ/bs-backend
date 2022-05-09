@@ -1,6 +1,9 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { serviceProviderStub } from '../../../test/mocks/stubs';
+import {
+  serviceProviderStub,
+  providerConnectionStub,
+} from '../../../test/mocks/stubs';
 import {
   ProviderConnectionRepository,
   RequestConnectionRepository,
@@ -65,5 +68,22 @@ describe('DeleteConnectionService', () => {
       new BadRequestException('Connection not found'),
     );
     expect(spy).toHaveBeenCalledWith(connectionId);
+  });
+
+  it('should throw a BadRequestException if the provider connection not valid', async () => {
+    const connectionId = 'connectionId';
+    const userId = 'userId';
+    const serviceProvider = serviceProviderStub();
+    const providerConnection = providerConnectionStub();
+    jest
+      .spyOn(providerRepo, 'findByUserId')
+      .mockResolvedValueOnce(serviceProvider);
+    jest
+      .spyOn(providerConnectionRepo, 'findOne')
+      .mockResolvedValueOnce(providerConnection);
+    const out = service.execute({ connectionId, userId });
+    await expect(out).rejects.toThrow(
+      new BadRequestException('Connection not found'),
+    );
   });
 });
