@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { userStub } from '../../../test/mocks/stubs';
+import { userStub, connectionRequestStub } from '../../../test/mocks/stubs';
 import { UserRepository } from '../../user/repositories';
 import {
   ProviderConnectionRepository,
@@ -74,5 +74,22 @@ describe('AcceptConnectionService', () => {
       new BadRequestException('Connection Request not found'),
     );
     expect(spy).toHaveBeenCalledWith(requestId);
+  });
+
+  it('should throw BadRequestException if connection already accepted', async () => {
+    const userId = 'userId';
+    const requestId = 'requestId';
+    const user = userStub();
+    user.role = 'USER';
+    const requestConnection = connectionRequestStub();
+    requestConnection.status = 'ACCEPTED';
+    jest.spyOn(userRepo, 'findOne').mockResolvedValue(user);
+    jest
+      .spyOn(requestConnectionRepo, 'findOne')
+      .mockResolvedValue(requestConnection);
+    const out = service.execute({ userId, requestId });
+    await expect(out).rejects.toThrow(
+      new BadRequestException('Connection already accepted'),
+    );
   });
 });
