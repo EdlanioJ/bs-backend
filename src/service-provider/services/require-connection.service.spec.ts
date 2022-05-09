@@ -22,6 +22,7 @@ describe('RequireConnectionService', () => {
   let providerRepo: ServiceProviderRepository;
   let userRepo: UserRepository;
   let requestConnectionRepo: RequestConnectionRepository;
+  let sendMailProducerService: SendMailProducerService;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -41,6 +42,9 @@ describe('RequireConnectionService', () => {
     userRepo = module.get<UserRepository>(UserRepository);
     requestConnectionRepo = module.get<RequestConnectionRepository>(
       RequestConnectionRepository,
+    );
+    sendMailProducerService = module.get<SendMailProducerService>(
+      SendMailProducerService,
     );
   });
 
@@ -105,5 +109,46 @@ describe('RequireConnectionService', () => {
       new BadRequestException('Connection request already sent'),
     );
     expect(spy).toHaveBeenCalledWith(provider.id, user.id);
+  });
+
+  it('should create a connection request', async () => {
+    const providerOwnerId = 'providerOwnerId';
+    const userToConnectId = 'userToConnectId';
+    const provider = serviceProviderStub();
+    const user = userStub();
+    const requestConnection = connectionRequestStub();
+    user.role = 'USER';
+    jest.spyOn(providerRepo, 'findByUserId').mockResolvedValueOnce(provider);
+    jest.spyOn(userRepo, 'findOne').mockResolvedValueOnce(user);
+    jest
+      .spyOn(requestConnectionRepo, 'findAvailable')
+      .mockResolvedValueOnce(null);
+    const createSpy = jest
+      .spyOn(requestConnectionRepo, 'create')
+      .mockResolvedValueOnce(requestConnection);
+    const sendMailSpy = jest.spyOn(sendMailProducerService, 'execute');
+    await service.execute({ providerOwnerId, userToConnectId });
+    expect(createSpy).toHaveBeenCalledWith({
+      provider: { connect: { id: provider.id } },
+      employee: { connect: { id: user.id } },
+    });
+    expect(sendMailSpy).toHaveBeenCalledWith({
+      to: user.email,
+      type: 'connection-request',
+      content: [
+        {
+          key: 'name',
+          value: user.name,
+        },
+        {
+          key: 'providerName',
+          value: provider.name,
+        },
+        {
+          key: 'requestConnectionId',
+          value: requestConnection.id,
+        },
+      ],
+    });
   });
 });

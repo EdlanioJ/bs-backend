@@ -31,7 +31,7 @@ export class RequireConnectionService {
     if (userToConnect.role !== 'USER')
       throw new BadRequestException('Not a valid user to connect');
 
-    const checkAvailability = this.requestConnectionRepo.findAvailable(
+    const checkAvailability = await this.requestConnectionRepo.findAvailable(
       provider.id,
       userToConnect.id,
     );
@@ -46,7 +46,7 @@ export class RequireConnectionService {
 
     await this.mailProducer.execute({
       to: userToConnect.email,
-      type: 'connection-request-email',
+      type: 'connection-request',
       content: [
         {
           key: 'name',
