@@ -15,6 +15,7 @@ describe('ServiceController', () => {
   let controller: ServiceController;
   let createService: CreateProviderServiceService;
   let listService: ListProviderServiceService;
+  let getService: GetProviderServiceService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -32,6 +33,9 @@ describe('ServiceController', () => {
     );
     listService = module.get<ListProviderServiceService>(
       ListProviderServiceService,
+    );
+    getService = module.get<GetProviderServiceService>(
+      GetProviderServiceService,
     );
   });
 
@@ -58,7 +62,7 @@ describe('ServiceController', () => {
   });
 
   describe('list', () => {
-    it('should call return service list and total', async () => {
+    it('should listService return service list and total', async () => {
       const service = serviceStub();
       const result = {
         total: 1,
@@ -81,6 +85,20 @@ describe('ServiceController', () => {
           appointmentDurationInMinutes: service.appointmentDurationInMinutes,
         }),
       );
+    });
+  });
+
+  describe('get', () => {
+    it('should return service', async () => {
+      const service = serviceStub();
+      const result = ServiceModel.map(service);
+      const spy = jest
+        .spyOn(getService, 'execute')
+        .mockResolvedValueOnce(result);
+      const out = await controller.findOne(service.id);
+      expect(spy).toHaveBeenCalledWith({ id: service.id });
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(out).toEqual(result);
     });
   });
 });
