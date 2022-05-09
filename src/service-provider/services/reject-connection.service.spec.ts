@@ -1,5 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { userStub } from '../../../test/mocks/stubs';
 import { UserRepository } from '../../user/repositories';
 import { RequestConnectionRepository } from '../repositories';
 import { RejectConnectionService } from './reject-connection.service';
@@ -28,7 +29,7 @@ describe('RejectConnectionService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should throw a BadRequestException if the user not found', async () => {
+  it('should throw BadRequestException if user not found', async () => {
     const userId = 'userId';
     const requestId = 'requestId';
     const spy = jest.spyOn(userRepo, 'findOne').mockResolvedValueOnce(null);
@@ -37,5 +38,17 @@ describe('RejectConnectionService', () => {
       new BadRequestException('User not found'),
     );
     expect(spy).toHaveBeenCalledWith(userId);
+  });
+
+  it('should throw BadRequestException if user is not a valid user', async () => {
+    const userId = 'userId';
+    const requestId = 'requestId';
+    const user = userStub();
+    user.role = 'ADMIN';
+    jest.spyOn(userRepo, 'findOne').mockResolvedValueOnce(user);
+    const out = service.execute({ userId, requestId });
+    await expect(out).rejects.toThrowError(
+      new BadRequestException('Not a valid user'),
+    );
   });
 });
