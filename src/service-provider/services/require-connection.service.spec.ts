@@ -7,7 +7,7 @@ import {
   RequestConnectionRepository,
   ServiceProviderRepository,
 } from '../repositories';
-import { serviceProviderStub } from '../../../test/mocks/stubs';
+import { serviceProviderStub, userStub } from '../../../test/mocks/stubs';
 
 jest.mock('../repositories');
 jest.mock('../../user/repositories');
@@ -64,5 +64,19 @@ describe('RequireConnectionService', () => {
       new BadRequestException('User to connect not found'),
     );
     expect(spy).toHaveBeenCalledWith(userToConnectId);
+  });
+
+  it('should throw BadRequestException if user to connect is not a valid user', async () => {
+    const providerOwnerId = 'providerOwnerId';
+    const userToConnectId = 'userToConnectId';
+    const provider = serviceProviderStub();
+    const user = userStub();
+    user.role = 'ADMIN';
+    jest.spyOn(providerRepo, 'findByUserId').mockResolvedValueOnce(provider);
+    jest.spyOn(userRepo, 'findOne').mockResolvedValueOnce(user);
+    const out = service.execute({ providerOwnerId, userToConnectId });
+    await expect(out).rejects.toThrowError(
+      new BadRequestException('Not a valid user to connect'),
+    );
   });
 });
