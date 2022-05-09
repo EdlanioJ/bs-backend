@@ -21,14 +21,6 @@ export class RequireConnectionService {
   ) {}
 
   async execute({ providerOwnerId, userToConnectId }: Input): Promise<void> {
-    const providerOwner = await this.userRepo.findOne(providerOwnerId);
-
-    if (!providerOwner)
-      throw new BadRequestException('Provider owner not found');
-
-    if (providerOwner.role !== 'MANAGER')
-      throw new BadRequestException('Only managers can connect users');
-
     const provider = await this.providerRepo.findByUserId(providerOwnerId);
     if (!provider) throw new BadRequestException('Provider not found');
 
@@ -37,12 +29,13 @@ export class RequireConnectionService {
       throw new BadRequestException('User to connect not found');
 
     if (userToConnect.role !== 'USER')
-      throw new BadRequestException('Only users can be connected');
+      throw new BadRequestException('Not a valid user to connect');
 
     const checkAvailability = this.requestConnectionRepo.findAvailable(
       provider.id,
       userToConnect.id,
     );
+
     if (checkAvailability)
       throw new BadRequestException('Connection request already sent');
 
@@ -64,7 +57,7 @@ export class RequireConnectionService {
           value: provider.name,
         },
         {
-          key: 'connectionId',
+          key: 'requestConnectionId',
           value: requestConnection.id,
         },
       ],
