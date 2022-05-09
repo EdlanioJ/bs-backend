@@ -43,4 +43,14 @@ describe('ServiceRepository', () => {
     expect(result).toStrictEqual([service]);
     expect(result).toHaveLength(1);
   });
+
+  it('should count services', async () => {
+    prisma.service.count = jest.fn().mockResolvedValueOnce(1);
+    const result = await repository.count({
+      where: {
+        provider: { id: 'provider_id' },
+      },
+    });
+    expect(result).toBe(1);
+  });
 });
