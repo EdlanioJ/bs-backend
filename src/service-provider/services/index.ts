@@ -5,5 +5,5 @@ export * from './delete-service-provider.service';
 export * from './get-service-provider.service';
 export * from './list-connection-by-manager.service';
 export * from './list-connection.service';
-export * from './reject-connection';
+export * from './reject-connection.service';
 export * from './require-connection.service';
