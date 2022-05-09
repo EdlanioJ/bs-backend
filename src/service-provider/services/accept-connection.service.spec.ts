@@ -15,6 +15,7 @@ describe('AcceptConnectionService', () => {
   let service: AcceptConnectionService;
   let userRepo: UserRepository;
   let requestConnectionRepo: RequestConnectionRepository;
+  let providerConnectionRepo: ProviderConnectionRepository;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -29,6 +30,9 @@ describe('AcceptConnectionService', () => {
     userRepo = module.get<UserRepository>(UserRepository);
     requestConnectionRepo = module.get<RequestConnectionRepository>(
       RequestConnectionRepository,
+    );
+    providerConnectionRepo = module.get<ProviderConnectionRepository>(
+      ProviderConnectionRepository,
     );
   });
 
@@ -126,5 +130,36 @@ describe('AcceptConnectionService', () => {
     await expect(out).rejects.toThrow(
       new BadRequestException('User not the employee'),
     );
+  });
+
+  it('should accept connection', async () => {
+    const userId = 'userId';
+    const requestId = 'requestId';
+    const user = userStub();
+    user.role = 'USER';
+    const requestConnection = connectionRequestStub();
+    requestConnection.status = 'PENDING';
+    requestConnection.employeeId = userId;
+    jest.spyOn(userRepo, 'findOne').mockResolvedValue(user);
+    jest
+      .spyOn(requestConnectionRepo, 'findOne')
+      .mockResolvedValue(requestConnection);
+    const updateUserSpy = jest.spyOn(userRepo, 'update');
+    const updateRequestConnectionSpy = jest.spyOn(
+      requestConnectionRepo,
+      'update',
+    );
+    const createConnectionSpy = jest.spyOn(providerConnectionRepo, 'create');
+    await service.execute({ userId, requestId });
+    expect(updateUserSpy).toHaveBeenCalledWith(userId, {
+      role: 'EMPLOYEE',
+    });
+    expect(updateRequestConnectionSpy).toHaveBeenCalledWith(requestId, {
+      status: 'ACCEPTED',
+    });
+    expect(createConnectionSpy).toHaveBeenCalledWith({
+      user: { connect: { id: userId } },
+      provider: { connect: { id: requestConnection.providerId } },
+    });
   });
 });

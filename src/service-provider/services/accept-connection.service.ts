@@ -35,7 +35,7 @@ export class AcceptConnectionService {
       throw new BadRequestException('Connection Request rejected');
 
     if (requestConnection.employeeId !== userId)
-      throw new BadRequestException('You are not the employee');
+      throw new BadRequestException('User not the employee');
 
     await this.requestConnectionRepo.update(requestId, {
       status: 'ACCEPTED',
