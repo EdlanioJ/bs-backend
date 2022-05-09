@@ -31,4 +31,16 @@ describe('ServiceRepository', () => {
     });
     expect(result).toBe(service);
   });
+
+  it('should find all services', async () => {
+    const service = serviceStub();
+    prisma.service.findMany = jest.fn().mockResolvedValueOnce([service]);
+    const result = await repository.findAll({
+      where: {
+        provider: { id: 'provider_id' },
+      },
+    });
+    expect(result).toStrictEqual([service]);
+    expect(result).toHaveLength(1);
+  });
 });
