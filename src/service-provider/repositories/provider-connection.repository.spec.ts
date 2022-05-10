@@ -42,4 +42,17 @@ describe('ProviderConnectionRepository', () => {
     const result = await repository.findOne('providerConnectionId');
     expect(result).toBe(providerConnection);
   });
+
+  it('should find all provider connections', async () => {
+    const providerConnection = connectionRequestStub();
+    prisma.providerConnection.findMany = jest
+      .fn()
+      .mockResolvedValueOnce([providerConnection]);
+    const result = await repository.findAll({
+      where: {
+        id: 'providerConnectionId',
+      },
+    });
+    expect(result).toEqual([providerConnection]);
+  });
 });
