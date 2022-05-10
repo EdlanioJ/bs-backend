@@ -14,6 +14,7 @@ jest.mock('../services');
 describe('TemplateController', () => {
   let controller: TemplateController;
   let createTemplateService: CreateTemplateService;
+  let deleteTemplateService: DeleteTemplateService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -30,6 +31,9 @@ describe('TemplateController', () => {
     createTemplateService = module.get<CreateTemplateService>(
       CreateTemplateService,
     );
+    deleteTemplateService = module.get<DeleteTemplateService>(
+      DeleteTemplateService,
+    );
   });
 
   it('should be defined', () => {
@@ -37,7 +41,7 @@ describe('TemplateController', () => {
   });
 
   describe('create template', () => {
-    it('should call  create template service with correct values', async () => {
+    it('should call create template service with correct values', async () => {
       const spy = jest.spyOn(createTemplateService, 'execute');
       await controller.create(
         {
@@ -53,6 +57,14 @@ describe('TemplateController', () => {
         subject: 'subject',
         userId: 'userId',
       });
+    });
+  });
+
+  describe('delete template', () => {
+    it('should call delete template service with correct values', async () => {
+      const spy = jest.spyOn(deleteTemplateService, 'execute');
+      await controller.delete('templateId');
+      expect(spy).toHaveBeenCalledWith({ id: 'templateId' });
     });
   });
 });
