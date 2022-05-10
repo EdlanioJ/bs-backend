@@ -11,6 +11,7 @@ const db = {
     update: jest.fn().mockResolvedValue(template),
     findFirst: jest.fn().mockResolvedValue(template),
     findMany: jest.fn().mockResolvedValue([template]),
+    count: jest.fn().mockResolvedValue(1),
   },
 };
 
@@ -100,5 +101,12 @@ describe('TemplateRepository', () => {
       },
     });
     expect(result).toEqual([template]);
+  });
+
+  it('should count templates', async () => {
+    const spy = jest.spyOn(prisma.template, 'count');
+    const result = await repository.count();
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(1);
   });
 });
