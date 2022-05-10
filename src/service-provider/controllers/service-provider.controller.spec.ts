@@ -1,4 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { serviceProviderStub } from '../../../test/mocks/stubs';
+import { ServiceProviderModel } from '../models';
 import {
   AddServiceProviderService,
   DeleteServiceProviderService,
@@ -12,6 +14,7 @@ describe('ServiceProviderController', () => {
   let controller: ServiceProviderController;
   let addServiceProvider: AddServiceProviderService;
   let deleteServiceProvider: DeleteServiceProviderService;
+  let getServiceProvider: GetServiceProviderService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -31,6 +34,9 @@ describe('ServiceProviderController', () => {
     );
     deleteServiceProvider = module.get<DeleteServiceProviderService>(
       DeleteServiceProviderService,
+    );
+    getServiceProvider = module.get<GetServiceProviderService>(
+      GetServiceProviderService,
     );
   });
 
@@ -55,6 +61,21 @@ describe('ServiceProviderController', () => {
       const spy = jest.spyOn(deleteServiceProvider, 'execute');
       await controller.delete(userId, id);
       expect(spy).toHaveBeenCalledWith({ id, userId });
+    });
+  });
+
+  describe('get service provider', () => {
+    it('should get service provider service return ServiceProviderModel', async () => {
+      const serviceProvider = serviceProviderStub();
+      const out = ServiceProviderModel.map(serviceProvider);
+      const id = 'id';
+      const spy = jest
+        .spyOn(getServiceProvider, 'execute')
+        .mockResolvedValue(out);
+      const res = await controller.get(id);
+      expect(spy).toHaveBeenCalledWith({ id });
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(res).toBe(out);
     });
   });
 });
