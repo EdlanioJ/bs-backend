@@ -8,6 +8,7 @@ const db = {
   providerConnectionRequest: {
     create: jest.fn().mockResolvedValue(requestConnection),
     update: jest.fn().mockResolvedValue(requestConnection),
+    findFirst: jest.fn().mockResolvedValue(requestConnection),
   },
 };
 describe('RequestConnectionRepository', () => {
@@ -60,6 +61,15 @@ describe('RequestConnectionRepository', () => {
       data: {
         status: 'ACCEPTED',
       },
+    });
+  });
+
+  it('should find one request connection', async () => {
+    const spy = jest.spyOn(prisma.providerConnectionRequest, 'findFirst');
+    const result = await repository.findOne('requestId');
+    expect(result).toBe(requestConnection);
+    expect(spy).toHaveBeenCalledWith({
+      where: { id: 'requestId' },
     });
   });
 });
