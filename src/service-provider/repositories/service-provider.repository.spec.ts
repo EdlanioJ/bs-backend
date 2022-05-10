@@ -8,6 +8,7 @@ const db = {
   serviceProvider: {
     create: jest.fn().mockResolvedValue(serviceProvider),
     findFirst: jest.fn().mockResolvedValue(serviceProvider),
+    delete: jest.fn().mockResolvedValue(serviceProvider),
   },
 };
 
@@ -68,6 +69,17 @@ describe('ServiceProviderRepository', () => {
         user: {
           id: 'userId',
         },
+      },
+    });
+  });
+
+  it('should delete service provider', async () => {
+    const spy = jest.spyOn(prisma.serviceProvider, 'delete');
+    const result = await repository.delete('serviceProviderId');
+    expect(result).toBe(serviceProvider);
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        id: 'serviceProviderId',
       },
     });
   });
