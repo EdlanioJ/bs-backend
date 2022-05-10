@@ -9,6 +9,7 @@ const db = {
   template: {
     create: jest.fn().mockResolvedValue(template),
     update: jest.fn().mockResolvedValue(template),
+    findFirst: jest.fn().mockResolvedValue(template),
   },
 };
 
@@ -58,6 +59,17 @@ describe('TemplateRepository', () => {
       },
       data: {
         type: 'type',
+      },
+    });
+    expect(result).toEqual(template);
+  });
+
+  it('should find a template', async () => {
+    const spy = jest.spyOn(prisma.template, 'findFirst');
+    const result = await repository.findOne('templateId');
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        id: 'templateId',
       },
     });
     expect(result).toEqual(template);
