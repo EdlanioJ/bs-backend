@@ -55,4 +55,10 @@ describe('ProviderConnectionRepository', () => {
     });
     expect(result).toEqual([providerConnection]);
   });
+
+  it('should count provider connections', async () => {
+    prisma.providerConnection.count = jest.fn().mockResolvedValueOnce(1);
+    const result = await repository.count();
+    expect(result).toBe(1);
+  });
 });
