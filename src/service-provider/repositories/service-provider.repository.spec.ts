@@ -58,4 +58,17 @@ describe('ServiceProviderRepository', () => {
       },
     });
   });
+
+  it('should find service provider by user id', async () => {
+    const spy = jest.spyOn(prisma.serviceProvider, 'findFirst');
+    const result = await repository.findByUserId('userId');
+    expect(result).toBe(serviceProvider);
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        user: {
+          id: 'userId',
+        },
+      },
+    });
+  });
 });

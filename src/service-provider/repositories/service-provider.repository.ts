@@ -24,7 +24,7 @@ export class ServiceProviderRepository {
   async findByUserId(userId: string) {
     return this.prisma.serviceProvider.findFirst({
       where: {
-        userId: userId,
+        user: { id: userId },
       },
     });
   }
