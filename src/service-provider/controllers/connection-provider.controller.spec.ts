@@ -1,4 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { createResponse } from 'node-mocks-http';
+import { providerConnectionStub } from '../../../test/mocks/stubs';
+import { ProviderConnectionModel } from '../models';
 import {
   AcceptConnectionService,
   DeleteConnectionService,
@@ -11,12 +14,15 @@ import { ConnectionProviderController } from './connection-provider.controller';
 
 jest.mock('../services');
 
+const connectionProvider = providerConnectionStub();
+
 describe('ConnectionProviderController', () => {
   let controller: ConnectionProviderController;
   let acceptConnection: AcceptConnectionService;
   let rejectConnection: RejectConnectionService;
   let deleteConnection: DeleteConnectionService;
   let requireConnection: RequireConnectionService;
+  let listConnection: ListConnectionService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -46,6 +52,7 @@ describe('ConnectionProviderController', () => {
     requireConnection = module.get<RequireConnectionService>(
       RequireConnectionService,
     );
+    listConnection = module.get<ListConnectionService>(ListConnectionService);
   });
 
   it('should be defined', () => {
@@ -89,6 +96,24 @@ describe('ConnectionProviderController', () => {
       const spy = jest.spyOn(requireConnection, 'execute');
       await controller.request(providerOwnerId, userToConnectId);
       expect(spy).toHaveBeenCalledWith({ providerOwnerId, userToConnectId });
+    });
+  });
+
+  describe('list connection', () => {
+    it('should list connection service return ProviderConnectionModel list and total', async () => {
+      const out = {
+        total: 1,
+        data: ProviderConnectionModel.mapCollection([connectionProvider]),
+      };
+      const page = 1;
+      const limit = 10;
+      const res = createResponse();
+      const spy = jest.spyOn(listConnection, 'execute').mockResolvedValue(out);
+      await controller.list(page, limit, res);
+      expect(spy).toHaveBeenCalledWith({ page, limit });
+      expect(res.getHeader('x-total-count')).toBe(out.total);
+      const body = res._getJSONData();
+      expect(body).toHaveLength(out.data.length);
     });
   });
 });
