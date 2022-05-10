@@ -74,4 +74,15 @@ describe('TemplateRepository', () => {
     });
     expect(result).toEqual(template);
   });
+
+  it('should find a template by type', async () => {
+    const spy = jest.spyOn(prisma.template, 'findFirst');
+    const result = await repository.findOneByType('type');
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        type: 'type',
+      },
+    });
+    expect(result).toEqual(template);
+  });
 });
