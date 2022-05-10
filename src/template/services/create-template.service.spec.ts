@@ -1,5 +1,6 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { userStub } from '../../../test/mocks/stubs';
 import { UserRepository } from '../../user/repositories';
 import { TemplateRepository } from '../repositories';
 import { CreateTemplateService } from './create-template.service';
@@ -35,6 +36,20 @@ describe('CreateTemplateService', () => {
     expect(spy).toHaveBeenCalledWith('userId');
     await expect(out).rejects.toThrow(
       new BadRequestException('User not found'),
+    );
+  });
+
+  it('should throw UnauthorizedException if invalid user', async () => {
+    const user = userStub();
+    jest.spyOn(userRepo, 'findOne').mockResolvedValue(user);
+    const out = service.execute({
+      body: 'body',
+      subject: 'subject',
+      type: 'type',
+      userId: 'userId',
+    });
+    await expect(out).rejects.toThrow(
+      new UnauthorizedException('Invalid user'),
     );
   });
 });

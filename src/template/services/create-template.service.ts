@@ -25,8 +25,7 @@ export class CreateTemplateService {
     const user = await this.userRepo.findOne(userId);
     if (!user) throw new BadRequestException('User not found');
 
-    if (user.role !== 'ADMIN')
-      throw new UnauthorizedException('User is not admin');
+    if (user.role !== 'ADMIN') throw new UnauthorizedException('Invalid user');
 
     await this.templateRepo.create({
       body: body,
