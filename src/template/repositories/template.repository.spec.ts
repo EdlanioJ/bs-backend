@@ -8,6 +8,7 @@ const template = templateStub();
 const db = {
   template: {
     create: jest.fn().mockResolvedValue(template),
+    update: jest.fn().mockResolvedValue(template),
   },
 };
 
@@ -41,6 +42,22 @@ describe('TemplateRepository', () => {
         body: 'body',
         subject: 'subject',
         user: { connect: { id: 'userId' } },
+      },
+    });
+    expect(result).toEqual(template);
+  });
+
+  it('should update a template', async () => {
+    const spy = jest.spyOn(prisma.template, 'update');
+    const result = await repository.update('templateId', {
+      type: 'type',
+    });
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        id: 'templateId',
+      },
+      data: {
+        type: 'type',
       },
     });
     expect(result).toEqual(template);
