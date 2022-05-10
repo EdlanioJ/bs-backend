@@ -15,6 +15,7 @@ describe('ConnectionProviderController', () => {
   let controller: ConnectionProviderController;
   let acceptConnection: AcceptConnectionService;
   let rejectConnection: RejectConnectionService;
+  let deleteConnection: DeleteConnectionService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -37,6 +38,9 @@ describe('ConnectionProviderController', () => {
     );
     rejectConnection = module.get<RejectConnectionService>(
       RejectConnectionService,
+    );
+    deleteConnection = module.get<DeleteConnectionService>(
+      DeleteConnectionService,
     );
   });
 
@@ -61,6 +65,16 @@ describe('ConnectionProviderController', () => {
       const spy = jest.spyOn(rejectConnection, 'execute');
       await controller.reject(userId, requestId);
       expect(spy).toHaveBeenCalledWith({ userId, requestId });
+    });
+  });
+
+  describe('delete connection', () => {
+    it('should call delete connection service with correct values', async () => {
+      const userId = 'userId';
+      const connectionId = 'connectionId';
+      const spy = jest.spyOn(deleteConnection, 'execute');
+      await controller.delete(userId, connectionId);
+      expect(spy).toHaveBeenCalledWith({ userId, connectionId });
     });
   });
 });
