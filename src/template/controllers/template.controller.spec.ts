@@ -10,6 +10,7 @@ import {
 } from '../services';
 import { templateStub } from '../../../test/mocks/stubs';
 import { TemplateModel } from '../models';
+import { createResponse } from 'node-mocks-http';
 
 jest.mock('../services');
 
@@ -20,6 +21,7 @@ describe('TemplateController', () => {
   let createTemplateService: CreateTemplateService;
   let deleteTemplateService: DeleteTemplateService;
   let getTemplateService: GetTemplateService;
+  let listTemplateService: ListTemplateService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -40,6 +42,7 @@ describe('TemplateController', () => {
       DeleteTemplateService,
     );
     getTemplateService = module.get<GetTemplateService>(GetTemplateService);
+    listTemplateService = module.get<ListTemplateService>(ListTemplateService);
   });
 
   it('should be defined', () => {
@@ -82,6 +85,26 @@ describe('TemplateController', () => {
       const result = await controller.get('templateId');
       expect(spy).toHaveBeenCalledWith({ id: 'templateId' });
       expect(result).toEqual(TemplateModel.map(template));
+    });
+  });
+
+  describe('find all templates', () => {
+    it('should list template service return TemplateMode list and total', async () => {
+      const out = {
+        total: 1,
+        data: TemplateModel.mapCollection([template]),
+      };
+      const page = 1;
+      const limit = 10;
+      const spy = jest
+        .spyOn(listTemplateService, 'execute')
+        .mockResolvedValue(out);
+      const res = createResponse();
+      await controller.findAll(page, limit, res);
+      expect(spy).toHaveBeenCalledWith({ page, limit });
+      expect(res.getHeader('x-total-count')).toBe(out.total);
+      const body = res._getJSONData();
+      expect(body).toHaveLength(out.data.length);
     });
   });
 });
