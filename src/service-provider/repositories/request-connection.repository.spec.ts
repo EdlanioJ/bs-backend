@@ -7,6 +7,7 @@ const requestConnection = connectionRequestStub();
 const db = {
   providerConnectionRequest: {
     create: jest.fn().mockResolvedValue(requestConnection),
+    update: jest.fn().mockResolvedValue(requestConnection),
   },
 };
 describe('RequestConnectionRepository', () => {
@@ -44,6 +45,20 @@ describe('RequestConnectionRepository', () => {
         provider: { connect: { id: 'providerId' } },
         employee: { connect: { id: 'employeeId' } },
         status: 'PENDING',
+      },
+    });
+  });
+
+  it('should update request connection', async () => {
+    const spy = jest.spyOn(prisma.providerConnectionRequest, 'update');
+    const result = await repository.update('requestId', {
+      status: 'ACCEPTED',
+    });
+    expect(result).toBe(requestConnection);
+    expect(spy).toHaveBeenCalledWith({
+      where: { id: 'requestId' },
+      data: {
+        status: 'ACCEPTED',
       },
     });
   });
