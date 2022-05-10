@@ -33,4 +33,13 @@ describe('ProviderConnectionRepository', () => {
     });
     expect(result).toBe(providerConnection);
   });
+
+  it('should find one provider connection', async () => {
+    const providerConnection = connectionRequestStub();
+    prisma.providerConnection.findFirst = jest
+      .fn()
+      .mockResolvedValueOnce(providerConnection);
+    const result = await repository.findOne('providerConnectionId');
+    expect(result).toBe(providerConnection);
+  });
 });
