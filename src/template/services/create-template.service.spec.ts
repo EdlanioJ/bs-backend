@@ -11,6 +11,7 @@ jest.mock('../../user/repositories');
 describe('CreateTemplateService', () => {
   let service: CreateTemplateService;
   let userRepo: UserRepository;
+  let templateRepo: TemplateRepository;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -18,6 +19,7 @@ describe('CreateTemplateService', () => {
     }).compile();
     service = module.get<CreateTemplateService>(CreateTemplateService);
     userRepo = module.get<UserRepository>(UserRepository);
+    templateRepo = module.get<TemplateRepository>(TemplateRepository);
   });
 
   it('should be defined', () => {
@@ -41,6 +43,7 @@ describe('CreateTemplateService', () => {
 
   it('should throw UnauthorizedException if invalid user', async () => {
     const user = userStub();
+    user.role = 'USER';
     jest.spyOn(userRepo, 'findOne').mockResolvedValue(user);
     const out = service.execute({
       body: 'body',
@@ -51,5 +54,25 @@ describe('CreateTemplateService', () => {
     await expect(out).rejects.toThrow(
       new UnauthorizedException('Invalid user'),
     );
+  });
+
+  it('should create template', async () => {
+    const user = userStub();
+    user.role = 'ADMIN';
+    jest.spyOn(userRepo, 'findOne').mockResolvedValue(user);
+    const spy = jest.spyOn(templateRepo, 'create');
+    await service.execute({
+      body: 'body',
+      subject: 'subject',
+      type: 'type',
+      userId: 'userId',
+    });
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({
+      body: 'body',
+      subject: 'subject',
+      type: 'type',
+      user: { connect: { id: user.id } },
+    });
   });
 });
