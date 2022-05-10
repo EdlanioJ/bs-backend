@@ -12,6 +12,7 @@ const db = {
     findFirst: jest.fn().mockResolvedValue(template),
     findMany: jest.fn().mockResolvedValue([template]),
     count: jest.fn().mockResolvedValue(1),
+    delete: jest.fn().mockResolvedValue(template),
   },
 };
 
@@ -108,5 +109,15 @@ describe('TemplateRepository', () => {
     const result = await repository.count();
     expect(spy).toHaveBeenCalledTimes(1);
     expect(result).toEqual(1);
+  });
+
+  it('should delete a template', async () => {
+    const spy = jest.spyOn(prisma.template, 'delete');
+    await repository.delete('templateId');
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        id: 'templateId',
+      },
+    });
   });
 });
