@@ -7,6 +7,7 @@ const serviceProvider = serviceProviderStub();
 const db = {
   serviceProvider: {
     create: jest.fn().mockResolvedValue(serviceProvider),
+    findFirst: jest.fn().mockResolvedValue(serviceProvider),
   },
 };
 
@@ -43,6 +44,17 @@ describe('ServiceProviderRepository', () => {
       data: {
         user: { connect: { id: 'userId' } },
         name: 'name',
+      },
+    });
+  });
+
+  it('should find one service provider', async () => {
+    const spy = jest.spyOn(prisma.serviceProvider, 'findFirst');
+    const result = await repository.findOne('serviceProviderId');
+    expect(result).toBe(serviceProvider);
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        id: 'serviceProviderId',
       },
     });
   });
