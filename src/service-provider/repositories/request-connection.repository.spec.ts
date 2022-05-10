@@ -82,4 +82,19 @@ describe('RequestConnectionRepository', () => {
       where: { id: 'requestId' },
     });
   });
+
+  it('should find available request connection', async () => {
+    const spy = jest.spyOn(prisma.providerConnectionRequest, 'findFirst');
+    const result = await repository.findAvailable('providerId', 'employeeId');
+    expect(result).toBe(requestConnection);
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        provider: { id: 'providerId' },
+        employee: { id: 'employeeId' },
+        status: {
+          in: ['PENDING', 'ACCEPTED'],
+        },
+      },
+    });
+  });
 });
