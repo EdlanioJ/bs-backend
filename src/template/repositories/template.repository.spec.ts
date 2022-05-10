@@ -10,6 +10,7 @@ const db = {
     create: jest.fn().mockResolvedValue(template),
     update: jest.fn().mockResolvedValue(template),
     findFirst: jest.fn().mockResolvedValue(template),
+    findMany: jest.fn().mockResolvedValue([template]),
   },
 };
 
@@ -84,5 +85,20 @@ describe('TemplateRepository', () => {
       },
     });
     expect(result).toEqual(template);
+  });
+
+  it('should find all templates', async () => {
+    const spy = jest.spyOn(prisma.template, 'findMany');
+    const result = await repository.findAll({
+      where: {
+        type: 'type',
+      },
+    });
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        type: 'type',
+      },
+    });
+    expect(result).toEqual([template]);
   });
 });
