@@ -16,6 +16,11 @@ jest.mock('../services');
 
 const connectionProvider = providerConnectionStub();
 
+const listResult = {
+  total: 1,
+  data: ProviderConnectionModel.mapCollection([connectionProvider]),
+};
+
 describe('ConnectionProviderController', () => {
   let controller: ConnectionProviderController;
   let acceptConnection: AcceptConnectionService;
@@ -23,6 +28,7 @@ describe('ConnectionProviderController', () => {
   let deleteConnection: DeleteConnectionService;
   let requireConnection: RequireConnectionService;
   let listConnection: ListConnectionService;
+  let listConnectionByManager: ListConnectionByManagerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -53,6 +59,9 @@ describe('ConnectionProviderController', () => {
       RequireConnectionService,
     );
     listConnection = module.get<ListConnectionService>(ListConnectionService);
+    listConnectionByManager = module.get<ListConnectionByManagerService>(
+      ListConnectionByManagerService,
+    );
   });
 
   it('should be defined', () => {
@@ -101,19 +110,34 @@ describe('ConnectionProviderController', () => {
 
   describe('list connection', () => {
     it('should list connection service return ProviderConnectionModel list and total', async () => {
-      const out = {
-        total: 1,
-        data: ProviderConnectionModel.mapCollection([connectionProvider]),
-      };
       const page = 1;
       const limit = 10;
       const res = createResponse();
-      const spy = jest.spyOn(listConnection, 'execute').mockResolvedValue(out);
+      const spy = jest
+        .spyOn(listConnection, 'execute')
+        .mockResolvedValue(listResult);
       await controller.list(page, limit, res);
       expect(spy).toHaveBeenCalledWith({ page, limit });
-      expect(res.getHeader('x-total-count')).toBe(out.total);
+      expect(res.getHeader('x-total-count')).toBe(listResult.total);
       const body = res._getJSONData();
-      expect(body).toHaveLength(out.data.length);
+      expect(body).toHaveLength(listResult.data.length);
+    });
+  });
+
+  describe('list connection by manager', () => {
+    it('should list connection by manager service return ProviderConnectionModel list and total', async () => {
+      const page = 1;
+      const limit = 10;
+      const userId = 'userId';
+      const res = createResponse();
+      const spy = jest
+        .spyOn(listConnectionByManager, 'execute')
+        .mockResolvedValue(listResult);
+      await controller.listByManager(userId, page, limit, res);
+      expect(spy).toHaveBeenCalledWith({ userId, page, limit });
+      expect(res.getHeader('x-total-count')).toBe(listResult.total);
+      const body = res._getJSONData();
+      expect(body).toHaveLength(listResult.data.length);
     });
   });
 });
