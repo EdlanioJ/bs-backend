@@ -61,4 +61,13 @@ describe('ProviderConnectionRepository', () => {
     const result = await repository.count();
     expect(result).toBe(1);
   });
+
+  it('should delete provider connection', async () => {
+    const providerConnection = connectionRequestStub();
+    prisma.providerConnection.delete = jest
+      .fn()
+      .mockResolvedValueOnce(providerConnection);
+    const result = await repository.delete('providerConnectionId');
+    expect(result).toBe(providerConnection);
+  });
 });
