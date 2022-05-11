@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { managerRequestStub } from '../../../test/mocks/stubs';
+import { managerRequestStub, userStub } from '../../../test/mocks/stubs';
 
 import { SendMailProducerService } from '../../mail/services';
 import { ManagerRequestRepository, UserRepository } from '../repositories';
@@ -65,5 +65,26 @@ describe('RejectManagerService', () => {
       new BadRequestException('Manager request user not found'),
     );
     expect(spy).toHaveBeenCalledWith(managerRequest.userId);
+  });
+
+  it('should throw BadRequestException if user not found', async () => {
+    const managerRequest = managerRequestStub();
+    const user = userStub();
+    jest
+      .spyOn(managerRequestRepo, 'findAvailable')
+      .mockResolvedValue(managerRequest);
+    const spy = jest
+      .spyOn(userRepo, 'findOne')
+      .mockResolvedValueOnce(user)
+      .mockResolvedValue(null);
+    const out = service.execute({
+      requestId: 'requestId',
+      userId: 'userId',
+      reason: 'reason',
+    });
+    await expect(out).rejects.toThrow(
+      new BadRequestException('User not found'),
+    );
+    expect(spy).toHaveBeenNthCalledWith(2, 'userId');
   });
 });
