@@ -7,6 +7,8 @@ export const mockedConfigService = {
         return 'googleClientSecret';
       case 'GOOGLE_CALLBACK_URL':
         return 'googleCallbackUrl';
+      case 'JWT_SECRET':
+        return 'jwtSecret';
     }
   },
 };
