@@ -10,7 +10,7 @@ import { SendMailProducerService } from '../../mail/services';
 
 type Input = {
   userId: string;
-  id: string;
+  requestId: string;
 };
 
 @Injectable()
@@ -21,35 +21,38 @@ export class AcceptManagerService {
     private readonly managerRequestRepo: ManagerRequestRepository,
     private readonly mailProducer: SendMailProducerService,
   ) {}
-  async execute({ userId, id }: Input): Promise<void> {
-    const user = await this.userRepo.findOne(id);
-    if (!user) throw new BadRequestException('User not found');
-
-    if (user.role !== 'USER') throw new BadRequestException('Not a valid user');
-
-    const managerRequest = await this.managerRequestRepo.findAvailable(id);
+  async execute({ userId, requestId }: Input): Promise<void> {
+    const managerRequest = await this.managerRequestRepo.findAvailable(
+      requestId,
+    );
     if (!managerRequest) throw new BadRequestException('No request found');
 
-    const adminUser = await this.userRepo.findOne(userId);
-    if (!adminUser) throw new BadRequestException('User not found');
+    const user = await this.userRepo.findOne(managerRequest.userId);
+    if (!user) throw new BadRequestException('Manager request user not found');
 
-    if (adminUser.role !== 'ADMIN')
+    if (user.role !== 'USER')
+      throw new BadRequestException('Invalid manager request user');
+
+    const admin = await this.userRepo.findOne(userId);
+    if (!admin) throw new BadRequestException('User not found');
+
+    if (admin.role !== 'ADMIN')
       throw new BadRequestException('User is not an admin');
 
-    await this.userRepo.update(id, { role: 'MANAGER' });
+    await this.userRepo.update(user.id, { role: 'MANAGER' });
 
     await this.managerRepo.create({
-      user: { connect: { id } },
-      authorizedBy: { connect: { id: userId } },
+      user: { connect: { id: user.id } },
+      authorizedBy: { connect: { id: admin.id } },
     });
 
-    await this.managerRequestRepo.update(id, {
+    await this.managerRequestRepo.update(requestId, {
       status: 'ACCEPTED',
     });
 
     await this.mailProducer.execute({
       to: user.email,
-      type: 'manager-accepted-email',
+      type: 'manager-request-accepted',
       content: [
         {
           key: 'name',

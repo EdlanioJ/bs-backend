@@ -4,7 +4,7 @@ import { ManagerRequestRepository, UserRepository } from '../repositories';
 import { SendMailProducerService } from '../../mail/services';
 
 type Input = {
-  id: string;
+  requestId: string;
   userId: string;
   reason: string;
 };
@@ -17,20 +17,22 @@ export class RejectManagerService {
     private readonly mailProducer: SendMailProducerService,
   ) {}
 
-  async execute({ id, userId, reason }: Input): Promise<void> {
-    const user = await this.userRepo.findOne(id);
-    if (!user) throw new BadRequestException('User not found');
-
-    const managerRequest = await this.managerRequestRepo.findAvailable(id);
+  async execute({ requestId, userId, reason }: Input): Promise<void> {
+    const managerRequest = await this.managerRequestRepo.findAvailable(
+      requestId,
+    );
     if (!managerRequest) throw new BadRequestException('No request found');
 
-    const adminUser = await this.userRepo.findOne(userId);
-    if (!adminUser) throw new BadRequestException('User not found');
+    const user = await this.userRepo.findOne(managerRequest.userId);
+    if (!user) throw new BadRequestException('User not found');
 
-    if (adminUser.role !== 'ADMIN')
+    const admin = await this.userRepo.findOne(userId);
+    if (!admin) throw new BadRequestException('User not found');
+
+    if (admin.role !== 'ADMIN')
       throw new BadRequestException('User is not an admin');
 
-    await this.managerRequestRepo.update(id, {
+    await this.managerRequestRepo.update(requestId, {
       status: 'REJECTED',
       rejectBy: { connect: { id: userId } },
       rejectReason: reason,
@@ -38,7 +40,7 @@ export class RejectManagerService {
 
     await this.mailProducer.execute({
       to: user.email,
-      type: 'manager-rejected-email',
+      type: 'manager-request-rejected',
       content: [
         {
           key: 'name',

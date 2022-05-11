@@ -85,9 +85,12 @@ export class UserManagerController {
   @Roles(Role.ADMIN)
   @UseGuards(JwtGuard, RolesGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Post(':id/accept')
-  async accept(@GetCurrentUser('sub') userId: string, @Param('id') id: string) {
-    return this.acceptManager.execute({ userId, id });
+  @Post('request/:id/accept')
+  async accept(
+    @GetCurrentUser('sub') userId: string,
+    @Param('id') requestId: string,
+  ) {
+    return this.acceptManager.execute({ userId, requestId });
   }
 
   @ApiNoContentResponse({ description: 'manager request rejected' })
@@ -95,12 +98,12 @@ export class UserManagerController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @Roles(Role.ADMIN)
   @UseGuards(JwtGuard, RolesGuard)
-  @Post(':id/reject')
+  @Post('request/:id/reject')
   async reject(
     @GetCurrentUser('sub') userId: string,
-    @Param('id') id: string,
+    @Param('id') requestId: string,
     @Body() { reason }: RejectManagerDto,
   ) {
-    return this.rejectManager.execute({ userId, id, reason });
+    return this.rejectManager.execute({ userId, requestId, reason });
   }
 }
