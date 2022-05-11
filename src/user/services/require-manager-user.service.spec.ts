@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { userStub } from '../../../test/mocks/stubs';
+import { userStub, managerRequestStub } from '../../../test/mocks/stubs';
 import { ManagerRequestRepository, UserRepository } from '../repositories';
 import { RequireManagerUserService } from './require-manager-user.service';
 
@@ -9,6 +9,7 @@ jest.mock('../repositories');
 describe('RequireManagerUserService', () => {
   let service: RequireManagerUserService;
   let userRepo: UserRepository;
+  let managerRequestRepo: ManagerRequestRepository;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -20,6 +21,9 @@ describe('RequireManagerUserService', () => {
     }).compile();
     service = module.get<RequireManagerUserService>(RequireManagerUserService);
     userRepo = module.get<UserRepository>(UserRepository);
+    managerRequestRepo = module.get<ManagerRequestRepository>(
+      ManagerRequestRepository,
+    );
   });
 
   it('should be defined', () => {
@@ -43,5 +47,21 @@ describe('RequireManagerUserService', () => {
     jest.spyOn(userRepo, 'findOne').mockResolvedValue(user);
     const out = service.execute({ userId });
     await expect(out).rejects.toThrow(new BadRequestException('Invalid user'));
+  });
+
+  it('should throw BadRequestException if request already sent', async () => {
+    const userId = 'userId';
+    const user = userStub();
+    user.role = 'USER';
+    const managerRequest = managerRequestStub();
+    jest.spyOn(userRepo, 'findOne').mockResolvedValue(user);
+    const spy = jest
+      .spyOn(managerRequestRepo, 'findAvailable')
+      .mockResolvedValue(managerRequest);
+    const out = service.execute({ userId });
+    await expect(out).rejects.toThrow(
+      new BadRequestException('Request already sent'),
+    );
+    expect(spy).toHaveBeenCalledWith(userId);
   });
 });
