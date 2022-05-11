@@ -20,6 +20,7 @@ describe('UserManagerController', () => {
   let controller: UserManagerController;
   let listManagerRequest: ListManagerRequestService;
   let acceptRequest: AcceptManagerService;
+  let rejectRequest: RejectManagerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -37,6 +38,7 @@ describe('UserManagerController', () => {
       ListManagerRequestService,
     );
     acceptRequest = module.get<AcceptManagerService>(AcceptManagerService);
+    rejectRequest = module.get<RejectManagerService>(RejectManagerService);
   });
 
   it('should be defined', () => {
@@ -70,6 +72,18 @@ describe('UserManagerController', () => {
       expect(spy).toHaveBeenCalledWith({
         userId: 'userId',
         requestId: 'requestId',
+      });
+    });
+  });
+
+  describe('RejectRequest', () => {
+    it('should call reject manager service with correct values', async () => {
+      const spy = jest.spyOn(rejectRequest, 'execute');
+      await controller.reject('userId', 'requestId', { reason: 'reason' });
+      expect(spy).toHaveBeenCalledWith({
+        userId: 'userId',
+        requestId: 'requestId',
+        reason: 'reason',
       });
     });
   });
