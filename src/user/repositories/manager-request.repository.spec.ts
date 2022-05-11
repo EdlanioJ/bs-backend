@@ -9,6 +9,7 @@ const db = {
   managerRequest: {
     create: jest.fn().mockResolvedValue(managerRequest),
     update: jest.fn().mockResolvedValue(managerRequest),
+    count: jest.fn().mockResolvedValue(1),
   },
 };
 
@@ -55,6 +56,21 @@ describe('ManagerRequestRepository', () => {
     expect(spy).toHaveBeenCalledWith({
       where: { id: 'any_id' },
       data: { status: 'ACCEPTED' },
+    });
+  });
+
+  it('should count manager requests', async () => {
+    const spy = jest.spyOn(prisma.managerRequest, 'count');
+    const result = await repository.count({
+      where: {
+        status: 'PENDING',
+      },
+    });
+    expect(result).toEqual(1);
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        status: 'PENDING',
+      },
     });
   });
 });
