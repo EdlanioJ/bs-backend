@@ -76,4 +76,15 @@ describe('UserRepository', () => {
       },
     });
   });
+
+  it('should find one user by third party id', async () => {
+    const spy = jest.spyOn(prisma.user, 'findFirst');
+    const result = await repository.findOneByThirdPartyId('any_id');
+    expect(result).toEqual(user);
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        thirdPartyId: 'any_id',
+      },
+    });
+  });
 });
