@@ -10,6 +10,7 @@ const db = {
     create: jest.fn().mockResolvedValue(user),
     findFirst: jest.fn().mockResolvedValue(user),
     findMany: jest.fn().mockResolvedValue([user]),
+    update: jest.fn().mockResolvedValue(user),
   },
 };
 describe('UserRepository', () => {
@@ -94,5 +95,25 @@ describe('UserRepository', () => {
     const result = await repository.findAll();
     expect(result).toEqual([user]);
     expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should update a user', async () => {
+    const spy = jest.spyOn(prisma.user, 'update');
+    const result = await repository.update('any_id', {
+      email: 'any_email',
+      password: 'any_password',
+      name: 'any_name',
+    });
+    expect(result).toEqual(user);
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        id: 'any_id',
+      },
+      data: {
+        email: 'any_email',
+        password: 'any_password',
+        name: 'any_name',
+      },
+    });
   });
 });
