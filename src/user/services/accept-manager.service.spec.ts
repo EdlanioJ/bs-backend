@@ -7,7 +7,7 @@ import {
 import { SendMailProducerService } from '../../mail/services';
 import { AcceptManagerService } from './accept-manager.service';
 import { BadRequestException } from '@nestjs/common';
-import { managerRequestStub } from '../../../test/mocks/stubs';
+import { managerRequestStub, userStub } from '../../../test/mocks/stubs';
 
 jest.mock('../repositories');
 jest.mock('../../mail/services');
@@ -62,5 +62,19 @@ describe('AcceptManagerService', () => {
       new BadRequestException('Manager request user not found'),
     );
     expect(spy).toHaveBeenCalledWith(managerRequest.userId);
+  });
+
+  it('should throw BadRequestException if invalid manager request user', async () => {
+    const managerRequest = managerRequestStub();
+    const user = userStub();
+    user.role = 'MANAGER';
+    jest
+      .spyOn(managerRequestRepo, 'findAvailable')
+      .mockResolvedValue(managerRequest);
+    jest.spyOn(userRepo, 'findOne').mockResolvedValue(user);
+    const out = service.execute({ requestId: 'requestId', userId: 'userId' });
+    await expect(out).rejects.toThrow(
+      new BadRequestException('Invalid manager request user'),
+    );
   });
 });
