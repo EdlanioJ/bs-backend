@@ -77,4 +77,39 @@ describe('AcceptManagerService', () => {
       new BadRequestException('Invalid manager request user'),
     );
   });
+
+  it('should throw BadRequestException if user not found', async () => {
+    const managerRequest = managerRequestStub();
+    const user = userStub();
+    user.role = 'USER';
+    jest
+      .spyOn(managerRequestRepo, 'findAvailable')
+      .mockResolvedValue(managerRequest);
+    const spy = jest
+      .spyOn(userRepo, 'findOne')
+      .mockResolvedValueOnce(user)
+      .mockResolvedValue(null);
+    const out = service.execute({ requestId: 'requestId', userId: 'userId' });
+    await expect(out).rejects.toThrow(
+      new BadRequestException('User not found'),
+    );
+    expect(spy).toHaveBeenNthCalledWith(2, 'userId');
+  });
+
+  it('should throw BadRequestException if not a valid user', async () => {
+    const managerRequest = managerRequestStub();
+    const user = userStub();
+    user.role = 'USER';
+    jest
+      .spyOn(managerRequestRepo, 'findAvailable')
+      .mockResolvedValue(managerRequest);
+    jest
+      .spyOn(userRepo, 'findOne')
+      .mockResolvedValueOnce(user)
+      .mockResolvedValue(user);
+    const out = service.execute({ requestId: 'requestId', userId: 'userId' });
+    await expect(out).rejects.toThrow(
+      new BadRequestException('Not a valid user'),
+    );
+  });
 });
