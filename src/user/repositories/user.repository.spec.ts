@@ -8,6 +8,7 @@ const user = userStub();
 const db = {
   user: {
     create: jest.fn().mockResolvedValue(user),
+    findFirst: jest.fn().mockResolvedValue(user),
   },
 };
 describe('UserRepository', () => {
@@ -39,6 +40,17 @@ describe('UserRepository', () => {
         email: 'any_email',
         password: 'any_password',
         name: 'any_name',
+      },
+    });
+  });
+
+  it('should find one user', async () => {
+    const spy = jest.spyOn(prisma.user, 'findFirst');
+    const result = await repository.findOne('any_id');
+    expect(result).toEqual(user);
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        id: 'any_id',
       },
     });
   });
