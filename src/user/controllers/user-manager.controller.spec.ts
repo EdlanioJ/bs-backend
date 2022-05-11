@@ -19,6 +19,7 @@ const managerRequest = managerRequestStub();
 describe('UserManagerController', () => {
   let controller: UserManagerController;
   let listManagerRequest: ListManagerRequestService;
+  let acceptRequest: AcceptManagerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -35,6 +36,7 @@ describe('UserManagerController', () => {
     listManagerRequest = module.get<ListManagerRequestService>(
       ListManagerRequestService,
     );
+    acceptRequest = module.get<AcceptManagerService>(AcceptManagerService);
   });
 
   it('should be defined', () => {
@@ -58,6 +60,17 @@ describe('UserManagerController', () => {
       expect(res.getHeader('x-total-count')).toBe(result.total);
       const body = res._getJSONData();
       expect(body).toHaveLength(result.data.length);
+    });
+  });
+
+  describe('AcceptRequest', () => {
+    it('should call accept manager service with correct values', async () => {
+      const spy = jest.spyOn(acceptRequest, 'execute');
+      await controller.accept('userId', 'requestId');
+      expect(spy).toHaveBeenCalledWith({
+        userId: 'userId',
+        requestId: 'requestId',
+      });
     });
   });
 });
