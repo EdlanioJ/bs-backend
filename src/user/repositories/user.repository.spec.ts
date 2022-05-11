@@ -9,6 +9,7 @@ const db = {
   user: {
     create: jest.fn().mockResolvedValue(user),
     findFirst: jest.fn().mockResolvedValue(user),
+    findMany: jest.fn().mockResolvedValue([user]),
   },
 };
 describe('UserRepository', () => {
@@ -86,5 +87,12 @@ describe('UserRepository', () => {
         thirdPartyId: 'any_id',
       },
     });
+  });
+
+  it('should find all users', async () => {
+    const spy = jest.spyOn(prisma.user, 'findMany');
+    const result = await repository.findAll();
+    expect(result).toEqual([user]);
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 });
