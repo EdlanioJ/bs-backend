@@ -64,4 +64,17 @@ describe('RequireManagerUserService', () => {
     );
     expect(spy).toHaveBeenCalledWith(userId);
   });
+
+  it('should require manager', async () => {
+    const userId = 'userId';
+    const user = userStub();
+    user.role = 'USER';
+    jest.spyOn(userRepo, 'findOne').mockResolvedValue(user);
+    jest.spyOn(managerRequestRepo, 'findAvailable').mockResolvedValue(null);
+    const spy = jest.spyOn(managerRequestRepo, 'create');
+    await service.execute({ userId });
+    expect(spy).toHaveBeenCalledWith({
+      user: { connect: { id: user.id } },
+    });
+  });
 });

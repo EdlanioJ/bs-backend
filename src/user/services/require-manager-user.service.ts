@@ -18,7 +18,9 @@ export class RequireManagerUserService {
     if (!user) throw new BadRequestException('User not found');
     if (user.role !== 'USER') throw new BadRequestException('Invalid user');
 
-    const checkAvailability = this.managerRequestRepo.findAvailable(userId);
+    const checkAvailability = await this.managerRequestRepo.findAvailable(
+      userId,
+    );
     if (checkAvailability)
       throw new BadRequestException('Request already sent');
 
