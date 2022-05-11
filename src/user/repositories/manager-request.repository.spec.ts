@@ -11,6 +11,7 @@ const db = {
     update: jest.fn().mockResolvedValue(managerRequest),
     count: jest.fn().mockResolvedValue(1),
     findMany: jest.fn().mockResolvedValue([managerRequest]),
+    findFirst: jest.fn().mockResolvedValue(managerRequest),
   },
 };
 
@@ -85,6 +86,18 @@ describe('ManagerRequestRepository', () => {
     expect(result).toEqual([managerRequest]);
     expect(spy).toHaveBeenCalledWith({
       where: {
+        status: 'PENDING',
+      },
+    });
+  });
+
+  it('should find an available manager request', async () => {
+    const spy = jest.spyOn(prisma.managerRequest, 'findFirst');
+    const result = await repository.findAvailable('any_user_id');
+    expect(result).toEqual(managerRequest);
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        userId: 'any_user_id',
         status: 'PENDING',
       },
     });
