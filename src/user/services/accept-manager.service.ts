@@ -39,14 +39,14 @@ export class AcceptManagerService {
     if (admin.role !== 'ADMIN')
       throw new BadRequestException('Not a valid user');
 
-    await this.userRepo.update(user.id, { role: 'MANAGER' });
-
     await this.managerRepo.create({
       user: { connect: { id: user.id } },
       authorizedBy: { connect: { id: admin.id } },
     });
 
-    await this.managerRequestRepo.update(requestId, {
+    await this.userRepo.update(user.id, { role: 'MANAGER' });
+
+    await this.managerRequestRepo.update(managerRequest.id, {
       status: 'ACCEPTED',
     });
 

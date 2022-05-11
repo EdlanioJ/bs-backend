@@ -16,6 +16,8 @@ describe('AcceptManagerService', () => {
   let service: AcceptManagerService;
   let managerRequestRepo: ManagerRequestRepository;
   let userRepo: UserRepository;
+  let managerRepo: ManagerRepository;
+  let mailProducer: SendMailProducerService;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -33,6 +35,8 @@ describe('AcceptManagerService', () => {
       ManagerRequestRepository,
     );
     userRepo = module.get<UserRepository>(UserRepository);
+    managerRepo = module.get<ManagerRepository>(ManagerRepository);
+    mailProducer = module.get<SendMailProducerService>(SendMailProducerService);
   });
 
   it('should be defined', () => {
@@ -111,5 +115,43 @@ describe('AcceptManagerService', () => {
     await expect(out).rejects.toThrow(
       new BadRequestException('Not a valid user'),
     );
+  });
+
+  it('should accept manager request', async () => {
+    const managerRequest = managerRequestStub();
+    const user = userStub();
+    user.role = 'USER';
+    const admin = userStub();
+    admin.role = 'ADMIN';
+    jest
+      .spyOn(managerRequestRepo, 'findAvailable')
+      .mockResolvedValue(managerRequest);
+    jest
+      .spyOn(userRepo, 'findOne')
+      .mockResolvedValueOnce(user)
+      .mockResolvedValue(admin);
+    const createManagerSpy = jest.spyOn(managerRepo, 'create');
+    const updateUserSpy = jest.spyOn(userRepo, 'update');
+    const sendMailSpy = jest.spyOn(mailProducer, 'execute');
+    const updateManagerRequestSpy = jest.spyOn(managerRequestRepo, 'update');
+    await service.execute({ requestId: 'requestId', userId: 'userId' });
+    expect(createManagerSpy).toHaveBeenCalledWith({
+      user: { connect: { id: user.id } },
+      authorizedBy: { connect: { id: admin.id } },
+    });
+    expect(updateUserSpy).toHaveBeenCalledWith(user.id, { role: 'MANAGER' });
+    expect(updateManagerRequestSpy).toHaveBeenCalledWith(managerRequest.id, {
+      status: 'ACCEPTED',
+    });
+    expect(sendMailSpy).toHaveBeenCalledWith({
+      to: user.email,
+      type: 'manager-request-accepted',
+      content: [
+        {
+          key: 'name',
+          value: user.name,
+        },
+      ],
+    });
   });
 });
