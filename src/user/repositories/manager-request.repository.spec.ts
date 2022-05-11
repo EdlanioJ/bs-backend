@@ -8,6 +8,7 @@ const managerRequest = managerRequestStub();
 const db = {
   managerRequest: {
     create: jest.fn().mockResolvedValue(managerRequest),
+    update: jest.fn().mockResolvedValue(managerRequest),
   },
 };
 
@@ -42,6 +43,18 @@ describe('ManagerRequestRepository', () => {
         user: { connect: { id: 'any_user_id' } },
         status: 'PENDING',
       },
+    });
+  });
+
+  it('should update a manager request', async () => {
+    const spy = jest.spyOn(prisma.managerRequest, 'update');
+    const result = await repository.update('any_id', {
+      status: 'ACCEPTED',
+    });
+    expect(result).toEqual(managerRequest);
+    expect(spy).toHaveBeenCalledWith({
+      where: { id: 'any_id' },
+      data: { status: 'ACCEPTED' },
     });
   });
 });
