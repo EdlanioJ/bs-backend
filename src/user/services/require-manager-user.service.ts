@@ -16,8 +16,7 @@ export class RequireManagerUserService {
   async execute({ userId }: Input): Promise<void> {
     const user = await this.userRepo.findOne(userId);
     if (!user) throw new BadRequestException('User not found');
-    if (user.role !== 'USER')
-      throw new BadRequestException('Only users can make this request');
+    if (user.role !== 'USER') throw new BadRequestException('Invalid user');
 
     const checkAvailability = this.managerRequestRepo.findAvailable(userId);
     if (checkAvailability)
