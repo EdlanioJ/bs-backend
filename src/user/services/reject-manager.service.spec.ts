@@ -13,6 +13,7 @@ describe('RejectManagerService', () => {
   let service: RejectManagerService;
   let managerRequestRepo: ManagerRequestRepository;
   let userRepo: UserRepository;
+  let mailProducer: SendMailProducerService;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -28,6 +29,7 @@ describe('RejectManagerService', () => {
       ManagerRequestRepository,
     );
     userRepo = module.get<UserRepository>(UserRepository);
+    mailProducer = module.get<SendMailProducerService>(SendMailProducerService);
   });
 
   it('should be defined', () => {
@@ -107,5 +109,46 @@ describe('RejectManagerService', () => {
     await expect(out).rejects.toThrow(
       new BadRequestException('Not a valid user'),
     );
+  });
+
+  it('should reject manager request', async () => {
+    const managerRequest = managerRequestStub();
+    const user = userStub();
+    user.role = 'USER';
+    const admin = userStub();
+    admin.role = 'ADMIN';
+    jest
+      .spyOn(managerRequestRepo, 'findAvailable')
+      .mockResolvedValue(managerRequest);
+    jest
+      .spyOn(userRepo, 'findOne')
+      .mockResolvedValueOnce(user)
+      .mockResolvedValue(admin);
+    const sendMailSpy = jest.spyOn(mailProducer, 'execute');
+    const spy = jest.spyOn(managerRequestRepo, 'update');
+    await service.execute({
+      requestId: 'requestId',
+      userId: 'userId',
+      reason: 'reason',
+    });
+    expect(spy).toHaveBeenCalledWith(managerRequest.id, {
+      status: 'REJECTED',
+      rejectBy: { connect: { id: admin.id } },
+      rejectReason: 'reason',
+    });
+    expect(sendMailSpy).toHaveBeenCalledWith({
+      to: user.email,
+      type: 'manager-request-rejected',
+      content: [
+        {
+          key: 'name',
+          value: user.name,
+        },
+        {
+          key: 'reason',
+          value: 'reason',
+        },
+      ],
+    });
   });
 });

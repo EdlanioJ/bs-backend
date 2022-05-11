@@ -32,9 +32,9 @@ export class RejectManagerService {
     if (admin.role !== 'ADMIN')
       throw new BadRequestException('Not a valid user');
 
-    await this.managerRequestRepo.update(requestId, {
+    await this.managerRequestRepo.update(managerRequest.id, {
       status: 'REJECTED',
-      rejectBy: { connect: { id: userId } },
+      rejectBy: { connect: { id: admin.id } },
       rejectReason: reason,
     });
 
