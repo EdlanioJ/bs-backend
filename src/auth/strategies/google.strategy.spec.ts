@@ -55,4 +55,16 @@ describe('GoogleStrategy', () => {
       provider: profile.provider,
     });
   });
+
+  it('should done returns a payload', async () => {
+    const user = { id: 'id', username: 'username', role: 'role' };
+    jest.spyOn(service, 'execute').mockResolvedValue(user);
+    const req = createRequest();
+    await strategy.validate(req, accessToken, refreshToken, profile, doneMock);
+    expect(doneMock).toHaveBeenCalledWith(null, {
+      sub: user.id,
+      username: user.username,
+      role: user.role,
+    });
+  });
 });
