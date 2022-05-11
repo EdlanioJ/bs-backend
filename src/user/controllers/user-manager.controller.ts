@@ -26,6 +26,7 @@ import { Role } from '../../auth/entities';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOkResponse,
   ApiQuery,
@@ -48,12 +49,12 @@ export class UserManagerController {
 
   @ApiOkResponse({ type: ManagerRequestModel, isArray: true })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
   @Roles(Role.ADMIN)
   @UseGuards(JwtGuard, RolesGuard)
   @HttpCode(HttpStatus.OK)
-  @Get('requests')
+  @Get('request')
   async listRequest(
     @Query('page') page = 1,
     @Query('limit') limit = 10,
@@ -69,12 +70,12 @@ export class UserManagerController {
       .json(data);
   }
 
-  @ApiNoContentResponse({ description: 'request made successfully' })
+  @ApiCreatedResponse({ description: 'create manager request' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Roles(Role.USER)
   @UseGuards(JwtGuard, RolesGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @Post('require')
+  @HttpCode(HttpStatus.CREATED)
+  @Post('request')
   async require(@GetCurrentUser('sub') userId: string) {
     return this.requireManager.execute({ userId });
   }
