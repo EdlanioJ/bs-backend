@@ -87,4 +87,25 @@ describe('RejectManagerService', () => {
     );
     expect(spy).toHaveBeenNthCalledWith(2, 'userId');
   });
+
+  it('should throw BadRequestException if not a valid user', async () => {
+    const managerRequest = managerRequestStub();
+    const user = userStub();
+    user.role = 'USER';
+    jest
+      .spyOn(managerRequestRepo, 'findAvailable')
+      .mockResolvedValue(managerRequest);
+    jest
+      .spyOn(userRepo, 'findOne')
+      .mockResolvedValueOnce(user)
+      .mockResolvedValue(user);
+    const out = service.execute({
+      requestId: 'requestId',
+      userId: 'userId',
+      reason: 'reason',
+    });
+    await expect(out).rejects.toThrow(
+      new BadRequestException('Not a valid user'),
+    );
+  });
 });

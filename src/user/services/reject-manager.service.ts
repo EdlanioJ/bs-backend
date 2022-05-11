@@ -30,7 +30,7 @@ export class RejectManagerService {
     if (!admin) throw new BadRequestException('User not found');
 
     if (admin.role !== 'ADMIN')
-      throw new BadRequestException('User is not an admin');
+      throw new BadRequestException('Not a valid user');
 
     await this.managerRequestRepo.update(requestId, {
       status: 'REJECTED',
