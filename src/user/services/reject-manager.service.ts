@@ -24,7 +24,7 @@ export class RejectManagerService {
     if (!managerRequest) throw new BadRequestException('No request found');
 
     const user = await this.userRepo.findOne(managerRequest.userId);
-    if (!user) throw new BadRequestException('User not found');
+    if (!user) throw new BadRequestException('Manager request user not found');
 
     const admin = await this.userRepo.findOne(userId);
     if (!admin) throw new BadRequestException('User not found');
