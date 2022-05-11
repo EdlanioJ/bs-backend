@@ -10,6 +10,7 @@ const db = {
     create: jest.fn().mockResolvedValue(managerRequest),
     update: jest.fn().mockResolvedValue(managerRequest),
     count: jest.fn().mockResolvedValue(1),
+    findMany: jest.fn().mockResolvedValue([managerRequest]),
   },
 };
 
@@ -67,6 +68,21 @@ describe('ManagerRequestRepository', () => {
       },
     });
     expect(result).toEqual(1);
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        status: 'PENDING',
+      },
+    });
+  });
+
+  it('should find all manager requests', async () => {
+    const spy = jest.spyOn(prisma.managerRequest, 'findMany');
+    const result = await repository.findAll({
+      where: {
+        status: 'PENDING',
+      },
+    });
+    expect(result).toEqual([managerRequest]);
     expect(spy).toHaveBeenCalledWith({
       where: {
         status: 'PENDING',
