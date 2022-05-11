@@ -29,7 +29,7 @@ export class UserRepository {
     });
   }
 
-  findAll(filter: Prisma.UserFindManyArgs) {
+  findAll(filter?: Prisma.UserFindManyArgs) {
     return this.prisma.user.findMany(filter);
   }
 
