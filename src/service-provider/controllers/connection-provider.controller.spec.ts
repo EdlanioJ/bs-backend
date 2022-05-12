@@ -116,7 +116,7 @@ describe('ConnectionProviderController', () => {
       const spy = jest
         .spyOn(listConnection, 'execute')
         .mockResolvedValue(listResult);
-      await controller.list(page, limit, res);
+      await controller.list(res);
       expect(spy).toHaveBeenCalledWith({ page, limit });
       expect(res.getHeader('x-total-count')).toBe(listResult.total);
       const body = res._getJSONData();
