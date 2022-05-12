@@ -11,6 +11,10 @@ export const mockedConfigService = {
         return 'jwtSecret';
       case 'JWT_REFRESH_SECRET':
         return 'jwtRefreshSecret';
+      case 'JWT_EXPIRES_IN':
+        return '10s';
+      case 'JWT_SECRET_EXPIRE_IN':
+        return '1h';
     }
   },
 };
