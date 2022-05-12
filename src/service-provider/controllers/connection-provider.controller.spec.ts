@@ -133,7 +133,7 @@ describe('ConnectionProviderController', () => {
       const spy = jest
         .spyOn(listConnectionByManager, 'execute')
         .mockResolvedValue(listResult);
-      await controller.listByManager(userId, page, limit, res);
+      await controller.listByManager(res, userId);
       expect(spy).toHaveBeenCalledWith({ userId, page, limit });
       expect(res.getHeader('x-total-count')).toBe(listResult.total);
       const body = res._getJSONData();

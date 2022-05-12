@@ -157,10 +157,10 @@ export class ConnectionProviderController {
   @Get('manager')
   @HttpCode(HttpStatus.OK)
   async listByManager(
+    @Res() res: Response,
     @GetCurrentUser('sub') userId: string,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
-    @Res() res: Response,
   ) {
     const { data, total } = await this.listConnectionByManager.execute({
       limit,
