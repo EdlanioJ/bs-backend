@@ -1,12 +1,15 @@
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
+import * as bcrypt from 'bcrypt';
 import {
   mockedConfigService,
   mockedJwtService,
 } from '../../../test/mocks/services';
 import { TokensModel } from '../models';
 import { AuthHelpers } from './auth.helpers';
+
+jest.mock('bcrypt');
 
 describe('AuthHelpers', () => {
   let authHelpers: AuthHelpers;
@@ -65,6 +68,22 @@ describe('AuthHelpers', () => {
           refreshToken: 'any_token',
         }),
       );
+    });
+  });
+
+  describe('hashData', () => {
+    it('should return hashed data', async () => {
+      const data = 'any_data';
+      const saltSpy = jest
+        .spyOn(bcrypt, 'genSaltSync')
+        .mockReturnValue('any_salt');
+      const hashSpy = jest
+        .spyOn(bcrypt, 'hash')
+        .mockResolvedValue('any_hash' as never);
+      const hash = await authHelpers.hashData(data);
+      expect(hash).toBe('any_hash');
+      expect(saltSpy).toHaveBeenCalledWith(12);
+      expect(hashSpy).toHaveBeenCalledWith(data, 'any_salt');
     });
   });
 });
