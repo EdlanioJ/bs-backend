@@ -67,9 +67,9 @@ export class ServiceController {
   @HttpCode(HttpStatus.OK)
   @Get()
   async list(
+    @Res() res: Response,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
-    @Res() res: Response,
   ) {
     const { data, total } = await this.listService.execute({
       limit,

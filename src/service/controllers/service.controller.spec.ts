@@ -72,7 +72,7 @@ describe('ServiceController', () => {
         .spyOn(listService, 'execute')
         .mockResolvedValueOnce(result);
       const res = createResponse();
-      await controller.list(1, 10, res);
+      await controller.list(res);
       expect(spy).toHaveBeenCalledWith({ page: 1, limit: 10 });
       expect(res.getHeader('x-total-count')).toBe(result.total);
       expect(res.getHeader('x-page')).toBe(1);
