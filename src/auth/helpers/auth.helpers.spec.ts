@@ -86,4 +86,27 @@ describe('AuthHelpers', () => {
       expect(hashSpy).toHaveBeenCalledWith(data, 'any_salt');
     });
   });
+
+  describe('compareData', () => {
+    it('should return true', async () => {
+      const data = 'any_data';
+      const hash = 'any_hash';
+      const spy = jest
+        .spyOn(bcrypt, 'compare')
+        .mockResolvedValue(true as never);
+      const result = await authHelpers.compareData(data, hash);
+      expect(result).toBeTruthy();
+      expect(spy).toHaveBeenCalledWith(data, hash);
+    });
+    it('should return false', async () => {
+      const data = 'any_data';
+      const hash = 'any_hash';
+      const spy = jest
+        .spyOn(bcrypt, 'compare')
+        .mockResolvedValue(false as never);
+      const result = await authHelpers.compareData(data, hash);
+      expect(result).toBeFalsy();
+      expect(spy).toHaveBeenCalledWith(data, hash);
+    });
+  });
 });
