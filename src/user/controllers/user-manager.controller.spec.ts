@@ -61,7 +61,7 @@ describe('UserManagerController', () => {
       const res = createResponse();
       const limit = 10;
       const page = 1;
-      await controller.listRequest(page, limit, res);
+      await controller.listRequest(res);
       expect(spy).toHaveBeenCalledWith({ limit, page });
       expect(res.getHeader('x-total-count')).toBe(result.total);
       const body = res._getJSONData();

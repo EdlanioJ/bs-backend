@@ -56,9 +56,9 @@ export class UserManagerController {
   @HttpCode(HttpStatus.OK)
   @Get('request')
   async listRequest(
+    @Res() res: Response,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
-    @Res() res: Response,
   ) {
     const { total, data } = await this.listManagerRequest.execute({
       limit,
