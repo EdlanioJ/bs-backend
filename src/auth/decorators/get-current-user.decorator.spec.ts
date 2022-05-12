@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Controller } from '@nestjs/common';
 import { ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
@@ -19,9 +21,7 @@ class TestController {
 
 function getParamDecoratorFactory(_decorator: any, param?: string) {
   class TestDecorator {
-    public test(@GetCurrentUser(param) value: any) {
-      console.log(value);
-    }
+    public test(@GetCurrentUser(param) _value: any) {}
   }
   const args = Reflect.getMetadata(ROUTE_ARGS_METADATA, TestDecorator, 'test');
   return args[Object.keys(args)[0]].factory;
@@ -56,5 +56,17 @@ describe('GetCurrentUser', () => {
     const user = factory(null, ctx);
     const out = controller.getUser(user);
     expect(out).toEqual(req.user);
+  });
+
+  it('should return user sub', () => {
+    const ctx = new ExecutionContextHost(
+      [req, res],
+      TestController,
+      controller.geUserSub,
+    );
+    const factory = getParamDecoratorFactory(GetCurrentUser, 'sub');
+    const sub = factory('sub', ctx);
+    const out = controller.geUserSub(sub);
+    expect(out).toEqual(req.user['sub']);
   });
 });
