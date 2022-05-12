@@ -72,9 +72,9 @@ export class TemplateController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(
+    @Res() res: Response,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
-    @Res() res: Response,
   ) {
     const { total, data } = await this.listTemplate.execute({
       page,

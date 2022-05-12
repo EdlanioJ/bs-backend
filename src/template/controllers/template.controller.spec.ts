@@ -100,7 +100,7 @@ describe('TemplateController', () => {
         .spyOn(listTemplateService, 'execute')
         .mockResolvedValue(out);
       const res = createResponse();
-      await controller.findAll(page, limit, res);
+      await controller.findAll(res);
       expect(spy).toHaveBeenCalledWith({ page, limit });
       expect(res.getHeader('x-total-count')).toBe(out.total);
       const body = res._getJSONData();
