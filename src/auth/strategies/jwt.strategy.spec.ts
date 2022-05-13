@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import { mockedConfigService } from '../../../test/mocks/services';
-import { JwtStrategy } from './jwt.strategy';
+import { JwtStrategy } from './index';
 
 describe('JwtStrategy', () => {
   let strategy: JwtStrategy;
