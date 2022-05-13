@@ -7,7 +7,7 @@ import {
   ResetPasswordService,
   RegisterService,
 } from '../services';
-import { AuthController } from './auth.controller';
+import { AuthController } from './index';
 
 jest.mock('../services');
 
