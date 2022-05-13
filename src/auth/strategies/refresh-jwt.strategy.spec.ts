@@ -2,7 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import { createRequest } from 'node-mocks-http';
 import { mockedConfigService } from '../../../test/mocks/services';
-import { RefreshJwtStrategy } from './refresh-jwt.strategy';
+import { RefreshJwtStrategy } from './index';
 
 describe('RefreshJwtStrategy', () => {
   let strategy: RefreshJwtStrategy;
