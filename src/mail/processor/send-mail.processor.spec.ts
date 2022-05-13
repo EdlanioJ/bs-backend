@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { SendMailProcessorService } from '../services';
-import { SendMailProcessor } from './send-mail.processor';
+import { SendMailProcessor } from './index';
 
 jest.mock('../services');
 
