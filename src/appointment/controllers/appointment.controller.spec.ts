@@ -12,7 +12,7 @@ import {
   ListAppointmentByEmployeeService,
   ListAppointmentService,
 } from '../services';
-import { AppointmentController } from './appointment.controller';
+import { AppointmentController } from './index';
 
 jest.mock('../services');
 
