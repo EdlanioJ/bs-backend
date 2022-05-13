@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { connectionRequestStub } from '../../../test/mocks/stubs';
+import { connectionRequestStub } from '../../../test/stubs';
 import { PrismaService } from '../../prisma';
 import { RequestConnectionRepository } from './request-connection.repository';
 

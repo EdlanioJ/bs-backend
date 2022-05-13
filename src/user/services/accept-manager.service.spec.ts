@@ -7,7 +7,7 @@ import {
 import { SendMailProducerService } from '../../mail/services';
 import { AcceptManagerService } from './accept-manager.service';
 import { BadRequestException } from '@nestjs/common';
-import { managerRequestStub, userStub } from '../../../test/mocks/stubs';
+import { managerRequestStub, userStub } from '../../../test/stubs';
 
 jest.mock('../repositories');
 jest.mock('../../mail/services');

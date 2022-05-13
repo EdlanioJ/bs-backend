@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { managerRequestStub } from '../../../test/mocks/stubs';
+import { managerRequestStub } from '../../../test/stubs';
 import { ManagerRequestModel } from '../models';
 import { ManagerRequestRepository } from '../repositories';
 import { ListManagerRequestService } from './list-manager-request.service';

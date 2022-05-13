@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { templateStub } from '../../../test/mocks/stubs';
+import { templateStub } from '../../../test/stubs';
 import { PrismaService } from '../../prisma';
 import { TemplateRepository } from './template.repository';
 

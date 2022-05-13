@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { managerRequestStub, userStub } from '../../../test/mocks/stubs';
+import { managerRequestStub, userStub } from '../../../test/stubs';
 
 import { SendMailProducerService } from '../../mail/services';
 import { ManagerRequestRepository, UserRepository } from '../repositories';

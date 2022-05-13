@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { appointmentStub } from '../../../test/mocks/stubs';
+import { appointmentStub } from '../../../test/stubs';
 import { PrismaService } from '../../prisma';
 import { AppointmentRepository } from './appointment.repository';
 

@@ -4,7 +4,7 @@ import {
   serviceProviderStub,
   providerConnectionStub,
   connectionRequestStub,
-} from '../../../test/mocks/stubs';
+} from '../../../test/stubs';
 import {
   ProviderConnectionRepository,
   RequestConnectionRepository,

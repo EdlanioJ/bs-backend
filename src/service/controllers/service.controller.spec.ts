@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { createResponse } from 'node-mocks-http';
-import { serviceStub } from '../../../test/mocks/stubs';
+import { serviceStub } from '../../../test/stubs';
 import { ServiceModel } from '../models';
 import {
   CreateProviderServiceService,

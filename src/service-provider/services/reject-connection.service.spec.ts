@@ -1,6 +1,6 @@
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { connectionRequestStub, userStub } from '../../../test/mocks/stubs';
+import { connectionRequestStub, userStub } from '../../../test/stubs';
 import { UserRepository } from '../../user/repositories';
 import { RequestConnectionRepository } from '../repositories';
 import { RejectConnectionService } from './reject-connection.service';

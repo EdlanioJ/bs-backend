@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { createResponse } from 'node-mocks-http';
 
-import { appointmentStub } from '../../../test/mocks/stubs';
+import { appointmentStub } from '../../../test/stubs';
 import { AppointmentModel } from '../models';
 import {
   CancelAppointmentService,

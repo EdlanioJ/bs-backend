@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { userStub } from '../../../test/mocks/stubs';
+import { userStub } from '../../../test/stubs';
 import { PrismaService } from '../../prisma';
 import { UserRepository } from './user.repository';
 

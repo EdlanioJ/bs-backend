@@ -2,7 +2,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Test } from '@nestjs/testing';
 import { TemplateRepository } from '../../template/repositories';
 import { SendMailProcessorService } from './send-mail-processor.service';
-import { templateStub } from '../../../test/mocks/stubs';
+import { templateStub } from '../../../test/stubs';
 
 jest.mock('../../template/repositories');
 jest.mock('@nestjs-modules/mailer');

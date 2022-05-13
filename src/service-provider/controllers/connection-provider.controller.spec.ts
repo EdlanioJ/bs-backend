@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { createResponse } from 'node-mocks-http';
-import { providerConnectionStub } from '../../../test/mocks/stubs';
+import { providerConnectionStub } from '../../../test/stubs';
 import { ProviderConnectionModel } from '../models';
 import {
   AcceptConnectionService,

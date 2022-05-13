@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { CompleteAppointmentService } from './complete-appointment.service';
 import { AppointmentRepository } from '../repositories';
-import { appointmentStub } from '../../../test/mocks/stubs';
+import { appointmentStub } from '../../../test/stubs';
 import faker from '@faker-js/faker';
 
 jest.mock('../repositories', () =>

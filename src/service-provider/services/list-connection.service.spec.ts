@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { providerConnectionStub } from '../../../test/mocks/stubs';
+import { providerConnectionStub } from '../../../test/stubs';
 import { ProviderConnectionModel } from '../models';
 import { ProviderConnectionRepository } from '../repositories';
 import { ListConnectionService } from './list-connection.service';

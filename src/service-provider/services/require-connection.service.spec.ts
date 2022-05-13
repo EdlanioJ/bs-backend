@@ -11,7 +11,7 @@ import {
   serviceProviderStub,
   userStub,
   connectionRequestStub,
-} from '../../../test/mocks/stubs';
+} from '../../../test/stubs';
 
 jest.mock('../repositories');
 jest.mock('../../user/repositories');

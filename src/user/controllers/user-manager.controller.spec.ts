@@ -8,7 +8,7 @@ import {
   ListManagerRequestService,
   RequireManagerUserService,
 } from '../services';
-import { managerRequestStub } from '../../../test/mocks/stubs';
+import { managerRequestStub } from '../../../test/stubs';
 import { ManagerRequestModel } from '../models';
 import { createResponse } from 'node-mocks-http';
 

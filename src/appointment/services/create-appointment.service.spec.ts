@@ -5,11 +5,7 @@ import { ServiceRepository } from '../../service/repositories';
 import { UserRepository } from '../../user/repositories';
 import { AppointmentRepository } from '../repositories';
 import { CreateAppointmentService } from './create-appointment.service';
-import {
-  appointmentStub,
-  serviceStub,
-  userStub,
-} from '../../../test/mocks/stubs';
+import { appointmentStub, serviceStub, userStub } from '../../../test/stubs';
 
 jest.mock('../../service/repositories');
 jest.mock('../../user/repositories');

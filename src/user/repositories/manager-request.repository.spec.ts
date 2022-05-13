@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { managerRequestStub } from '../../../test/mocks/stubs';
+import { managerRequestStub } from '../../../test/stubs';
 import { PrismaService } from '../../prisma';
 import { ManagerRequestRepository } from './manager-request.repository';
 

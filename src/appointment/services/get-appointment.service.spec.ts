@@ -1,7 +1,7 @@
 import { TestingModule, Test } from '@nestjs/testing';
 import { GetAppointmentService } from './get-appointment.service';
 import { AppointmentRepository } from '../repositories';
-import { appointmentStub } from '../../../test/mocks/stubs';
+import { appointmentStub } from '../../../test/stubs';
 
 jest.mock('../repositories');
 

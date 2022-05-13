@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { serviceProviderStub } from '../../../test/mocks/stubs';
+import { serviceProviderStub } from '../../../test/stubs';
 import { PrismaService } from '../../prisma';
 import { ServiceProviderRepository } from './service-provider.repository';
 const serviceProvider = serviceProviderStub();

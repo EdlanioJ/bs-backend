@@ -1,6 +1,6 @@
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { serviceProviderStub } from '../../../test/mocks/stubs';
+import { serviceProviderStub } from '../../../test/stubs';
 import { ServiceProviderRepository } from '../repositories';
 import { DeleteServiceProviderService } from './delete-service-provider.service';
 

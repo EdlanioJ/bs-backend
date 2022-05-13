@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { CancelAppointmentService } from './cancel-appointment.service';
 import { AppointmentRepository } from '../repositories';
-import { appointmentStub } from '../../../test/mocks/stubs';
+import { appointmentStub } from '../../../test/stubs';
 
 jest.mock('../repositories', () =>
   jest.requireActual('../../../test/mocks/repositories/appointment.mock'),

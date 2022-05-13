@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { userStub } from '../../../test/mocks/stubs';
+import { userStub } from '../../../test/stubs';
 import { UserRepository } from '../../user/repositories';
 import { AuthHelpers } from '../helpers';
 import { ValidateWithCredentialsService } from './validate-with-credentials.service';

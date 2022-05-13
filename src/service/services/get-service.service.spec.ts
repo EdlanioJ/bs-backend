@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { serviceStub } from '../../../test/mocks/stubs';
+import { serviceStub } from '../../../test/stubs';
 import { ServiceRepository } from '../repositories';
 import { GetProviderServiceService } from './get-service.service';
 

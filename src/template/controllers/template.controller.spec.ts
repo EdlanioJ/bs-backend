@@ -8,7 +8,7 @@ import {
   GetTemplateService,
   ListTemplateService,
 } from '../services';
-import { templateStub } from '../../../test/mocks/stubs';
+import { templateStub } from '../../../test/stubs';
 import { TemplateModel } from '../models';
 import { createResponse } from 'node-mocks-http';
 

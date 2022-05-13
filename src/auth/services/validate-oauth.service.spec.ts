@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { userStub } from '../../../test/mocks/stubs';
+import { userStub } from '../../../test/stubs';
 import { SendMailProducerService } from '../../mail/services';
 import { UserRepository } from '../../user/repositories';
 import { ValidateOAuthService } from './validate-oauth.service';

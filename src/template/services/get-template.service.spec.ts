@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { templateStub } from '../../../test/mocks/stubs';
+import { templateStub } from '../../../test/stubs';
 import { TemplateModel } from '../models';
 import { TemplateRepository } from '../repositories';
 import { GetTemplateService } from './get-template.service';

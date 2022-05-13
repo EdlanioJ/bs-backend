@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import {
   providerConnectionStub,
   serviceProviderStub,
-} from '../../../test/mocks/stubs';
+} from '../../../test/stubs';
 import {
   ProviderConnectionRepository,
   ServiceProviderRepository,
