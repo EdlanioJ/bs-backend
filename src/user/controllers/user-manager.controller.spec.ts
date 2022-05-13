@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { UserManagerController } from './user-manager.controller';
+import { UserManagerController } from './index';
 
 import {
   AcceptManagerService,
