@@ -22,7 +22,6 @@ describe('Match', () => {
     dto.password = '123456';
     dto.confirmPassword = '1234567';
     const errors = await validate(dto);
-    console.log(errors);
     expect(errors).toHaveLength(1);
     expect(errors[0]).toEqual(
       expect.objectContaining({
