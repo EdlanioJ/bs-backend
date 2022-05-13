@@ -11,6 +11,11 @@ export class SendMailProcessor {
   @Process('send-mail-job')
   async sendMail(job: Job<SendMailDto>) {
     const { data } = job;
-    await this.sendMailService.execute(data);
+    const input = new SendMailDto();
+    input.to = data.to;
+    input.type = data.type;
+    input.content = data.content;
+
+    await this.sendMailService.execute(input);
   }
 }
