@@ -5,7 +5,7 @@ import { Profile } from 'passport-google-oauth20';
 import { mockedConfigService } from '../../../test/mocks/services';
 import { AuthPayloadDto } from '../dto';
 import { ValidateOAuthService } from '../services';
-import { GoogleStrategy } from './google.strategy';
+import { GoogleStrategy } from './index';
 
 jest.mock('../services');
 
