@@ -1,12 +1,10 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
 
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
+  <p align="center">BS API built with <a href="https://nestjs.com" target="_blank">Nest.JS</a> a <a href="https://nodejs.org" target="_blank">Node.JS</a> framework for building efficient and scalable server-side applications.</p>
+    
+<p align="center">
 <a href='https://coveralls.io/github/EdlanioJ/bs-backend?branch=main'><img src='https://coveralls.io/repos/github/EdlanioJ/bs-backend/badge.svg?branch=main' alt='Coverage Status' /></a>
 </p>
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
@@ -34,6 +32,8 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+* View the docs from [here](localhost:3000/docs)
 
 ## Test
 
