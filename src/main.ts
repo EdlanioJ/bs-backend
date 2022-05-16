@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
+import { ClusterService } from './core';
 
 async function bootstrap() {
   const processId = process.pid;
@@ -54,4 +55,4 @@ async function bootstrap() {
   });
 }
 
-bootstrap();
+ClusterService.clusterize(bootstrap);
