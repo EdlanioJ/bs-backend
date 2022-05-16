@@ -12,7 +12,7 @@ async function bootstrap() {
   const port = configService.get<number>('PORT');
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-
+  app.enableShutdownHooks();
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Beauty Spaces API')
     .setVersion('0.0.1')
