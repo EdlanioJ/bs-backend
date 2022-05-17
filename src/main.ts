@@ -5,16 +5,20 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
 import { ClusterService } from './core';
+import { PrismaService } from './prisma';
 
 async function bootstrap() {
   const processId = process.pid;
   const logger = new Logger('bootstrap');
   const app = await NestFactory.create(AppModule);
   const configService: ConfigService = app.get(ConfigService);
+  const prismaService: PrismaService = app.get(PrismaService);
   const port = configService.get<number>('PORT');
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.enableShutdownHooks();
+  prismaService.enableShutdownHooks(app);
+
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Beauty Spaces API')
     .setVersion('0.0.1')
