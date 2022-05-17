@@ -76,6 +76,14 @@ describe('AuthController', () => {
     });
   });
 
+  describe('GoogleAuth', () => {
+    it('should have been called', async () => {
+      const spy = jest.spyOn(controller, 'googleAuth');
+      controller.googleAuth();
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('LocalAuth', () => {
     it('should LoginService return tokens', async () => {
       const spy = jest.spyOn(loginService, 'execute').mockResolvedValueOnce({
