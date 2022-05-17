@@ -22,10 +22,4 @@ export class ServiceProviderModel {
       createdBy: serviceProvider.userId,
     };
   }
-
-  static mapCollection(
-    serviceProviders: ServiceProvider[],
-  ): ServiceProviderModel[] {
-    return serviceProviders.map(ServiceProviderModel.map);
-  }
 }
