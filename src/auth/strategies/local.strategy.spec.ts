@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { ValidateWithCredentialsService } from '../services';
-import { LocalStrategy } from './index';
+import { LocalStrategy } from './local.strategy';
 
 jest.mock('../services');
 

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { TemplateController } from './index';
+import { TemplateController } from './template.controller';
 
 import {
   CreateTemplateService,

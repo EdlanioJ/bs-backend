@@ -6,7 +6,7 @@ import {
   DeleteServiceProviderService,
   GetServiceProviderService,
 } from '../services';
-import { ServiceProviderController } from './index';
+import { ServiceProviderController } from './service-provider.controller';
 
 jest.mock('../services');
 

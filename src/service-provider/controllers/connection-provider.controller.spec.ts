@@ -10,7 +10,7 @@ import {
   RejectConnectionService,
   RequireConnectionService,
 } from '../services';
-import { ConnectionProviderController } from './index';
+import { ConnectionProviderController } from './connection-provider.controller';
 
 jest.mock('../services');
 
