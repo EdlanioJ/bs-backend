@@ -35,3 +35,4 @@ prisma/seed/*.json
 !.vscode/extensions.json
 
 .env
+.env.test
