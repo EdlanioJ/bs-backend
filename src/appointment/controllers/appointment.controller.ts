@@ -64,7 +64,7 @@ export class AppointmentController {
       customerId: userId,
       employeeId: employeeId,
       serviceId: serviceId,
-      startTime: startAt,
+      startTime: new Date(startAt),
     });
   }
 
