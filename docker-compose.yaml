@@ -10,3 +10,8 @@ services:
       - "5555:5555"
     volumes:
       - .:/home/node/app
+  redis:
+    image: redis:alpine
+    container_name: beauty-space-test-redis
+    ports:
+      - "6379:6379"
