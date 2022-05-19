@@ -134,8 +134,8 @@ export class AppointmentController {
   async listByCustomer(
     @Res() res: Response,
     @GetCurrentUser('sub') userId: string,
-    @Query('from_date') fromDate: Date,
-    @Query('to_date') toDate: Date,
+    @Query('from_date') fromDate = new Date(),
+    @Query('to_date') toDate = addDays(new Date(), 14),
     @Query('page') page = 1,
     @Query('limit') limit = 10,
   ) {
