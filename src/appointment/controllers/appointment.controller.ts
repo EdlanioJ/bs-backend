@@ -11,6 +11,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
+import { addDays } from 'date-fns';
 import { GetCurrentUser } from '../../auth/decorators';
 import { JwtGuard } from '../../auth/guards';
 import {
@@ -104,8 +105,8 @@ export class AppointmentController {
   async listByEmployee(
     @Res() res: Response,
     @Param('id') employeeId: string,
-    @Query('from_date') fromDate: Date,
-    @Query('to_date') toDate: Date,
+    @Query('from_date') fromDate = new Date(),
+    @Query('to_date') toDate = addDays(new Date(), 14),
     @Query('page') page = 1,
     @Query('limit') limit = 10,
   ) {
