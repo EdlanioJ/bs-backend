@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { addMinutes } from 'date-fns';
 import * as request from 'supertest';
 import * as jwt from 'jsonwebtoken';
 import { INestApplication } from '@nestjs/common';
@@ -14,7 +15,7 @@ describe('AppointmentController (e2e)', () => {
   let prisma: PrismaService;
   let configService: ConfigService;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -25,7 +26,7 @@ describe('AppointmentController (e2e)', () => {
     configService = app.get(ConfigService);
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await prisma.appointment.deleteMany();
     await prisma.service.deleteMany();
     await prisma.serviceProvider.deleteMany();
@@ -92,5 +93,71 @@ describe('AppointmentController (e2e)', () => {
       });
 
     expect(response.status).toBe(201);
+  });
+
+  it('/appointment/:id (GET)', async () => {
+    const manager = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        name: faker.name.findName(),
+        role: 'MANAGER',
+      },
+    });
+    const provider = await prisma.serviceProvider.create({
+      data: {
+        name: faker.company.companyName(),
+        user: { connect: { id: manager.id } },
+      },
+    });
+
+    const service = await prisma.service.create({
+      data: {
+        name: 'My Service',
+        appointmentDurationInMinutes: 30,
+        provider: { connect: { id: provider.id } },
+      },
+    });
+
+    const employee = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        name: faker.name.findName(),
+        role: 'EMPLOYEE',
+      },
+    });
+
+    const customer = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        name: faker.name.findName(),
+      },
+    });
+
+    const startAt = faker.date.future();
+    const appointment = await prisma.appointment.create({
+      data: {
+        service: { connect: { id: service.id } },
+        employee: { connect: { id: employee.id } },
+        customer: { connect: { id: customer.id } },
+        start: startAt,
+        end: addMinutes(startAt, service.appointmentDurationInMinutes),
+      },
+    });
+
+    const token = jwt.sign(
+      { sub: customer.id, role: customer.role, email: customer.email },
+      configService.get('JWT_SECRET'),
+      { expiresIn: '15m' },
+    );
+
+    const response = await request(app.getHttpServer())
+      .get(`/appointment/${appointment.id}`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.id).toBe(appointment.id);
   });
 });
