@@ -129,7 +129,7 @@ export class AppointmentController {
   @ApiQuery({ name: 'limit', required: false, type: Number })
   @ApiQuery({ name: 'from_date', required: true, type: Date })
   @ApiQuery({ name: 'to_date', required: true, type: Date })
-  @Get('customer')
+  @Get('me/list')
   @HttpCode(HttpStatus.OK)
   async listByCustomer(
     @Res() res: Response,
