@@ -155,7 +155,7 @@ export class AppointmentController {
   @ApiNoContentResponse({ description: 'cancel appointment' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @Patch(':id/cancel')
+  @Patch('cancel/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   cancel(
     @Body() { cancelReason }: CancelAppointmentDto,
