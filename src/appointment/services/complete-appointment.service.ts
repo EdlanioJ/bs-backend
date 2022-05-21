@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
-import { isBefore } from 'date-fns';
+import { isAfter } from 'date-fns';
 import { AppointmentRepository } from '../repositories';
 
 type Input = {
@@ -27,8 +27,8 @@ export class CompleteAppointmentService {
     if (appointment.status === 'CANCELLED')
       throw new BadRequestException('Appointment is cancelled');
 
-    if (isBefore(appointment.start, new Date()))
-      throw new BadRequestException('Appointment cannot be in the past');
+    if (isAfter(appointment.start, new Date()))
+      throw new BadRequestException('Appointment do not start yet');
 
     await this.appointmentRepo.update(appointmentId, {
       status: 'COMPLETED',

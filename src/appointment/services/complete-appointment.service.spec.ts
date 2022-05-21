@@ -72,22 +72,22 @@ describe('CompleteAppointmentService', () => {
     );
   });
 
-  it('should throw BadRequestException if appointment state time is in past', () => {
+  it('should throw BadRequestException if appointment do not start yet', () => {
     jest.spyOn(appointmentRepo, 'findOne').mockResolvedValue({
       ...appointmentStub(),
-      start: faker.date.past(),
+      start: faker.date.future(),
       employeeId: input.userId,
     });
     const output = service.execute(input);
     expect(output).rejects.toThrowError(
-      new BadRequestException('Appointment cannot be in the past'),
+      new BadRequestException('Appointment do not start yet'),
     );
   });
 
   it('should successfully complete appointment', async () => {
     jest.spyOn(appointmentRepo, 'findOne').mockResolvedValue({
       ...appointmentStub(),
-      start: faker.date.future(),
+      start: faker.date.past(),
       employeeId: input.userId,
     });
     const spy = jest.spyOn(appointmentRepo, 'update');
