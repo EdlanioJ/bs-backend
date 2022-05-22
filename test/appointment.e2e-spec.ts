@@ -1,12 +1,12 @@
 import { faker } from '@faker-js/faker';
 import { addDays, addMinutes, subMinutes } from 'date-fns';
 import * as request from 'supertest';
-import * as jwt from 'jsonwebtoken';
 import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma';
+import { jwtSign } from './utils';
 
 jest.setTimeout(30000);
 
@@ -76,10 +76,9 @@ describe('AppointmentController (e2e)', () => {
       },
     });
 
-    const token = jwt.sign(
+    const token = jwtSign(
       { sub: customer.id, role: customer.role, email: customer.email },
       configService.get('JWT_SECRET'),
-      { expiresIn: '15m' },
     );
 
     const startAt = faker.date.future();
@@ -147,10 +146,9 @@ describe('AppointmentController (e2e)', () => {
       },
     });
 
-    const token = jwt.sign(
+    const token = jwtSign(
       { sub: customer.id, role: customer.role, email: customer.email },
       configService.get('JWT_SECRET'),
-      { expiresIn: '15m' },
     );
 
     const response = await request(app.getHttpServer())
@@ -213,10 +211,9 @@ describe('AppointmentController (e2e)', () => {
       },
     });
 
-    const token = jwt.sign(
+    const token = jwtSign(
       { sub: customer.id, role: customer.role, email: customer.email },
       configService.get('JWT_SECRET'),
-      { expiresIn: '15m' },
     );
 
     const response = await request(app.getHttpServer())
@@ -281,10 +278,9 @@ describe('AppointmentController (e2e)', () => {
       },
     });
 
-    const token = jwt.sign(
-      { sub: employee.id, role: employee.role, email: employee.email },
+    const token = jwtSign(
+      { sub: customer.id, role: customer.role, email: customer.email },
       configService.get('JWT_SECRET'),
-      { expiresIn: '15m' },
     );
 
     const response = await request(app.getHttpServer())
@@ -349,10 +345,9 @@ describe('AppointmentController (e2e)', () => {
       },
     });
 
-    const token = jwt.sign(
+    const token = jwtSign(
       { sub: customer.id, role: customer.role, email: customer.email },
       configService.get('JWT_SECRET'),
-      { expiresIn: '15m' },
     );
 
     const response = await request(app.getHttpServer())
@@ -417,10 +412,9 @@ describe('AppointmentController (e2e)', () => {
       },
     });
 
-    const token = jwt.sign(
+    const token = jwtSign(
       { sub: customer.id, role: customer.role, email: customer.email },
       configService.get('JWT_SECRET'),
-      { expiresIn: '15m' },
     );
 
     const response = await request(app.getHttpServer())
@@ -482,10 +476,9 @@ describe('AppointmentController (e2e)', () => {
       },
     });
 
-    const token = jwt.sign(
+    const token = jwtSign(
       { sub: employee.id, role: employee.role, email: employee.email },
       configService.get('JWT_SECRET'),
-      { expiresIn: '15m' },
     );
 
     const response = await request(app.getHttpServer())
