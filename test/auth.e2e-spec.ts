@@ -52,4 +52,19 @@ describe('AuthController (e2e)', () => {
     expect(response.body).toHaveProperty('accessToken');
     expect(response.body).toHaveProperty('refreshToken');
   });
+
+  it('/auth/register/ (POST)', async () => {
+    const password = faker.internet.password();
+
+    const response = await request(app.getHttpServer())
+      .post('/auth/register/')
+      .send({
+        email: faker.internet.email(),
+        password,
+        confirmPassword: password,
+        name: faker.name.findName(),
+      });
+
+    expect(response.status).toBe(HttpStatus.CREATED);
+  });
 });
