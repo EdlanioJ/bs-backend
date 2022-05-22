@@ -85,4 +85,26 @@ describe('AuthController (e2e)', () => {
 
     expect(response.status).toBe(HttpStatus.NO_CONTENT);
   });
+
+  it('/auth/password/reset/:token (POST)', async () => {
+    const user = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        name: faker.name.findName(),
+        resetPasswordToken: faker.datatype.uuid(),
+        resetPasswordExpires: faker.date.future(),
+      },
+    });
+
+    const password = faker.internet.password();
+    const response = await request(app.getHttpServer())
+      .post(`/auth/password/reset/${user.resetPasswordToken}`)
+      .send({
+        password,
+        confirmPassword: password,
+      });
+
+    expect(response.status).toBe(HttpStatus.NO_CONTENT);
+  });
 });
