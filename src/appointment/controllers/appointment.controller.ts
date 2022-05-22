@@ -172,7 +172,7 @@ export class AppointmentController {
   @ApiNoContentResponse({ description: 'complete appointment' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @Patch(':id/complete')
+  @Patch('complete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   complete(
     @Param('id') appointmentId: string,
