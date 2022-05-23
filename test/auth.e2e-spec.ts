@@ -113,6 +113,31 @@ describe('AuthController (e2e)', () => {
     const id = new ObjectId().toHexString();
     const email = faker.internet.email();
     const role = 'USER';
+    const { refreshToken } = await authHelpers.generateTokens(id, email, role);
+
+    await prisma.user.create({
+      data: {
+        id,
+        email,
+        role,
+        name: faker.name.findName(),
+        refreshToken: await authHelpers.hashData(refreshToken),
+      },
+    });
+
+    const response = await request(app.getHttpServer())
+      .post('/auth/refresh/')
+      .set('Authorization', `Bearer ${refreshToken}`);
+
+    expect(response.status).toBe(HttpStatus.OK);
+    expect(response.body).toHaveProperty('accessToken');
+    expect(response.body).toHaveProperty('refreshToken');
+  });
+
+  it('/auth/logout/ (POST)', async () => {
+    const id = new ObjectId().toHexString();
+    const email = faker.internet.email();
+    const role = 'USER';
     const tokens = await authHelpers.generateTokens(id, email, role);
 
     await prisma.user.create({
@@ -126,11 +151,9 @@ describe('AuthController (e2e)', () => {
     });
 
     const response = await request(app.getHttpServer())
-      .post('/auth/refresh/')
-      .set('Authorization', `Bearer ${tokens.refreshToken}`);
+      .post('/auth/logout/')
+      .set('Authorization', `Bearer ${tokens.accessToken}`);
 
-    expect(response.status).toBe(HttpStatus.OK);
-    expect(response.body).toHaveProperty('accessToken');
-    expect(response.body).toHaveProperty('refreshToken');
+    expect(response.status).toBe(HttpStatus.NO_CONTENT);
   });
 });
