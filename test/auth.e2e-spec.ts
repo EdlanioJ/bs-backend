@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { ObjectId } from 'bson';
 import * as request from 'supertest';
 import { AuthHelpers } from '../src/auth/helpers';
 import { AppModule } from '../src/app.module';
@@ -106,5 +107,30 @@ describe('AuthController (e2e)', () => {
       });
 
     expect(response.status).toBe(HttpStatus.NO_CONTENT);
+  });
+
+  it('/auth/refresh/ (POST)', async () => {
+    const id = new ObjectId().toHexString();
+    const email = faker.internet.email();
+    const role = 'USER';
+    const tokens = await authHelpers.generateTokens(id, email, role);
+
+    await prisma.user.create({
+      data: {
+        id,
+        email,
+        role,
+        name: faker.name.findName(),
+        refreshToken: await authHelpers.hashData(tokens.refreshToken),
+      },
+    });
+
+    const response = await request(app.getHttpServer())
+      .post('/auth/refresh/')
+      .set('Authorization', `Bearer ${tokens.refreshToken}`);
+
+    expect(response.status).toBe(HttpStatus.OK);
+    expect(response.body).toHaveProperty('accessToken');
+    expect(response.body).toHaveProperty('refreshToken');
   });
 });
