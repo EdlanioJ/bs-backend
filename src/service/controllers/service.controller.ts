@@ -14,7 +14,10 @@ import { Response } from 'express';
 
 import { CreateServiceDto } from '../dto';
 import { GetCurrentUser } from '../../auth/decorators';
-import { JwtGuard } from '../../auth/guards';
+import { JwtGuard, RolesGuard } from '../../auth/guards';
+import { Roles } from '../../auth/decorators';
+import { Role } from '../../auth/entities';
+
 import {
   CreateProviderServiceService,
   GetProviderServiceService,
@@ -47,6 +50,8 @@ export class ServiceController {
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
+  @Roles(Role.MANAGER)
+  @UseGuards(RolesGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(
