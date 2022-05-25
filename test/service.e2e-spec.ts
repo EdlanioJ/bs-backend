@@ -13,7 +13,7 @@ describe('ServiceController (e2e)', () => {
   let prisma: PrismaService;
   let authHelpers: AuthHelpers;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -22,6 +22,17 @@ describe('ServiceController (e2e)', () => {
     await app.init();
     prisma = app.get(PrismaService);
     authHelpers = app.get(AuthHelpers);
+  });
+
+  afterEach(async () => {
+    await prisma.service.deleteMany();
+    await prisma.serviceProvider.deleteMany();
+    await prisma.user.deleteMany();
+  });
+
+  afterAll(async () => {
+    await prisma.$disconnect();
+    await app.close();
   });
 
   it('/service/ (POST)', async () => {

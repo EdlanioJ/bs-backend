@@ -14,7 +14,7 @@ describe('AuthController (e2e)', () => {
   let prisma: PrismaService;
   let authHelpers: AuthHelpers;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -27,6 +27,9 @@ describe('AuthController (e2e)', () => {
 
   afterEach(async () => {
     await prisma.user.deleteMany();
+  });
+
+  afterAll(async () => {
     await prisma.$disconnect();
     await app.close();
   });

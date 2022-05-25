@@ -15,7 +15,7 @@ describe('AppointmentController (e2e)', () => {
   let prisma: PrismaService;
   let configService: ConfigService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -31,6 +31,9 @@ describe('AppointmentController (e2e)', () => {
     await prisma.service.deleteMany();
     await prisma.serviceProvider.deleteMany();
     await prisma.user.deleteMany();
+  });
+
+  afterAll(async () => {
     await prisma.$disconnect();
     await app.close();
   });
