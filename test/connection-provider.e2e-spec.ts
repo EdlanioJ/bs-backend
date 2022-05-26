@@ -113,7 +113,6 @@ describe('ConnectionProviderController (e2e)', () => {
       .post(`/connection/provider/accept/${connectionRequest.id}`)
       .set('Authorization', `Bearer ${accessToken}`);
 
-    await prisma.providerConnection.deleteMany();
     expect(response.status).toBe(HttpStatus.CREATED);
   });
 
@@ -266,6 +265,59 @@ describe('ConnectionProviderController (e2e)', () => {
 
     const response = await request(app.getHttpServer())
       .get('/connection/provider')
+      .set('Authorization', `Bearer ${accessToken}`);
+
+    expect(response.status).toBe(HttpStatus.OK);
+    expect(response.body[0].id).toBe(connection.id);
+    expect(response.headers['x-total-count']).toBe('1');
+  });
+
+  it('/connection/provider/manager (GET)', async () => {
+    const manager = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        role: 'MANAGER',
+        name: faker.name.findName(),
+      },
+    });
+
+    const provider = await prisma.serviceProvider.create({
+      data: {
+        name: faker.company.companyName(),
+        user: { connect: { id: manager.id } },
+      },
+    });
+
+    const user = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        name: faker.name.findName(),
+      },
+    });
+
+    await prisma.providerConnectionRequest.create({
+      data: {
+        employee: { connect: { id: user.id } },
+        provider: { connect: { id: provider.id } },
+        status: 'ACCEPTED',
+      },
+    });
+
+    const connection = await prisma.providerConnection.create({
+      data: {
+        provider: { connect: { id: provider.id } },
+        user: { connect: { id: user.id } },
+      },
+    });
+
+    const { accessToken } = await authHelpers.generateTokens(
+      manager.id,
+      manager.name,
+      manager.role,
+    );
+
+    const response = await request(app.getHttpServer())
+      .get('/connection/provider/manager')
       .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(HttpStatus.OK);
