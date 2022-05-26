@@ -25,6 +25,7 @@ describe('ConnectionProviderController (e2e)', () => {
   });
 
   afterEach(async () => {
+    await prisma.providerConnection.deleteMany();
     await prisma.providerConnectionRequest.deleteMany();
     await prisma.serviceProvider.deleteMany();
     await prisma.user.deleteMany();
@@ -35,7 +36,7 @@ describe('ConnectionProviderController (e2e)', () => {
     await app.close();
   });
 
-  it('/provider/connection/require/:userId (POST)', async () => {
+  it('/connection/provider/require/:userId (POST)', async () => {
     const manager = await prisma.user.create({
       data: {
         email: faker.internet.email(),
@@ -65,13 +66,13 @@ describe('ConnectionProviderController (e2e)', () => {
     );
 
     const response = await request(app.getHttpServer())
-      .post(`/provider/connection/require/${user.id}`)
+      .post(`/connection/provider/require/${user.id}`)
       .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(HttpStatus.CREATED);
   });
 
-  it('/provider/connection/accept/:id', async () => {
+  it('/connection/provider/accept/:id', async () => {
     const manager = await prisma.user.create({
       data: {
         email: faker.internet.email(),
@@ -109,14 +110,14 @@ describe('ConnectionProviderController (e2e)', () => {
     );
 
     const response = await request(app.getHttpServer())
-      .post(`/provider/connection/accept/${connectionRequest.id}`)
+      .post(`/connection/provider/accept/${connectionRequest.id}`)
       .set('Authorization', `Bearer ${accessToken}`);
 
     await prisma.providerConnection.deleteMany();
     expect(response.status).toBe(HttpStatus.CREATED);
   });
 
-  it('/provider/connection/reject/:id', async () => {
+  it('/connection/provider/reject/:id', async () => {
     const manager = await prisma.user.create({
       data: {
         email: faker.internet.email(),
@@ -154,13 +155,13 @@ describe('ConnectionProviderController (e2e)', () => {
     );
 
     const response = await request(app.getHttpServer())
-      .patch(`/provider/connection/reject/${connectionRequest.id}`)
+      .patch(`/connection/provider/reject/${connectionRequest.id}`)
       .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(HttpStatus.NO_CONTENT);
   });
 
-  it('/provider/connection/:id (DELETE)', async () => {
+  it('/connection/provider/:id (DELETE)', async () => {
     const manager = await prisma.user.create({
       data: {
         email: faker.internet.email(),
@@ -205,9 +206,70 @@ describe('ConnectionProviderController (e2e)', () => {
     );
 
     const response = await request(app.getHttpServer())
-      .delete(`/provider/connection/${connection.id}`)
+      .delete(`/connection/provider/${connection.id}`)
       .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(HttpStatus.NO_CONTENT);
+  });
+
+  it('/connection/provider/ (GET)', async () => {
+    const admin = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        name: faker.name.findName(),
+        role: 'ADMIN',
+      },
+    });
+
+    const manager = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        role: 'MANAGER',
+        name: faker.name.findName(),
+      },
+    });
+
+    const provider = await prisma.serviceProvider.create({
+      data: {
+        name: faker.company.companyName(),
+        user: { connect: { id: manager.id } },
+      },
+    });
+
+    const user = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        name: faker.name.findName(),
+      },
+    });
+
+    await prisma.providerConnectionRequest.create({
+      data: {
+        employee: { connect: { id: user.id } },
+        provider: { connect: { id: provider.id } },
+        status: 'ACCEPTED',
+      },
+    });
+
+    const connection = await prisma.providerConnection.create({
+      data: {
+        provider: { connect: { id: provider.id } },
+        user: { connect: { id: user.id } },
+      },
+    });
+
+    const { accessToken } = await authHelpers.generateTokens(
+      admin.id,
+      admin.name,
+      admin.role,
+    );
+
+    const response = await request(app.getHttpServer())
+      .get('/connection/provider')
+      .set('Authorization', `Bearer ${accessToken}`);
+
+    expect(response.status).toBe(HttpStatus.OK);
+    expect(response.body[0].id).toBe(connection.id);
+    expect(response.headers['x-total-count']).toBe('1');
   });
 });
