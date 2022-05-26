@@ -70,4 +70,49 @@ describe('ConnectionProviderController (e2e)', () => {
 
     expect(response.status).toBe(HttpStatus.CREATED);
   });
+
+  it('/provider/connection/accept/:id', async () => {
+    const manager = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        role: 'MANAGER',
+        name: faker.name.findName(),
+      },
+    });
+
+    const provider = await prisma.serviceProvider.create({
+      data: {
+        name: faker.company.companyName(),
+        user: { connect: { id: manager.id } },
+      },
+    });
+
+    const user = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        name: faker.name.findName(),
+      },
+    });
+
+    const connectionRequest = await prisma.providerConnectionRequest.create({
+      data: {
+        employee: { connect: { id: user.id } },
+        provider: { connect: { id: provider.id } },
+        status: 'PENDING',
+      },
+    });
+
+    const { accessToken } = await authHelpers.generateTokens(
+      user.id,
+      user.name,
+      user.role,
+    );
+
+    const response = await request(app.getHttpServer())
+      .post(`/provider/connection/accept/${connectionRequest.id}`)
+      .set('Authorization', `Bearer ${accessToken}`);
+
+    await prisma.providerConnection.deleteMany();
+    expect(response.status).toBe(HttpStatus.CREATED);
+  });
 });
