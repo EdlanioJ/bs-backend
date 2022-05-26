@@ -38,7 +38,7 @@ import { ProviderConnectionModel } from '../models';
 
 @ApiTags('provider-connection')
 @ApiBearerAuth('access-token')
-@Controller('provider/connection')
+@Controller('connection/provider')
 @UseGuards(JwtGuard)
 export class ConnectionProviderController {
   constructor(
