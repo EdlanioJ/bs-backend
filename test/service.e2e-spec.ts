@@ -65,4 +65,41 @@ describe('ServiceController (e2e)', () => {
 
     expect(response.status).toBe(HttpStatus.CREATED);
   });
+
+  it('/service/ (GET)', async () => {
+    const user = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        role: 'MANAGER',
+        name: faker.name.findName(),
+      },
+    });
+    const provider = await prisma.serviceProvider.create({
+      data: {
+        name: faker.company.companyName(),
+        user: { connect: { id: user.id } },
+      },
+    });
+    const service = await prisma.service.create({
+      data: {
+        name: faker.commerce.product(),
+        appointmentDurationInMinutes: 30,
+        provider: { connect: { id: provider.id } },
+      },
+    });
+
+    const { accessToken } = await authHelpers.generateTokens(
+      user.id,
+      user.email,
+      user.role,
+    );
+
+    const response = await request(app.getHttpServer())
+      .get('/service/')
+      .set('Authorization', `Bearer ${accessToken}`);
+
+    expect(response.status).toBe(HttpStatus.OK);
+    expect(response.body[0].id).toBe(service.id);
+    expect(response.headers['x-total-count']).toBe('1');
+  });
 });
