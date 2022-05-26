@@ -25,7 +25,7 @@ model User {
   avatar       String?
   provider     String?
   role         Role    @default(USER)
-  thirdPartyId String? @unique @map("third_party_id")
+  thirdPartyId String? @map("third_party_id")
   refreshToken String? @map("refresh_token")
 
   resetPasswordToken   String?   @map("reset_password_token")
