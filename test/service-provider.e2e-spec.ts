@@ -58,4 +58,34 @@ describe('ServiceProviderController', () => {
 
     expect(response.status).toBe(HttpStatus.CREATED);
   });
+
+  it('/provider/:id (GET)', async () => {
+    const user = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        name: faker.name.findName(),
+        role: 'MANAGER',
+      },
+    });
+
+    const { accessToken } = await authHelpers.generateTokens(
+      user.id,
+      user.name,
+      user.role,
+    );
+
+    const provider = await prisma.serviceProvider.create({
+      data: {
+        name: faker.company.companyName(),
+        user: { connect: { id: user.id } },
+      },
+    });
+
+    const response = await request(app.getHttpServer())
+      .get(`/provider/${provider.id}`)
+      .set('Authorization', `Bearer ${accessToken}`);
+
+    expect(response.status).toBe(HttpStatus.OK);
+    expect(response.body.id).toBe(provider.id);
+  });
 });
