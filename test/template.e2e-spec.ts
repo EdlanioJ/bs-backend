@@ -60,4 +60,36 @@ describe('TemplateController', () => {
 
     expect(response.status).toBe(HttpStatus.CREATED);
   });
+
+  it('/template/:id (GET)', async () => {
+    const user = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        name: faker.name.findName(),
+        role: 'ADMIN',
+      },
+    });
+
+    const template = await prisma.template.create({
+      data: {
+        body: faker.lorem.paragraph(),
+        type: 'EMAIL',
+        subject: faker.lorem.sentence(),
+        user: { connect: { id: user.id } },
+      },
+    });
+
+    const { accessToken } = await authHelpers.generateTokens(
+      user.id,
+      user.name,
+      user.role,
+    );
+
+    const response = await request(app.getHttpServer())
+      .get(`/template/${template.id}`)
+      .set('Authorization', `Bearer ${accessToken}`);
+
+    expect(response.status).toBe(HttpStatus.OK);
+    expect(response.body.id).toBe(template.id);
+  });
 });
