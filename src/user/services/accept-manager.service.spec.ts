@@ -45,7 +45,7 @@ describe('AcceptManagerService', () => {
 
   it('should throw BadRequestException if no request found', async () => {
     const spy = jest
-      .spyOn(managerRequestRepo, 'findAvailable')
+      .spyOn(managerRequestRepo, 'findOne')
       .mockResolvedValue(null);
     const out = service.execute({ requestId: 'requestId', userId: 'userId' });
     await expect(out).rejects.toThrow(
@@ -57,9 +57,7 @@ describe('AcceptManagerService', () => {
 
   it('should throw BadRequestException if manager request user not found', async () => {
     const managerRequest = managerRequestStub();
-    jest
-      .spyOn(managerRequestRepo, 'findAvailable')
-      .mockResolvedValue(managerRequest);
+    jest.spyOn(managerRequestRepo, 'findOne').mockResolvedValue(managerRequest);
     const spy = jest.spyOn(userRepo, 'findOne').mockResolvedValue(null);
     const out = service.execute({ requestId: 'requestId', userId: 'userId' });
     await expect(out).rejects.toThrow(
@@ -70,11 +68,10 @@ describe('AcceptManagerService', () => {
 
   it('should throw BadRequestException if invalid manager request user', async () => {
     const managerRequest = managerRequestStub();
+    managerRequest.status = 'PENDING';
     const user = userStub();
     user.role = 'MANAGER';
-    jest
-      .spyOn(managerRequestRepo, 'findAvailable')
-      .mockResolvedValue(managerRequest);
+    jest.spyOn(managerRequestRepo, 'findOne').mockResolvedValue(managerRequest);
     jest.spyOn(userRepo, 'findOne').mockResolvedValue(user);
     const out = service.execute({ requestId: 'requestId', userId: 'userId' });
     await expect(out).rejects.toThrow(
@@ -84,11 +81,10 @@ describe('AcceptManagerService', () => {
 
   it('should throw BadRequestException if user not found', async () => {
     const managerRequest = managerRequestStub();
+    managerRequest.status = 'PENDING';
     const user = userStub();
     user.role = 'USER';
-    jest
-      .spyOn(managerRequestRepo, 'findAvailable')
-      .mockResolvedValue(managerRequest);
+    jest.spyOn(managerRequestRepo, 'findOne').mockResolvedValue(managerRequest);
     const spy = jest
       .spyOn(userRepo, 'findOne')
       .mockResolvedValueOnce(user)
@@ -102,11 +98,10 @@ describe('AcceptManagerService', () => {
 
   it('should throw BadRequestException if not a valid user', async () => {
     const managerRequest = managerRequestStub();
+    managerRequest.status = 'PENDING';
     const user = userStub();
     user.role = 'USER';
-    jest
-      .spyOn(managerRequestRepo, 'findAvailable')
-      .mockResolvedValue(managerRequest);
+    jest.spyOn(managerRequestRepo, 'findOne').mockResolvedValue(managerRequest);
     jest
       .spyOn(userRepo, 'findOne')
       .mockResolvedValueOnce(user)
@@ -119,13 +114,12 @@ describe('AcceptManagerService', () => {
 
   it('should accept manager request', async () => {
     const managerRequest = managerRequestStub();
+    managerRequest.status = 'PENDING';
     const user = userStub();
     user.role = 'USER';
     const admin = userStub();
     admin.role = 'ADMIN';
-    jest
-      .spyOn(managerRequestRepo, 'findAvailable')
-      .mockResolvedValue(managerRequest);
+    jest.spyOn(managerRequestRepo, 'findOne').mockResolvedValue(managerRequest);
     jest
       .spyOn(userRepo, 'findOne')
       .mockResolvedValueOnce(user)
