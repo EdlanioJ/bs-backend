@@ -94,4 +94,44 @@ describe('UserManagerController (e2e)', () => {
 
     expect(response.status).toBe(HttpStatus.CREATED);
   });
+
+  it('/user/manager/request/reject/:id (POST)', async () => {
+    const user = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        name: faker.name.findName(),
+        role: 'USER',
+      },
+    });
+
+    const managerRequest = await prisma.managerRequest.create({
+      data: {
+        user: { connect: { id: user.id } },
+        status: 'PENDING',
+      },
+    });
+
+    const admin = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        name: faker.name.findName(),
+        role: 'ADMIN',
+      },
+    });
+
+    const { accessToken } = await authHelpers.generateTokens(
+      admin.id,
+      admin.name,
+      admin.role,
+    );
+
+    const response = await request(app.getHttpServer())
+      .post(`/user/manager/request/reject/${managerRequest.id}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({
+        reason: 'I do not like you',
+      });
+
+    expect(response.status).toBe(HttpStatus.NO_CONTENT);
+  });
 });

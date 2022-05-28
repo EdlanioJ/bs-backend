@@ -99,7 +99,8 @@ export class UserManagerController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @Roles(Role.ADMIN)
   @UseGuards(JwtGuard, RolesGuard)
-  @Post('request/:id/reject')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post('request/reject/:id')
   async reject(
     @GetCurrentUser('sub') userId: string,
     @Param('id') requestId: string,
