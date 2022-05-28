@@ -52,6 +52,20 @@ describe('RejectManagerService', () => {
     expect(spy).toHaveBeenCalledWith('requestId');
   });
 
+  it('should throw BadRequestException if request not available', async () => {
+    const managerRequest = managerRequestStub();
+    managerRequest.status = 'REJECTED';
+    jest.spyOn(managerRequestRepo, 'findOne').mockResolvedValue(managerRequest);
+    const out = service.execute({
+      requestId: 'requestId',
+      userId: 'userId',
+      reason: 'reason',
+    });
+    await expect(out).rejects.toThrow(
+      new BadRequestException('Request not available'),
+    );
+  });
+
   it('should throw BadRequestException if manager request user not found', async () => {
     const managerRequest = managerRequestStub();
     managerRequest.status = 'PENDING';
