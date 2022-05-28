@@ -93,11 +93,11 @@ describe('ManagerRequestRepository', () => {
 
   it('should find an available manager request', async () => {
     const spy = jest.spyOn(prisma.managerRequest, 'findFirst');
-    const result = await repository.findAvailable('any_user_id');
+    const result = await repository.findAvailable('any_request_id');
     expect(result).toEqual(managerRequest);
     expect(spy).toHaveBeenCalledWith({
       where: {
-        userId: 'any_user_id',
+        id: 'any_request_id',
         status: 'PENDING',
       },
     });

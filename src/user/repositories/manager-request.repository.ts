@@ -26,10 +26,10 @@ export class ManagerRequestRepository {
     return this.prisma.managerRequest.findMany(filter);
   }
 
-  async findAvailable(userId: string) {
+  async findAvailable(requestId: string) {
     return this.prisma.managerRequest.findFirst({
       where: {
-        userId,
+        id: requestId,
         status: 'PENDING',
       },
     });
