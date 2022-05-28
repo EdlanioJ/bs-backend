@@ -34,4 +34,8 @@ export class ManagerRequestRepository {
       },
     });
   }
+
+  async findOne(id: string) {
+    return this.prisma.managerRequest.findFirst({ where: { id } });
+  }
 }
