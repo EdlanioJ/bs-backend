@@ -20,6 +20,8 @@ export class RejectManagerService {
   async execute({ requestId, userId, reason }: Input): Promise<void> {
     const managerRequest = await this.managerRequestRepo.findOne(requestId);
     if (!managerRequest) throw new BadRequestException('No request found');
+    if (managerRequest.status !== 'PENDING')
+      throw new BadRequestException('Request not available');
 
     const user = await this.userRepo.findOne(managerRequest.userId);
     if (!user) throw new BadRequestException('Manager request user not found');
