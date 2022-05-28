@@ -102,4 +102,15 @@ describe('ManagerRequestRepository', () => {
       },
     });
   });
+
+  it('should find one manager request', async () => {
+    const spy = jest.spyOn(prisma.managerRequest, 'findFirst');
+    const result = await repository.findOne('any_user_id');
+    expect(result).toEqual(managerRequest);
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        id: 'any_user_id',
+      },
+    });
+  });
 });
