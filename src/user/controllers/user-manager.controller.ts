@@ -80,13 +80,13 @@ export class UserManagerController {
     return this.requireManager.execute({ userId });
   }
 
-  @ApiNoContentResponse({ description: 'manager request accepted' })
+  @ApiCreatedResponse({ description: 'manager request accepted' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @Roles(Role.ADMIN)
   @UseGuards(JwtGuard, RolesGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @Post('request/:id/accept')
+  @HttpCode(HttpStatus.CREATED)
+  @Post('request/accept/:id')
   async accept(
     @GetCurrentUser('sub') userId: string,
     @Param('id') requestId: string,

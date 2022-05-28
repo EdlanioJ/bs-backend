@@ -26,6 +26,7 @@ describe('UserManagerController (e2e)', () => {
   });
 
   afterEach(async () => {
+    await prisma.manager.deleteMany({});
     await prisma.managerRequest.deleteMany({});
     await prisma.user.deleteMany({});
   });
@@ -52,6 +53,43 @@ describe('UserManagerController (e2e)', () => {
 
     const response = await request(app.getHttpServer())
       .post('/user/manager/request')
+      .set('Authorization', `Bearer ${accessToken}`);
+
+    expect(response.status).toBe(HttpStatus.CREATED);
+  });
+
+  it('/user/manager/request/accept/:id (POST)', async () => {
+    const user = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        name: faker.name.findName(),
+        role: 'USER',
+      },
+    });
+
+    const managerRequest = await prisma.managerRequest.create({
+      data: {
+        user: { connect: { id: user.id } },
+        status: 'PENDING',
+      },
+    });
+
+    const admin = await prisma.user.create({
+      data: {
+        email: faker.internet.email(),
+        name: faker.name.findName(),
+        role: 'ADMIN',
+      },
+    });
+
+    const { accessToken } = await authHelpers.generateTokens(
+      admin.id,
+      admin.name,
+      admin.role,
+    );
+
+    const response = await request(app.getHttpServer())
+      .post(`/user/manager/request/accept/${managerRequest.id}`)
       .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(HttpStatus.CREATED);
