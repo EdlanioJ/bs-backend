@@ -2,18 +2,17 @@ import { faker } from '@faker-js/faker';
 import { addDays, addMinutes, subMinutes } from 'date-fns';
 import * as request from 'supertest';
 import { INestApplication } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma';
-import { jwtSign } from './utils';
+import { AuthHelpers } from '../src/auth/helpers';
 
 jest.setTimeout(30000);
 
 describe('AppointmentController (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
-  let configService: ConfigService;
+  let authHelpers: AuthHelpers;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -23,7 +22,7 @@ describe('AppointmentController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
     prisma = app.get(PrismaService);
-    configService = app.get(ConfigService);
+    authHelpers = app.get(AuthHelpers);
   });
 
   afterEach(async () => {
@@ -79,15 +78,16 @@ describe('AppointmentController (e2e)', () => {
       },
     });
 
-    const token = jwtSign(
-      { sub: customer.id, role: customer.role, email: customer.email },
-      configService.get('JWT_SECRET'),
+    const { accessToken } = await authHelpers.generateTokens(
+      customer.id,
+      customer.name,
+      customer.role,
     );
 
     const startAt = faker.date.future();
     const response = await request(app.getHttpServer())
       .post('/appointment/')
-      .set('Authorization', `Bearer ${token}`)
+      .set('Authorization', `Bearer ${accessToken}`)
       .send({
         serviceId: service.id,
         employeeId: employee.id,
@@ -149,14 +149,15 @@ describe('AppointmentController (e2e)', () => {
       },
     });
 
-    const token = jwtSign(
-      { sub: customer.id, role: customer.role, email: customer.email },
-      configService.get('JWT_SECRET'),
+    const { accessToken } = await authHelpers.generateTokens(
+      customer.id,
+      customer.name,
+      customer.role,
     );
 
     const response = await request(app.getHttpServer())
       .get(`/appointment/${appointment.id}`)
-      .set('Authorization', `Bearer ${token}`);
+      .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(200);
     expect(response.body.id).toBe(appointment.id);
@@ -214,14 +215,15 @@ describe('AppointmentController (e2e)', () => {
       },
     });
 
-    const token = jwtSign(
-      { sub: customer.id, role: customer.role, email: customer.email },
-      configService.get('JWT_SECRET'),
+    const { accessToken } = await authHelpers.generateTokens(
+      customer.id,
+      customer.name,
+      customer.role,
     );
 
     const response = await request(app.getHttpServer())
       .get('/appointment/')
-      .set('Authorization', `Bearer ${token}`);
+      .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(1);
@@ -281,14 +283,15 @@ describe('AppointmentController (e2e)', () => {
       },
     });
 
-    const token = jwtSign(
-      { sub: customer.id, role: customer.role, email: customer.email },
-      configService.get('JWT_SECRET'),
+    const { accessToken } = await authHelpers.generateTokens(
+      customer.id,
+      customer.name,
+      customer.role,
     );
 
     const response = await request(app.getHttpServer())
       .get(`/appointment/employee/${employee.id}`)
-      .set('Authorization', `Bearer ${token}`);
+      .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(1);
@@ -348,14 +351,15 @@ describe('AppointmentController (e2e)', () => {
       },
     });
 
-    const token = jwtSign(
-      { sub: customer.id, role: customer.role, email: customer.email },
-      configService.get('JWT_SECRET'),
+    const { accessToken } = await authHelpers.generateTokens(
+      customer.id,
+      customer.name,
+      customer.role,
     );
 
     const response = await request(app.getHttpServer())
       .get('/appointment/me/list')
-      .set('Authorization', `Bearer ${token}`);
+      .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(1);
@@ -415,14 +419,15 @@ describe('AppointmentController (e2e)', () => {
       },
     });
 
-    const token = jwtSign(
-      { sub: customer.id, role: customer.role, email: customer.email },
-      configService.get('JWT_SECRET'),
+    const { accessToken } = await authHelpers.generateTokens(
+      customer.id,
+      customer.name,
+      customer.role,
     );
 
     const response = await request(app.getHttpServer())
       .patch(`/appointment/cancel/${appointment.id}`)
-      .set('Authorization', `Bearer ${token}`);
+      .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(204);
   });
@@ -479,14 +484,15 @@ describe('AppointmentController (e2e)', () => {
       },
     });
 
-    const token = jwtSign(
-      { sub: employee.id, role: employee.role, email: employee.email },
-      configService.get('JWT_SECRET'),
+    const { accessToken } = await authHelpers.generateTokens(
+      employee.id,
+      employee.name,
+      employee.role,
     );
 
     const response = await request(app.getHttpServer())
       .patch(`/appointment/complete/${appointment.id}`)
-      .set('Authorization', `Bearer ${token}`);
+      .set('Authorization', `Bearer ${accessToken}`);
     expect(response.status).toBe(204);
   });
 });
