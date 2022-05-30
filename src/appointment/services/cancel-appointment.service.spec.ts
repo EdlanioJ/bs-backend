@@ -4,9 +4,7 @@ import { CancelAppointmentService } from './cancel-appointment.service';
 import { AppointmentRepository } from '../repositories';
 import { appointmentStub } from '../../../test/stubs';
 
-jest.mock('../repositories', () =>
-  jest.requireActual('../../../test/mocks/repositories/appointment.mock'),
-);
+jest.mock('../repositories');
 
 describe('CancelAppointmentService', () => {
   let service: CancelAppointmentService;

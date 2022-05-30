@@ -5,9 +5,7 @@ import { AppointmentRepository } from '../repositories';
 import { appointmentStub } from '../../../test/stubs';
 import faker from '@faker-js/faker';
 
-jest.mock('../repositories', () =>
-  jest.requireActual('../../../test/mocks/repositories/appointment.mock'),
-);
+jest.mock('../repositories');
 
 describe('CompleteAppointmentService', () => {
   let service: CompleteAppointmentService;
