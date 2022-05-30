@@ -4,7 +4,7 @@ services:
   app:
     build: .
     entrypoint: .docker/entrypoint.sh
-    container_name: beauty-space-backend
+    container_name: bs-backend
     ports:
       - "3000:3000"
       - "5555:5555"
@@ -12,6 +12,6 @@ services:
       - .:/home/node/app
   redis:
     image: redis:alpine
-    container_name: beauty-space-test-redis
+    container_name: bs-test-redis
     ports:
       - "6379:6379"
