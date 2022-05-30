@@ -162,19 +162,17 @@ describe('AppointmentController', () => {
   describe('ListAppointmentByCustomer', () => {
     it('should return appointments and total', async () => {
       const customerId = 'an_user_id';
-      const fromDate = new Date();
-      const toDate = new Date();
       const res = createResponse();
       const spy = jest
         .spyOn(listAppointmentByCustomer, 'execute')
         .mockResolvedValueOnce(listResult);
 
-      await controller.listByCustomer(res, customerId, fromDate, toDate);
+      await controller.listByCustomer(res, customerId);
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith({
         customerId,
-        fromDate,
-        toDate,
+        fromDate: expect.any(Date),
+        toDate: expect.any(Date),
         page,
         limit,
       });
