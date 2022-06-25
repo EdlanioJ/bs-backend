@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { UserManagerController } from './controllers';
+import { UserController, UserManagerController } from './controllers';
 import {
   ManagerRepository,
   ManagerRequestRepository,
@@ -12,6 +12,7 @@ import {
   ListManagerRequestService,
   RejectManagerService,
   RequireManagerUserService,
+  GetUserService,
 } from './services';
 
 import { AuthModule } from '../auth';
@@ -24,10 +25,11 @@ import { MailModule } from '../mail';
     ListManagerRequestService,
     AcceptManagerService,
     RejectManagerService,
+    GetUserService,
     UserRepository,
     ManagerRepository,
     ManagerRequestRepository,
   ],
-  controllers: [UserManagerController],
+  controllers: [UserManagerController, UserController],
 })
 export class UserModule {}
