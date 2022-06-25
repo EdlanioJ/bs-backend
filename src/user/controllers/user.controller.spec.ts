@@ -44,4 +44,27 @@ describe('UserController', () => {
       );
     });
   });
+
+  describe('getUser', () => {
+    it('should return a user model', async () => {
+      const id = 'any_id';
+      const user = {
+        id,
+        name: 'any_name',
+        avatar: 'any_avatar',
+        createdAt: new Date(),
+      };
+      const spy = jest.spyOn(getUserService, 'execute').mockResolvedValue(user);
+      const out = await controller.getUser(id);
+      expect(spy).toHaveBeenCalledWith({ id });
+      expect(out).toEqual(
+        expect.objectContaining({
+          id,
+          name: user.name,
+          avatar: user.avatar,
+          createdAt: user.createdAt,
+        }),
+      );
+    });
+  });
 });
