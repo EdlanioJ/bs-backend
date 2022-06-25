@@ -6,7 +6,10 @@ export class ManagerRequestModel {
 
   @ApiProperty()
   createdBy: string; // userId
+
+  @ApiProperty()
   createdAt: Date;
+
   @ApiProperty()
   status: string;
 
