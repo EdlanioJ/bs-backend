@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -19,8 +19,15 @@ export class UserController {
 
   @ApiOkResponse({ type: UserModel })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @Get('me')
+  @Get('profile')
   async profile(@GetCurrentUser('sub') userId: string) {
     return this.getUserService.execute({ id: userId });
+  }
+
+  @ApiOkResponse({ type: UserModel })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @Get(':id')
+  async getUser(@Param('id') id: string) {
+    return this.getUserService.execute({ id });
   }
 }
