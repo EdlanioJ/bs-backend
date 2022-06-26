@@ -4,7 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
-import { ClusterService } from './core';
+// import { ClusterService } from './core';
 import { PrismaService } from './prisma';
 
 async function bootstrap() {
@@ -59,4 +59,4 @@ async function bootstrap() {
   });
 }
 
-ClusterService.clusterize(bootstrap);
+bootstrap();
