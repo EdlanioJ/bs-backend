@@ -96,12 +96,15 @@ describe('TemplateController', () => {
       };
       const page = 1;
       const limit = 10;
+      const orderBy = 'createdAt';
+      const sort = 'desc';
+
       const spy = jest
         .spyOn(listTemplateService, 'execute')
         .mockResolvedValue(out);
       const res = createResponse();
       await controller.findAll(res);
-      expect(spy).toHaveBeenCalledWith({ page, limit });
+      expect(spy).toHaveBeenCalledWith({ page, limit, orderBy, sort });
       expect(res.getHeader('x-total-count')).toBe(out.total);
       const body = res._getJSONData();
       expect(body).toHaveLength(out.data.length);

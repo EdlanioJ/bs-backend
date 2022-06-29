@@ -129,6 +129,20 @@ export class ConnectionProviderController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({
+    name: 'order_by',
+    required: false,
+    type: String,
+    enum: ['createdAt', 'id'],
+    example: 'createdAt',
+  })
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    type: String,
+    enum: ['asc', 'desc'],
+    example: 'desc',
+  })
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
   @Get()
@@ -159,6 +173,20 @@ export class ConnectionProviderController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({
+    name: 'order_by',
+    required: false,
+    type: String,
+    enum: ['createdAt', 'id'],
+    example: 'createdAt',
+  })
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    type: String,
+    enum: ['asc', 'desc'],
+    example: 'desc',
+  })
   @Roles(Role.MANAGER)
   @UseGuards(RolesGuard)
   @Get('manager')

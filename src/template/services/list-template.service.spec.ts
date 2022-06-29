@@ -26,16 +26,19 @@ describe('ListTemplateService', () => {
     const templates = [templateStub()];
     const page = 1;
     const limit = 10;
+    const orderBy = 'createdAt';
+    const sort = 'desc';
     const findSpy = jest
       .spyOn(templateRepo, 'findAll')
       .mockResolvedValue(templates);
     const countSpy = jest
       .spyOn(templateRepo, 'count')
       .mockResolvedValue(templates.length);
-    const result = await service.execute({ limit, page });
+    const result = await service.execute({ limit, page, orderBy, sort });
     expect(findSpy).toHaveBeenCalledWith({
       skip: (page - 1) * limit,
       take: limit,
+      orderBy: { [orderBy]: sort },
     });
     expect(countSpy).toHaveBeenCalledTimes(1);
     expect(result).toEqual({
