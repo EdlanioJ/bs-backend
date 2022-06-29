@@ -10,7 +10,6 @@ import {
 } from '../services';
 import { templateStub } from '../../../test/stubs';
 import { TemplateModel } from '../models';
-import { createResponse } from 'node-mocks-http';
 
 jest.mock('../services');
 
@@ -102,12 +101,10 @@ describe('TemplateController', () => {
       const spy = jest
         .spyOn(listTemplateService, 'execute')
         .mockResolvedValue(out);
-      const res = createResponse();
-      await controller.findAll(res);
+      const output = await controller.findAll();
       expect(spy).toHaveBeenCalledWith({ page, limit, orderBy, sort });
-      expect(res.getHeader('x-total-count')).toBe(out.total);
-      const body = res._getJSONData();
-      expect(body).toHaveLength(out.data.length);
+      expect(output.total).toBe(out.total);
+      expect(output.templates).toHaveLength(out.data.length);
     });
   });
 });

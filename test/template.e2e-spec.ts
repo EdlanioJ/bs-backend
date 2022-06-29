@@ -122,7 +122,7 @@ describe('TemplateController', () => {
       .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(HttpStatus.OK);
-    expect(response.body.length).toBe(1);
-    expect(response.headers['x-total-count']).toBe('1');
+    expect(response.body.templates.length).toBe(1);
+    expect(response.body.total).toBe(1);
   });
 });

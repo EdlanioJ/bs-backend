@@ -9,9 +9,7 @@ import {
   Post,
   Query,
   UseGuards,
-  Res,
 } from '@nestjs/common';
-import { Response } from 'express';
 
 import { CreateTemplateDto } from '../dto';
 import {
@@ -32,6 +30,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
+  getSchemaPath,
 } from '@nestjs/swagger';
 import { TemplateModel } from '../models';
 
@@ -65,7 +64,17 @@ export class TemplateController {
     });
   }
 
-  @ApiOkResponse({ type: TemplateModel, isArray: true })
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        templates: { $ref: getSchemaPath(TemplateModel) },
+        page: { type: 'number' },
+        limit: { type: 'number' },
+        total: { type: 'number' },
+      },
+    },
+  })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
@@ -86,7 +95,6 @@ export class TemplateController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(
-    @Res() res: Response,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
     @Query('order_by') orderBy = 'createdAt',
@@ -99,9 +107,12 @@ export class TemplateController {
       sort,
     });
 
-    return res
-      .set({ 'x-total-count': total, 'x-page': page, 'x-limit': limit })
-      .json(data);
+    return {
+      templates: data,
+      page,
+      limit,
+      total,
+    };
   }
 
   @ApiOkResponse({ type: TemplateModel })
