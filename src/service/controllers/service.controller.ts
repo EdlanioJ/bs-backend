@@ -69,16 +69,34 @@ export class ServiceController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({
+    name: 'order_by',
+    required: false,
+    type: String,
+    enum: ['createdAt', 'name'],
+    example: 'createdAt',
+  })
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    type: String,
+    enum: ['asc', 'desc'],
+    example: 'desc',
+  })
   @HttpCode(HttpStatus.OK)
   @Get()
   async list(
     @Res() res: Response,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
+    @Query('order_by') orderBy = 'createdAt',
+    @Query('sort') sort = 'desc',
   ) {
     const { data, total } = await this.listService.execute({
       limit,
       page,
+      orderBy,
+      sort,
     });
 
     return res

@@ -28,10 +28,18 @@ describe('ListProviderServiceService', () => {
     const spy = jest
       .spyOn(serviceRepo, 'findAll')
       .mockResolvedValueOnce([serviceStub()]);
-    const result = await service.execute({ page: 1, limit: 1 });
+    const result = await service.execute({
+      page: 1,
+      limit: 1,
+      orderBy: 'createdAt',
+      sort: 'desc',
+    });
     expect(spy).toHaveBeenCalledWith({
       skip: 0,
       take: 1,
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
     expect(result).toBeDefined();
     expect(countSpy).toHaveBeenCalledTimes(1);

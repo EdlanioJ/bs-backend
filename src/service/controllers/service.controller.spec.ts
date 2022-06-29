@@ -73,7 +73,12 @@ describe('ServiceController', () => {
         .mockResolvedValueOnce(result);
       const res = createResponse();
       await controller.list(res);
-      expect(spy).toHaveBeenCalledWith({ page: 1, limit: 10 });
+      expect(spy).toHaveBeenCalledWith({
+        page: 1,
+        limit: 10,
+        orderBy: 'createdAt',
+        sort: 'desc',
+      });
       expect(res.getHeader('x-total-count')).toBe(result.total);
       expect(res.getHeader('x-page')).toBe(1);
       expect(res.getHeader('x-limit')).toBe(10);
