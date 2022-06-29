@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { createResponse } from 'node-mocks-http';
 
 import { appointmentStub } from '../../../test/stubs';
 import { AppointmentModel } from '../models';
@@ -43,16 +42,6 @@ describe('AppointmentController', () => {
       },
     ],
     total: 1,
-  };
-
-  const expectedListObject = {
-    id: stub.id,
-    appointmentWith: stub.employeeId,
-    service: stub.serviceId,
-    createdAt: stub.createdAt.toISOString(),
-    endAt: stub.end.toISOString(),
-    startAt: stub.start.toISOString(),
-    status: stub.status,
   };
 
   beforeEach(async () => {
@@ -147,8 +136,8 @@ describe('AppointmentController', () => {
       const spy = jest
         .spyOn(listAppointment, 'execute')
         .mockResolvedValueOnce(listResult);
-      const res = createResponse();
-      await controller.list(res);
+
+      const output = await controller.list();
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith({
         page,
@@ -156,23 +145,24 @@ describe('AppointmentController', () => {
         orderBy: 'createdAt',
         sort: 'desc',
       });
-      expect(res.getHeader('x-total-count')).toBe(listResult.total);
-      expect(res.getHeader('x-page')).toBe(page);
-      expect(res.getHeader('x-limit')).toBe(limit);
-      const body = res._getJSONData();
-      expect(body[0]).toEqual(expect.objectContaining(expectedListObject));
+      expect(output.total).toBe(listResult.total);
+      expect(output.page).toBe(page);
+      expect(output.limit).toBe(limit);
+      expect(output.appointments[0]).toEqual(
+        expect.objectContaining(listResult.data[0]),
+      );
     });
   });
 
   describe('ListAppointmentByCustomer', () => {
     it('should return appointments and total', async () => {
       const customerId = 'an_user_id';
-      const res = createResponse();
+
       const spy = jest
         .spyOn(listAppointmentByCustomer, 'execute')
         .mockResolvedValueOnce(listResult);
 
-      await controller.listByCustomer(res, customerId);
+      const output = await controller.listByCustomer(customerId);
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith({
         customerId,
@@ -183,11 +173,13 @@ describe('AppointmentController', () => {
         orderBy: 'createdAt',
         sort: 'desc',
       });
-      expect(res.getHeader('x-total-count')).toBe(listResult.total);
-      expect(res.getHeader('x-page')).toBe(page);
-      expect(res.getHeader('x-limit')).toBe(limit);
-      const body = res._getJSONData();
-      expect(body[0]).toEqual(expect.objectContaining(expectedListObject));
+      expect(output.total).toBe(listResult.total);
+      expect(output.page).toBe(page);
+      expect(output.limit).toBe(limit);
+
+      expect(output.appointments[0]).toEqual(
+        expect.objectContaining(listResult.data[0]),
+      );
     });
   });
 
@@ -198,8 +190,7 @@ describe('AppointmentController', () => {
         .spyOn(listAppointmentByEmployee, 'execute')
         .mockResolvedValueOnce(listResult);
 
-      const res = createResponse();
-      await controller.listByEmployee(res, employeeId);
+      const output = await controller.listByEmployee(employeeId);
       expect(spy).toHaveBeenCalledWith({
         employeeId,
         fromDate: expect.any(Date),
@@ -209,11 +200,12 @@ describe('AppointmentController', () => {
         orderBy: 'createdAt',
         sort: 'desc',
       });
-      expect(res.getHeader('x-total-count')).toBe(listResult.total);
-      expect(res.getHeader('x-page')).toBe(page);
-      expect(res.getHeader('x-limit')).toBe(limit);
-      const body = res._getJSONData();
-      expect(body[0]).toEqual(expect.objectContaining(expectedListObject));
+      expect(output.total).toBe(listResult.total);
+      expect(output.page).toBe(page);
+      expect(output.limit).toBe(limit);
+      expect(output.appointments[0]).toEqual(
+        expect.objectContaining(listResult.data[0]),
+      );
     });
   });
 

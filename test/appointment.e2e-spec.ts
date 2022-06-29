@@ -226,9 +226,9 @@ describe('AppointmentController (e2e)', () => {
       .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
-    expect(response.body[0].id).toBe(appointment.id);
-    expect(response.headers['x-total-count']).toBe('1');
+    expect(response.body.appointments.length).toBe(1);
+    expect(response.body.appointments[0].id).toBe(appointment.id);
+    expect(response.body.total).toBe(1);
   });
 
   it('/appointment/employee/:id (GET)', async () => {
@@ -294,9 +294,9 @@ describe('AppointmentController (e2e)', () => {
       .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
-    expect(response.body[0].id).toBe(appointment.id);
-    expect(response.headers['x-total-count']).toBe('1');
+    expect(response.body.appointments.length).toBe(1);
+    expect(response.body.appointments[0].id).toBe(appointment.id);
+    expect(response.body.total).toBe(1);
   });
 
   it('/appointment/me/list (GET)', async () => {
@@ -362,9 +362,9 @@ describe('AppointmentController (e2e)', () => {
       .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
-    expect(response.body[0].id).toBe(appointment.id);
-    expect(response.headers['x-total-count']).toBe('1');
+    expect(response.body.appointments.length).toBe(1);
+    expect(response.body.appointments[0].id).toBe(appointment.id);
+    expect(response.body.total).toBe(1);
   });
 
   it('/appointment/cancel/:id (PATCH)', async () => {

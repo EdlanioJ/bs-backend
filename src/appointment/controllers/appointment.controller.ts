@@ -7,7 +7,6 @@ import {
   Get,
   Query,
   UseGuards,
-  Res,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -24,7 +23,6 @@ import {
   ListAppointmentByEmployeeService,
 } from '../services';
 import { CancelAppointmentDto, CreateAppointmentDto } from '../dto';
-import { Response } from 'express';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -34,6 +32,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
+  getSchemaPath,
 } from '@nestjs/swagger';
 import { AppointmentModel } from '../models';
 
@@ -77,7 +76,20 @@ export class AppointmentController {
     return this.getAppointment.execute({ id });
   }
 
-  @ApiOkResponse({ type: AppointmentModel, isArray: true })
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        appointments: {
+          type: 'array',
+          items: { $ref: getSchemaPath(AppointmentModel) },
+        },
+        total: { type: 'number' },
+        page: { type: 'number' },
+        limit: { type: 'number' },
+      },
+    },
+  })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
@@ -98,7 +110,6 @@ export class AppointmentController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async list(
-    @Res() res: Response,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
     @Query('order_by') orderBy = 'createdAt',
@@ -110,12 +121,28 @@ export class AppointmentController {
       orderBy,
       sort,
     });
-    return res
-      .set({ 'x-total-count': total, 'x-page': page, 'x-limit': limit })
-      .json(data);
+    return {
+      appointments: data,
+      total,
+      page,
+      limit,
+    };
   }
 
-  @ApiOkResponse({ type: AppointmentModel, isArray: true })
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        appointments: {
+          type: 'array',
+          items: { $ref: getSchemaPath(AppointmentModel) },
+        },
+        total: { type: 'number' },
+        page: { type: 'number' },
+        limit: { type: 'number' },
+      },
+    },
+  })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
@@ -138,7 +165,6 @@ export class AppointmentController {
   @Get('employee/:id')
   @HttpCode(HttpStatus.OK)
   async listByEmployee(
-    @Res() res: Response,
     @Param('id') employeeId: string,
     @Query('from_date') fromDate = new Date(),
     @Query('to_date') toDate = addDays(new Date(), 14),
@@ -157,12 +183,28 @@ export class AppointmentController {
       sort,
     });
 
-    return res
-      .set({ 'x-total-count': total, 'x-page': page, 'x-limit': limit })
-      .json(data);
+    return {
+      appointments: data,
+      total,
+      page,
+      limit,
+    };
   }
 
-  @ApiOkResponse({ type: AppointmentModel, isArray: true })
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        appointments: {
+          type: 'array',
+          items: { $ref: getSchemaPath(AppointmentModel) },
+        },
+        total: { type: 'number' },
+        page: { type: 'number' },
+        limit: { type: 'number' },
+      },
+    },
+  })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
@@ -185,7 +227,6 @@ export class AppointmentController {
   @Get('me/list')
   @HttpCode(HttpStatus.OK)
   async listByCustomer(
-    @Res() res: Response,
     @GetCurrentUser('sub') userId: string,
     @Query('from_date') fromDate = new Date(),
     @Query('to_date') toDate = addDays(new Date(), 14),
@@ -204,9 +245,12 @@ export class AppointmentController {
       sort,
     });
 
-    return res
-      .set({ 'x-total-count': total, 'x-page': page, 'x-limit': limit })
-      .json(data);
+    return {
+      appointments: data,
+      total,
+      page,
+      limit,
+    };
   }
 
   @ApiNoContentResponse({ description: 'cancel appointment' })
