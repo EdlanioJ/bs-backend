@@ -28,6 +28,9 @@ describe('ListManagerRequestService', () => {
   it('should return manager requests and total', async () => {
     const page = 1;
     const limit = 10;
+    const orderBy = 'id';
+    const sort = 'asc';
+
     const managerRequest = managerRequestStub();
     const findSpy = jest
       .spyOn(managerRequestRepository, 'findAll')
@@ -35,7 +38,7 @@ describe('ListManagerRequestService', () => {
     const countSpy = jest
       .spyOn(managerRequestRepository, 'count')
       .mockResolvedValue(1);
-    const result = await service.execute({ page, limit });
+    const result = await service.execute({ page, limit, orderBy, sort });
     expect(result).toEqual({
       total: 1,
       data: ManagerRequestModel.mapCollection([managerRequest]),
@@ -43,6 +46,9 @@ describe('ListManagerRequestService', () => {
     expect(findSpy).toHaveBeenCalledWith({
       skip: Number((page - 1) * limit),
       take: Number(limit),
+      orderBy: {
+        [orderBy]: sort,
+      },
     });
     expect(countSpy).toHaveBeenCalledTimes(1);
   });

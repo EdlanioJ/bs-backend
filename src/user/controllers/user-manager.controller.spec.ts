@@ -61,8 +61,10 @@ describe('UserManagerController', () => {
       const res = createResponse();
       const limit = 10;
       const page = 1;
+      const orderBy = 'createdAt';
+      const sort = 'desc';
       await controller.listRequest(res);
-      expect(spy).toHaveBeenCalledWith({ limit, page });
+      expect(spy).toHaveBeenCalledWith({ limit, page, orderBy, sort });
       expect(res.getHeader('x-total-count')).toBe(result.total);
       const body = res._getJSONData();
       expect(body).toHaveLength(result.data.length);

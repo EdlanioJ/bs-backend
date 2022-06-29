@@ -51,6 +51,20 @@ export class UserManagerController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
+  @ApiQuery({
+    name: 'order_by',
+    required: false,
+    type: String,
+    enum: ['createdAt', 'id'],
+    example: 'createdAt',
+  })
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    type: String,
+    enum: ['asc', 'desc'],
+    example: 'desc',
+  })
   @Roles(Role.ADMIN)
   @UseGuards(JwtGuard, RolesGuard)
   @HttpCode(HttpStatus.OK)
@@ -59,10 +73,14 @@ export class UserManagerController {
     @Res() res: Response,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
+    @Query('order_by') orderBy = 'createdAt',
+    @Query('sort') sort = 'desc',
   ) {
     const { total, data } = await this.listManagerRequest.execute({
       limit,
       page,
+      orderBy,
+      sort,
     });
 
     return res

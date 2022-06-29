@@ -5,6 +5,8 @@ import { ManagerRequestRepository } from '../repositories';
 type Input = {
   page: number;
   limit: number;
+  orderBy?: string;
+  sort?: string;
 };
 
 type Output = {
@@ -16,12 +18,15 @@ type Output = {
 export class ListManagerRequestService {
   constructor(private readonly managerRequestRepo: ManagerRequestRepository) {}
 
-  async execute({ limit, page }: Input): Promise<Output> {
+  async execute({ limit, page, orderBy, sort }: Input): Promise<Output> {
     const [total, requests] = await Promise.all([
       this.managerRequestRepo.count(),
       this.managerRequestRepo.findAll({
         skip: Number((page - 1) * limit),
         take: Number(limit),
+        orderBy: {
+          [orderBy]: sort,
+        },
       }),
     ]);
 
