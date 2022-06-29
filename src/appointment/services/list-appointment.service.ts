@@ -6,6 +6,8 @@ import { AppointmentRepository } from '../repositories';
 type Input = {
   page: number;
   limit: number;
+  orderBy?: string;
+  sort?: string;
 };
 
 type Output = {
@@ -17,12 +19,15 @@ type Output = {
 export class ListAppointmentService {
   constructor(private readonly appointmentRepo: AppointmentRepository) {}
 
-  async execute({ page, limit }: Input): Promise<Output> {
+  async execute({ page, limit, orderBy, sort }: Input): Promise<Output> {
     const [total, appointments] = await Promise.all([
       this.appointmentRepo.count(),
       this.appointmentRepo.findAll({
         skip: Number((page - 1) * limit),
         take: Number(limit),
+        orderBy: {
+          [orderBy]: sort,
+        },
       }),
     ]);
 

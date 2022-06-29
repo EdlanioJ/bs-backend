@@ -81,14 +81,35 @@ export class AppointmentController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
+  @ApiQuery({
+    name: 'order_by',
+    required: false,
+    type: String,
+    enum: ['createdAt', 'start', 'end'],
+    example: 'createdAt',
+  })
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    type: String,
+    enum: ['asc', 'desc'],
+    example: 'desc',
+  })
   @Get()
   @HttpCode(HttpStatus.OK)
   async list(
     @Res() res: Response,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
+    @Query('order_by') orderBy = 'createdAt',
+    @Query('sort') sort = 'desc',
   ) {
-    const { data, total } = await this.listAppointment.execute({ page, limit });
+    const { data, total } = await this.listAppointment.execute({
+      page,
+      limit,
+      orderBy,
+      sort,
+    });
     return res
       .set({ 'x-total-count': total, 'x-page': page, 'x-limit': limit })
       .json(data);
@@ -100,6 +121,20 @@ export class AppointmentController {
   @ApiQuery({ name: 'limit', required: false, type: Number })
   @ApiQuery({ name: 'from_date', required: true, type: Date })
   @ApiQuery({ name: 'to_date', required: true, type: Date })
+  @ApiQuery({
+    name: 'order_by',
+    required: false,
+    type: String,
+    enum: ['createdAt', 'start', 'end'],
+    example: 'createdAt',
+  })
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    type: String,
+    enum: ['asc', 'desc'],
+    example: 'desc',
+  })
   @Get('employee/:id')
   @HttpCode(HttpStatus.OK)
   async listByEmployee(
@@ -109,6 +144,8 @@ export class AppointmentController {
     @Query('to_date') toDate = addDays(new Date(), 14),
     @Query('page') page = 1,
     @Query('limit') limit = 10,
+    @Query('order_by') orderBy = 'createdAt',
+    @Query('sort') sort = 'desc',
   ) {
     const { data, total } = await this.listAppointmentByEmployee.execute({
       employeeId,
@@ -116,6 +153,8 @@ export class AppointmentController {
       toDate: new Date(toDate),
       page,
       limit,
+      orderBy,
+      sort,
     });
 
     return res
@@ -129,6 +168,20 @@ export class AppointmentController {
   @ApiQuery({ name: 'limit', required: false, type: Number })
   @ApiQuery({ name: 'from_date', required: true, type: Date })
   @ApiQuery({ name: 'to_date', required: true, type: Date })
+  @ApiQuery({
+    name: 'order_by',
+    required: false,
+    type: String,
+    enum: ['createdAt', 'start', 'end'],
+    example: 'createdAt',
+  })
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    type: String,
+    enum: ['asc', 'desc'],
+    example: 'desc',
+  })
   @Get('me/list')
   @HttpCode(HttpStatus.OK)
   async listByCustomer(
@@ -138,6 +191,8 @@ export class AppointmentController {
     @Query('to_date') toDate = addDays(new Date(), 14),
     @Query('page') page = 1,
     @Query('limit') limit = 10,
+    @Query('order_by') orderBy = 'createdAt',
+    @Query('sort') sort = 'desc',
   ) {
     const { data, total } = await this.listAppointmentByCustomer.execute({
       customerId: userId,
@@ -145,6 +200,8 @@ export class AppointmentController {
       toDate: new Date(toDate),
       page,
       limit,
+      orderBy,
+      sort,
     });
 
     return res

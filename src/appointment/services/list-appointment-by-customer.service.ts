@@ -9,6 +9,8 @@ type Input = {
   customerId: string;
   fromDate?: Date;
   toDate?: Date;
+  orderBy?: string;
+  sort?: string;
 };
 
 type Output = {
@@ -26,6 +28,8 @@ export class ListAppointmentByCustomerService {
     customerId,
     fromDate,
     toDate,
+    orderBy,
+    sort,
   }: Input): Promise<Output> {
     const [total, appointments] = await Promise.all([
       this.appointmentRepo.count({
@@ -40,6 +44,9 @@ export class ListAppointmentByCustomerService {
       this.appointmentRepo.findAll({
         skip: Number((page - 1) * limit),
         take: Number(limit),
+        orderBy: {
+          [orderBy]: sort,
+        },
         where: {
           customerId,
           start: {

@@ -150,7 +150,12 @@ describe('AppointmentController', () => {
       const res = createResponse();
       await controller.list(res);
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith({ page, limit });
+      expect(spy).toHaveBeenCalledWith({
+        page,
+        limit,
+        orderBy: 'createdAt',
+        sort: 'desc',
+      });
       expect(res.getHeader('x-total-count')).toBe(listResult.total);
       expect(res.getHeader('x-page')).toBe(page);
       expect(res.getHeader('x-limit')).toBe(limit);
@@ -175,6 +180,8 @@ describe('AppointmentController', () => {
         toDate: expect.any(Date),
         page,
         limit,
+        orderBy: 'createdAt',
+        sort: 'desc',
       });
       expect(res.getHeader('x-total-count')).toBe(listResult.total);
       expect(res.getHeader('x-page')).toBe(page);
@@ -199,6 +206,8 @@ describe('AppointmentController', () => {
         toDate: expect.any(Date),
         page,
         limit,
+        orderBy: 'createdAt',
+        sort: 'desc',
       });
       expect(res.getHeader('x-total-count')).toBe(listResult.total);
       expect(res.getHeader('x-page')).toBe(page);
