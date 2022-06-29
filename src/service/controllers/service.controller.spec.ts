@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { createResponse } from 'node-mocks-http';
+
 import { serviceStub } from '../../../test/stubs';
 import { ServiceModel } from '../models';
 import {
@@ -71,19 +71,18 @@ describe('ServiceController', () => {
       const spy = jest
         .spyOn(listService, 'execute')
         .mockResolvedValueOnce(result);
-      const res = createResponse();
-      await controller.list(res);
+
+      const output = await controller.list();
       expect(spy).toHaveBeenCalledWith({
         page: 1,
         limit: 10,
         orderBy: 'createdAt',
         sort: 'desc',
       });
-      expect(res.getHeader('x-total-count')).toBe(result.total);
-      expect(res.getHeader('x-page')).toBe(1);
-      expect(res.getHeader('x-limit')).toBe(10);
-      const body = res._getJSONData();
-      expect(body[0]).toEqual(
+      expect(output.total).toBe(result.total);
+      expect(output.page).toBe(1);
+      expect(output.limit).toBe(10);
+      expect(output.services[0]).toEqual(
         expect.objectContaining({
           id: service.id,
           name: service.name,

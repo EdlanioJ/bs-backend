@@ -99,8 +99,8 @@ describe('ServiceController (e2e)', () => {
       .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(HttpStatus.OK);
-    expect(response.body[0].id).toBe(service.id);
-    expect(response.headers['x-total-count']).toBe('1');
+    expect(response.body.services[0].id).toBe(service.id);
+    expect(response.body.total).toBe(1);
   });
 
   it('/service/:id (GET)', async () => {

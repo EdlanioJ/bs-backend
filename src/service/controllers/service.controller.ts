@@ -8,9 +8,7 @@ import {
   HttpCode,
   HttpStatus,
   Query,
-  Res,
 } from '@nestjs/common';
-import { Response } from 'express';
 
 import { CreateServiceDto } from '../dto';
 import { GetCurrentUser } from '../../auth/decorators';
@@ -31,6 +29,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
+  getSchemaPath,
 } from '@nestjs/swagger';
 import { ServiceModel } from '../models';
 
@@ -65,7 +64,20 @@ export class ServiceController {
     });
   }
 
-  @ApiOkResponse({ type: ServiceModel, isArray: true })
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        services: {
+          type: 'array',
+          items: { $ref: getSchemaPath(ServiceModel) },
+        },
+        page: { type: 'number' },
+        limit: { type: 'number' },
+        total: { type: 'number' },
+      },
+    },
+  })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
@@ -86,7 +98,6 @@ export class ServiceController {
   @HttpCode(HttpStatus.OK)
   @Get()
   async list(
-    @Res() res: Response,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
     @Query('order_by') orderBy = 'createdAt',
@@ -99,9 +110,12 @@ export class ServiceController {
       sort,
     });
 
-    return res
-      .set({ 'x-total-count': total, 'x-page': page, 'x-limit': limit })
-      .json(data);
+    return {
+      services: data,
+      total,
+      page,
+      limit,
+    };
   }
 
   @ApiOkResponse({ type: ServiceModel })
