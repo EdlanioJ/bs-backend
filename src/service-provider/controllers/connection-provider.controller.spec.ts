@@ -112,12 +112,14 @@ describe('ConnectionProviderController', () => {
     it('should list connection service return ProviderConnectionModel list and total', async () => {
       const page = 1;
       const limit = 10;
+      const orderBy = 'createdAt';
+      const sort = 'desc';
       const res = createResponse();
       const spy = jest
         .spyOn(listConnection, 'execute')
         .mockResolvedValue(listResult);
       await controller.list(res);
-      expect(spy).toHaveBeenCalledWith({ page, limit });
+      expect(spy).toHaveBeenCalledWith({ page, limit, orderBy, sort });
       expect(res.getHeader('x-total-count')).toBe(listResult.total);
       const body = res._getJSONData();
       expect(body).toHaveLength(listResult.data.length);
@@ -129,12 +131,14 @@ describe('ConnectionProviderController', () => {
       const page = 1;
       const limit = 10;
       const userId = 'userId';
+      const orderBy = 'createdAt';
+      const sort = 'desc';
       const res = createResponse();
       const spy = jest
         .spyOn(listConnectionByManager, 'execute')
         .mockResolvedValue(listResult);
       await controller.listByManager(res, userId);
-      expect(spy).toHaveBeenCalledWith({ userId, page, limit });
+      expect(spy).toHaveBeenCalledWith({ userId, page, limit, orderBy, sort });
       expect(res.getHeader('x-total-count')).toBe(listResult.total);
       const body = res._getJSONData();
       expect(body).toHaveLength(listResult.data.length);

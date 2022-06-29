@@ -6,6 +6,8 @@ import { ProviderConnectionRepository } from '../repositories';
 type Input = {
   page: number;
   limit: number;
+  orderBy?: string;
+  sort?: string;
 };
 
 type Output = {
@@ -19,12 +21,15 @@ export class ListConnectionService {
     private readonly providerConnectionRepo: ProviderConnectionRepository,
   ) {}
 
-  async execute({ page, limit }: Input): Promise<Output> {
+  async execute({ page, limit, orderBy, sort }: Input): Promise<Output> {
     const [total, providerConnections] = await Promise.all([
       this.providerConnectionRepo.count(),
       this.providerConnectionRepo.findAll({
         skip: Number((page - 1) * limit),
         take: Number(limit),
+        orderBy: {
+          [orderBy]: sort,
+        },
       }),
     ]);
 

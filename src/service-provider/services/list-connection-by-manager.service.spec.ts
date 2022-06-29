@@ -44,10 +44,12 @@ describe('ListConnectionByManagerService', () => {
     const userId = 'userId';
     const page = 1;
     const limit = 10;
+    const orderBy = 'id';
+    const sort = 'asc';
     const spy = jest
       .spyOn(providerRepo, 'findByUserId')
       .mockResolvedValue(null);
-    const out = service.execute({ userId, page, limit });
+    const out = service.execute({ userId, page, limit, orderBy, sort });
     await expect(out).rejects.toThrowError(
       new BadRequestException('user has not a provider'),
     );
@@ -58,6 +60,8 @@ describe('ListConnectionByManagerService', () => {
     const userId = 'userId';
     const page = 1;
     const limit = 10;
+    const orderBy = 'id';
+    const sort = 'asc';
     const serviceProvider = serviceProviderStub();
     const providerConnection = providerConnectionStub();
     jest.spyOn(providerRepo, 'findByUserId').mockResolvedValue(serviceProvider);
@@ -67,12 +71,13 @@ describe('ListConnectionByManagerService', () => {
     const countSpy = jest
       .spyOn(providerConnectionRepo, 'count')
       .mockResolvedValue(1);
-    const out = await service.execute({ userId, page, limit });
+    const out = await service.execute({ userId, page, limit, orderBy, sort });
     expect(out.total).toBe(1);
     expect(out.data).toHaveLength(1);
     expect(findSpy).toHaveBeenCalledWith({
       skip: Number((page - 1) * limit),
       take: Number(limit),
+      orderBy: { [orderBy]: sort },
       where: {
         providerId: serviceProvider.id,
       },

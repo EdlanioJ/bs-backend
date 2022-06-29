@@ -27,6 +27,8 @@ describe('ListConnectionService', () => {
   it('should return a list connections and total', async () => {
     const page = 1;
     const limit = 10;
+    const orderBy = 'id';
+    const sort = 'asc';
     const providerConnection = providerConnectionStub();
     const findSpy = jest
       .spyOn(providerConnectionRepo, 'findAll')
@@ -34,7 +36,7 @@ describe('ListConnectionService', () => {
     const countSpy = jest
       .spyOn(providerConnectionRepo, 'count')
       .mockResolvedValueOnce(1);
-    const out = await service.execute({ page, limit });
+    const out = await service.execute({ page, limit, orderBy, sort });
     expect(out.total).toBe(1);
     expect(out.data).toHaveLength(1);
     expect(out.data[0]).toEqual(

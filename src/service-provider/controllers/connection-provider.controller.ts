@@ -137,8 +137,15 @@ export class ConnectionProviderController {
     @Res() res: Response,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
+    @Query('order_by') orderBy = 'createdAt',
+    @Query('sort') sort = 'desc',
   ) {
-    const { data, total } = await this.listConnection.execute({ page, limit });
+    const { data, total } = await this.listConnection.execute({
+      page,
+      limit,
+      orderBy,
+      sort,
+    });
 
     return res
       .set({ 'x-total-count': total, 'x-page': page, 'x-limit': limit })
@@ -161,11 +168,15 @@ export class ConnectionProviderController {
     @GetCurrentUser('sub') userId: string,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
+    @Query('order_by') orderBy = 'createdAt',
+    @Query('sort') sort = 'desc',
   ) {
     const { data, total } = await this.listConnectionByManager.execute({
       limit,
       page,
       userId,
+      orderBy,
+      sort,
     });
 
     return res
