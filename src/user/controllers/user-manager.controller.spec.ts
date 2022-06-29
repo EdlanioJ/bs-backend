@@ -10,7 +10,6 @@ import {
 } from '../services';
 import { managerRequestStub } from '../../../test/stubs';
 import { ManagerRequestModel } from '../models';
-import { createResponse } from 'node-mocks-http';
 
 jest.mock('../services');
 
@@ -58,16 +57,14 @@ describe('UserManagerController', () => {
       const spy = jest
         .spyOn(listManagerRequest, 'execute')
         .mockResolvedValue(result);
-      const res = createResponse();
       const limit = 10;
       const page = 1;
       const orderBy = 'createdAt';
       const sort = 'desc';
-      await controller.listRequest(res);
+      const output = await controller.listRequest();
       expect(spy).toHaveBeenCalledWith({ limit, page, orderBy, sort });
-      expect(res.getHeader('x-total-count')).toBe(result.total);
-      const body = res._getJSONData();
-      expect(body).toHaveLength(result.data.length);
+      expect(output.total).toBe(result.total);
+      expect(output.managerRequests).toHaveLength(result.data.length);
     });
   });
 

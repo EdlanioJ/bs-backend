@@ -7,7 +7,6 @@ import {
   Param,
   Post,
   Query,
-  Res,
   UseGuards,
 } from '@nestjs/common';
 
@@ -32,9 +31,9 @@ import {
   ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
+  getSchemaPath,
 } from '@nestjs/swagger';
 import { ManagerRequestModel } from '../models';
-import { Response } from 'express';
 
 @ApiTags('manager')
 @ApiBearerAuth('access-token')
@@ -47,7 +46,20 @@ export class UserManagerController {
     private readonly rejectManager: RejectManagerService,
   ) {}
 
-  @ApiOkResponse({ type: ManagerRequestModel, isArray: true })
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        managerRequests: {
+          type: 'array',
+          items: { $ref: getSchemaPath(ManagerRequestModel) },
+        },
+        total: { type: 'number' },
+        page: { type: 'number' },
+        limit: { type: 'number' },
+      },
+    },
+  })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
@@ -70,7 +82,6 @@ export class UserManagerController {
   @HttpCode(HttpStatus.OK)
   @Get('request')
   async listRequest(
-    @Res() res: Response,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
     @Query('order_by') orderBy = 'createdAt',
@@ -83,9 +94,12 @@ export class UserManagerController {
       sort,
     });
 
-    return res
-      .set({ 'x-total-count': total, 'x-page': page, 'x-limit': limit })
-      .json(data);
+    return {
+      managerRequests: data,
+      total,
+      page,
+      limit,
+    };
   }
 
   @ApiCreatedResponse({ description: 'create manager request' })

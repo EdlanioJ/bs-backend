@@ -169,8 +169,8 @@ describe('UserManagerController (e2e)', () => {
       .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(HttpStatus.OK);
-    expect(response.body.length).toBe(1);
-    expect(response.body[0].id).toBe(managerRequest.id);
-    expect(response.headers['x-total-count']).toBe('1');
+    expect(response.body.managerRequests.length).toBe(1);
+    expect(response.body.managerRequests[0].id).toBe(managerRequest.id);
+    expect(response.body.total).toBe(1);
   });
 });
