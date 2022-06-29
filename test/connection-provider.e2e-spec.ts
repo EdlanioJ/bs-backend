@@ -268,8 +268,8 @@ describe('ConnectionProviderController (e2e)', () => {
       .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(HttpStatus.OK);
-    expect(response.body[0].id).toBe(connection.id);
-    expect(response.headers['x-total-count']).toBe('1');
+    expect(response.body.providerConnections[0].id).toBe(connection.id);
+    expect(response.body.total).toBe(1);
   });
 
   it('/connection/provider/manager (GET)', async () => {
@@ -321,7 +321,7 @@ describe('ConnectionProviderController (e2e)', () => {
       .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(HttpStatus.OK);
-    expect(response.body[0].id).toBe(connection.id);
-    expect(response.headers['x-total-count']).toBe('1');
+    expect(response.body.providerConnections[0].id).toBe(connection.id);
+    expect(response.body.total).toBe(1);
   });
 });

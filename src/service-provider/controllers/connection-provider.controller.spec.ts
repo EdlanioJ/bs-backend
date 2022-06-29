@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { createResponse } from 'node-mocks-http';
+
 import { providerConnectionStub } from '../../../test/stubs';
 import { ProviderConnectionModel } from '../models';
 import {
@@ -114,15 +114,14 @@ describe('ConnectionProviderController', () => {
       const limit = 10;
       const orderBy = 'createdAt';
       const sort = 'desc';
-      const res = createResponse();
       const spy = jest
         .spyOn(listConnection, 'execute')
         .mockResolvedValue(listResult);
-      await controller.list(res);
+      const output = await controller.list();
       expect(spy).toHaveBeenCalledWith({ page, limit, orderBy, sort });
-      expect(res.getHeader('x-total-count')).toBe(listResult.total);
-      const body = res._getJSONData();
-      expect(body).toHaveLength(listResult.data.length);
+      expect(output.total).toBe(listResult.total);
+
+      expect(output.providerConnections).toHaveLength(listResult.data.length);
     });
   });
 
@@ -133,15 +132,13 @@ describe('ConnectionProviderController', () => {
       const userId = 'userId';
       const orderBy = 'createdAt';
       const sort = 'desc';
-      const res = createResponse();
       const spy = jest
         .spyOn(listConnectionByManager, 'execute')
         .mockResolvedValue(listResult);
-      await controller.listByManager(res, userId);
+      const output = await controller.listByManager(userId);
       expect(spy).toHaveBeenCalledWith({ userId, page, limit, orderBy, sort });
-      expect(res.getHeader('x-total-count')).toBe(listResult.total);
-      const body = res._getJSONData();
-      expect(body).toHaveLength(listResult.data.length);
+      expect(output.total).toBe(listResult.total);
+      expect(output.providerConnections).toHaveLength(listResult.data.length);
     });
   });
 });

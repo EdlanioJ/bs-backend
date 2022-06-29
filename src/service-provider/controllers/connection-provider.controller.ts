@@ -8,10 +8,8 @@ import {
   Patch,
   Post,
   Query,
-  Res,
   UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
 
 import { Role } from '../../auth/entities';
 import { GetCurrentUser, Roles } from '../../auth/decorators';
@@ -33,6 +31,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
+  getSchemaPath,
 } from '@nestjs/swagger';
 import { ProviderConnectionModel } from '../models';
 
@@ -123,8 +122,20 @@ export class ConnectionProviderController {
   }
 
   @ApiOkResponse({
-    type: ProviderConnectionModel,
-    isArray: true,
+    schema: {
+      type: 'object',
+      properties: {
+        providerConnections: {
+          type: 'array',
+          items: {
+            $ref: getSchemaPath(ProviderConnectionModel),
+          },
+        },
+        total: { type: 'number' },
+        page: { type: 'number' },
+        limit: { type: 'number' },
+      },
+    },
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiQuery({ name: 'page', required: false, type: Number })
@@ -148,7 +159,6 @@ export class ConnectionProviderController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async list(
-    @Res() res: Response,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
     @Query('order_by') orderBy = 'createdAt',
@@ -161,14 +171,29 @@ export class ConnectionProviderController {
       sort,
     });
 
-    return res
-      .set({ 'x-total-count': total, 'x-page': page, 'x-limit': limit })
-      .json(data);
+    return {
+      providerConnections: data,
+      total,
+      page,
+      limit,
+    };
   }
 
   @ApiOkResponse({
-    type: ProviderConnectionModel,
-    isArray: true,
+    schema: {
+      type: 'object',
+      properties: {
+        providerConnections: {
+          type: 'array',
+          items: {
+            $ref: getSchemaPath(ProviderConnectionModel),
+          },
+        },
+        total: { type: 'number' },
+        page: { type: 'number' },
+        limit: { type: 'number' },
+      },
+    },
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiQuery({ name: 'page', required: false, type: Number })
@@ -192,7 +217,6 @@ export class ConnectionProviderController {
   @Get('manager')
   @HttpCode(HttpStatus.OK)
   async listByManager(
-    @Res() res: Response,
     @GetCurrentUser('sub') userId: string,
     @Query('page') page = 1,
     @Query('limit') limit = 10,
@@ -207,8 +231,11 @@ export class ConnectionProviderController {
       sort,
     });
 
-    return res
-      .set({ 'x-total-count': total, 'x-page': page, 'x-limit': limit })
-      .json(data);
+    return {
+      providerConnections: data,
+      total,
+      page,
+      limit,
+    };
   }
 }
