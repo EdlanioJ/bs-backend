@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { appointmentStub } from '../../../test/stubs';
+import { PaginateAppointmentQuery, SearchAppointmentQuery } from '../dto';
 import { AppointmentModel } from '../models';
 import {
   CancelAppointmentService,
@@ -137,7 +138,8 @@ describe('AppointmentController', () => {
         .spyOn(listAppointment, 'execute')
         .mockResolvedValueOnce(listResult);
 
-      const output = await controller.list();
+      const pagination = new PaginateAppointmentQuery();
+      const output = await controller.list(pagination);
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith({
         page,
@@ -162,7 +164,13 @@ describe('AppointmentController', () => {
         .spyOn(listAppointmentByCustomer, 'execute')
         .mockResolvedValueOnce(listResult);
 
-      const output = await controller.listByCustomer(customerId);
+      const pagination = new PaginateAppointmentQuery();
+      const searchParam = new SearchAppointmentQuery();
+      const output = await controller.listByCustomer(
+        customerId,
+        pagination,
+        searchParam,
+      );
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith({
         customerId,
@@ -190,7 +198,13 @@ describe('AppointmentController', () => {
         .spyOn(listAppointmentByEmployee, 'execute')
         .mockResolvedValueOnce(listResult);
 
-      const output = await controller.listByEmployee(employeeId);
+      const pagination = new PaginateAppointmentQuery();
+      const searchParam = new SearchAppointmentQuery();
+      const output = await controller.listByEmployee(
+        employeeId,
+        pagination,
+        searchParam,
+      );
       expect(spy).toHaveBeenCalledWith({
         employeeId,
         fromDate: expect.any(Date),

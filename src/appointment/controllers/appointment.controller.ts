@@ -10,7 +10,6 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { addDays } from 'date-fns';
 import { GetCurrentUser } from '../../auth/decorators';
 import { JwtGuard } from '../../auth/guards';
 import {
@@ -22,14 +21,18 @@ import {
   ListAppointmentByCustomerService,
   ListAppointmentByEmployeeService,
 } from '../services';
-import { CancelAppointmentDto, CreateAppointmentDto } from '../dto';
+import {
+  CancelAppointmentDto,
+  CreateAppointmentDto,
+  PaginateAppointmentQuery,
+  SearchAppointmentQuery,
+} from '../dto';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOkResponse,
-  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
   getSchemaPath,
@@ -91,29 +94,11 @@ export class AppointmentController {
     },
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
-  @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
-  @ApiQuery({
-    name: 'order_by',
-    required: false,
-    type: String,
-    enum: ['createdAt', 'start', 'end'],
-    example: 'createdAt',
-  })
-  @ApiQuery({
-    name: 'sort',
-    required: false,
-    type: String,
-    enum: ['asc', 'desc'],
-    example: 'desc',
-  })
   @Get()
   @HttpCode(HttpStatus.OK)
   async list(
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-    @Query('order_by') orderBy = 'createdAt',
-    @Query('sort') sort = 'desc',
+    @Query()
+    { limit, orderBy, page, sort }: PaginateAppointmentQuery,
   ) {
     const { data, total } = await this.listAppointment.execute({
       page,
@@ -144,34 +129,12 @@ export class AppointmentController {
     },
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'from_date', required: true, type: Date })
-  @ApiQuery({ name: 'to_date', required: true, type: Date })
-  @ApiQuery({
-    name: 'order_by',
-    required: false,
-    type: String,
-    enum: ['createdAt', 'start', 'end'],
-    example: 'createdAt',
-  })
-  @ApiQuery({
-    name: 'sort',
-    required: false,
-    type: String,
-    enum: ['asc', 'desc'],
-    example: 'desc',
-  })
   @Get('employee/:id')
   @HttpCode(HttpStatus.OK)
   async listByEmployee(
     @Param('id') employeeId: string,
-    @Query('from_date') fromDate = new Date(),
-    @Query('to_date') toDate = addDays(new Date(), 14),
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-    @Query('order_by') orderBy = 'createdAt',
-    @Query('sort') sort = 'desc',
+    @Query() { limit, orderBy, page, sort }: PaginateAppointmentQuery,
+    @Query() { fromDate, toDate }: SearchAppointmentQuery,
   ) {
     const { data, total } = await this.listAppointmentByEmployee.execute({
       employeeId,
@@ -206,34 +169,12 @@ export class AppointmentController {
     },
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'from_date', required: true, type: Date })
-  @ApiQuery({ name: 'to_date', required: true, type: Date })
-  @ApiQuery({
-    name: 'order_by',
-    required: false,
-    type: String,
-    enum: ['createdAt', 'start', 'end'],
-    example: 'createdAt',
-  })
-  @ApiQuery({
-    name: 'sort',
-    required: false,
-    type: String,
-    enum: ['asc', 'desc'],
-    example: 'desc',
-  })
   @Get('me/list')
   @HttpCode(HttpStatus.OK)
   async listByCustomer(
     @GetCurrentUser('sub') userId: string,
-    @Query('from_date') fromDate = new Date(),
-    @Query('to_date') toDate = addDays(new Date(), 14),
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-    @Query('order_by') orderBy = 'createdAt',
-    @Query('sort') sort = 'desc',
+    @Query() { limit, orderBy, page, sort }: PaginateAppointmentQuery,
+    @Query() { fromDate, toDate }: SearchAppointmentQuery,
   ) {
     const { data, total } = await this.listAppointmentByCustomer.execute({
       customerId: userId,
