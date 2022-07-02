@@ -15,7 +15,14 @@ async function bootstrap() {
   const prismaService: PrismaService = app.get(PrismaService);
   const port = configService.get<number>('PORT');
 
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidUnknownValues: true,
+      transformOptions: { enableImplicitConversion: true },
+    }),
+  );
   app.enableShutdownHooks();
   prismaService.enableShutdownHooks(app);
 

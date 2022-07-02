@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Transform } from 'class-transformer';
-import { IsNumber, IsOptional } from 'class-validator';
+import { Expose, Type } from 'class-transformer';
+import { IsNumber, IsOptional, IsDate } from 'class-validator';
 import { addDays } from 'date-fns';
 
 export class PaginateAppointmentQuery {
@@ -11,8 +11,8 @@ export class PaginateAppointmentQuery {
     required: false,
     example: 1,
   })
-  @Transform(({ value }) => parseInt(value, 10))
   @IsNumber()
+  @Type(() => Number)
   @IsOptional()
   page = 1;
 
@@ -23,8 +23,8 @@ export class PaginateAppointmentQuery {
     example: 10,
     default: 10,
   })
-  @Transform(({ value }) => parseInt(value, 10))
   @IsNumber()
+  @Type(() => Number)
   @IsOptional()
   limit = 10;
 
@@ -37,6 +37,7 @@ export class PaginateAppointmentQuery {
     example: 'createdAt',
   })
   @Expose({ name: 'order_by' })
+  @IsOptional()
   orderBy = 'createdAt';
 
   @ApiProperty({
@@ -46,25 +47,28 @@ export class PaginateAppointmentQuery {
     required: false,
     type: String,
   })
+  @IsOptional()
   sort = 'desc';
 }
 
 export class SearchAppointmentQuery {
   @ApiProperty({
     name: 'from_date',
-    required: true,
+    required: false,
     type: Date,
   })
   @Expose({ name: 'from_date' })
-  @Transform(({ value }) => new Date(value))
+  @IsDate()
+  @Type(() => Date)
   fromDate = new Date();
 
   @ApiProperty({
     name: 'to_date',
-    required: true,
+    required: false,
     type: Date,
   })
   @Expose({ name: 'to_date' })
-  @Transform(({ value }) => new Date(value))
+  @IsDate()
+  @Type(() => Date)
   toDate = addDays(this.fromDate, 14);
 }
