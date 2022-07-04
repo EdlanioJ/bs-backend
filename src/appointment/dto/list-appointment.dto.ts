@@ -11,8 +11,8 @@ export class PaginateAppointmentQuery {
     required: false,
     example: 1,
   })
-  @IsNumber()
   @Type(() => Number)
+  @IsNumber()
   @IsOptional()
   page = 1;
 
@@ -23,8 +23,8 @@ export class PaginateAppointmentQuery {
     example: 10,
     default: 10,
   })
-  @IsNumber()
   @Type(() => Number)
+  @IsNumber()
   @IsOptional()
   limit = 10;
 
@@ -58,8 +58,8 @@ export class SearchAppointmentQuery {
     type: Date,
   })
   @Expose({ name: 'from_date' })
-  @IsDate()
   @Type(() => Date)
+  @IsDate()
   fromDate = new Date();
 
   @ApiProperty({
@@ -68,7 +68,7 @@ export class SearchAppointmentQuery {
     type: Date,
   })
   @Expose({ name: 'to_date' })
-  @IsDate()
   @Type(() => Date)
+  @IsDate()
   toDate = addDays(this.fromDate, 14);
 }
