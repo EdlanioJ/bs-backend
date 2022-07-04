@@ -14,7 +14,7 @@ export class PaginateAppointmentQuery {
   @Type(() => Number)
   @IsNumber()
   @IsOptional()
-  page = 1;
+  page?: number = 1;
 
   @ApiProperty({
     name: 'limit',
@@ -26,7 +26,7 @@ export class PaginateAppointmentQuery {
   @Type(() => Number)
   @IsNumber()
   @IsOptional()
-  limit = 10;
+  limit?: number = 10;
 
   @ApiProperty({
     name: 'order_by',
@@ -38,7 +38,7 @@ export class PaginateAppointmentQuery {
   })
   @Expose({ name: 'order_by' })
   @IsOptional()
-  orderBy = 'createdAt';
+  orderBy?: string = 'createdAt';
 
   @ApiProperty({
     enum: ['asc', 'desc'],
@@ -48,7 +48,7 @@ export class PaginateAppointmentQuery {
     type: String,
   })
   @IsOptional()
-  sort = 'desc';
+  sort?: string = 'desc';
 }
 
 export class SearchAppointmentQuery {
@@ -61,7 +61,7 @@ export class SearchAppointmentQuery {
   @Transform(({ value }) => new Date(value))
   @IsDate()
   @IsOptional()
-  fromDate = new Date();
+  fromDate?: Date = new Date();
 
   @ApiProperty({
     name: 'to_date',
@@ -72,5 +72,5 @@ export class SearchAppointmentQuery {
   @Transform(({ value }) => new Date(value))
   @IsDate()
   @IsOptional()
-  toDate = addDays(this.fromDate, 14);
+  toDate?: Date = addDays(this.fromDate, 14);
 }
