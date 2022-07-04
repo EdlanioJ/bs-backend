@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import { IsNumber, IsOptional, IsDate } from 'class-validator';
 import { addDays } from 'date-fns';
 
@@ -58,8 +58,9 @@ export class SearchAppointmentQuery {
     type: Date,
   })
   @Expose({ name: 'from_date' })
-  @Type(() => Date)
+  @Transform(({ value }) => new Date(value))
   @IsDate()
+  @IsOptional()
   fromDate = new Date();
 
   @ApiProperty({
@@ -68,7 +69,8 @@ export class SearchAppointmentQuery {
     type: Date,
   })
   @Expose({ name: 'to_date' })
-  @Type(() => Date)
+  @Transform(({ value }) => new Date(value))
   @IsDate()
+  @IsOptional()
   toDate = addDays(this.fromDate, 14);
 }
