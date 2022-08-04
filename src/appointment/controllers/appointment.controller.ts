@@ -10,8 +10,8 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { GetCurrentUser } from '../../auth/decorators';
-import { JwtGuard } from '../../auth/guards';
+import { GetCurrentUser, Roles } from '../../auth/decorators';
+import { JwtGuard, RolesGuard } from '../../auth/guards';
 import {
   CancelAppointmentService,
   CompleteAppointmentService,
@@ -33,11 +33,13 @@ import {
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOkResponse,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { AppointmentModel } from '../models';
+import { AppointmentModel, SimpleAppointmentModel } from '../models';
+import { Role } from '../../auth/entities';
 
 @ApiTags('appointment')
 @ApiBearerAuth('access-token')
@@ -83,7 +85,7 @@ export class AppointmentController {
     schema: {
       type: 'object',
       properties: {
-        appointments: {
+        rows: {
           type: 'array',
           items: { $ref: getSchemaPath(AppointmentModel) },
         },
@@ -107,7 +109,7 @@ export class AppointmentController {
       sort,
     });
     return {
-      appointments: data,
+      rows: data,
       total,
       page,
       limit,
@@ -118,9 +120,9 @@ export class AppointmentController {
     schema: {
       type: 'object',
       properties: {
-        appointments: {
+        rows: {
           type: 'array',
-          items: { $ref: getSchemaPath(AppointmentModel) },
+          items: { $ref: getSchemaPath(SimpleAppointmentModel) },
         },
         total: { type: 'number' },
         page: { type: 'number' },
@@ -144,10 +146,11 @@ export class AppointmentController {
       limit,
       orderBy,
       sort,
+      status: ['PENDING', 'CONFIRMED'],
     });
 
     return {
-      appointments: data,
+      rows: SimpleAppointmentModel.mapCollection(data),
       total,
       page,
       limit,
@@ -158,7 +161,7 @@ export class AppointmentController {
     schema: {
       type: 'object',
       properties: {
-        appointments: {
+        rows: {
           type: 'array',
           items: { $ref: getSchemaPath(AppointmentModel) },
         },
@@ -168,13 +171,20 @@ export class AppointmentController {
       },
     },
   })
+  @ApiQuery({
+    name: 'status',
+    type: [String],
+    required: false,
+    example: ['PENDING', 'CONFIRMED', 'CANCELLED'],
+  })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @Get('me/list')
+  @Get('profile/user/')
   @HttpCode(HttpStatus.OK)
-  async listByCustomer(
+  async listProfileUser(
     @GetCurrentUser('sub') userId: string,
     @Query() { limit, orderBy, page, sort }: PaginateAppointmentQuery,
     @Query() { fromDate, toDate }: SearchAppointmentQuery,
+    @Query() status: string[] = ['PENDING', 'CONFIRMED', 'COMPLETED'],
   ) {
     const { data, total } = await this.listAppointmentByCustomer.execute({
       customerId: userId,
@@ -184,10 +194,61 @@ export class AppointmentController {
       limit,
       orderBy,
       sort,
+      status,
     });
 
     return {
-      appointments: data,
+      rows: data,
+      total,
+      page,
+      limit,
+    };
+  }
+
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        rows: {
+          type: 'array',
+          items: { $ref: getSchemaPath(AppointmentModel) },
+        },
+        total: { type: 'number' },
+        page: { type: 'number' },
+        limit: { type: 'number' },
+      },
+    },
+  })
+  @ApiQuery({
+    name: 'status',
+    type: [String],
+    required: false,
+    example: ['PENDING', 'CONFIRMED', 'CANCELLED'],
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @Get('profile/employee/')
+  @UseGuards(RolesGuard)
+  @Roles(Role.EMPLOYEE)
+  @HttpCode(HttpStatus.OK)
+  async listProfileEmployee(
+    @GetCurrentUser('sub') userId: string,
+    @Query() { limit, orderBy, page, sort }: PaginateAppointmentQuery,
+    @Query() { fromDate, toDate }: SearchAppointmentQuery,
+    @Query() status: string[] = ['PENDING', 'CONFIRMED', 'COMPLETED'],
+  ) {
+    const { data, total } = await this.listAppointmentByEmployee.execute({
+      employeeId: userId,
+      fromDate: new Date(fromDate),
+      toDate: new Date(toDate),
+      page,
+      limit,
+      orderBy,
+      sort,
+      status,
+    });
+
+    return {
+      rows: data,
       total,
       page,
       limit,

@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { appointmentStub } from '../../../test/stubs';
 import { PaginateAppointmentQuery, SearchAppointmentQuery } from '../dto';
-import { AppointmentModel } from '../models';
+import { AppointmentModel, SimpleAppointmentModel } from '../models';
 import {
   CancelAppointmentService,
   CompleteAppointmentService,
@@ -150,7 +150,7 @@ describe('AppointmentController', () => {
       expect(output.total).toBe(listResult.total);
       expect(output.page).toBe(page);
       expect(output.limit).toBe(limit);
-      expect(output.appointments[0]).toEqual(
+      expect(output.rows[0]).toEqual(
         expect.objectContaining(listResult.data[0]),
       );
     });
@@ -166,7 +166,7 @@ describe('AppointmentController', () => {
 
       const pagination = new PaginateAppointmentQuery();
       const searchParam = new SearchAppointmentQuery();
-      const output = await controller.listByCustomer(
+      const output = await controller.listProfileUser(
         customerId,
         pagination,
         searchParam,
@@ -180,12 +180,13 @@ describe('AppointmentController', () => {
         limit,
         orderBy: 'createdAt',
         sort: 'desc',
+        status: ['PENDING', 'CONFIRMED', 'COMPLETED'],
       });
       expect(output.total).toBe(listResult.total);
       expect(output.page).toBe(page);
       expect(output.limit).toBe(limit);
 
-      expect(output.appointments[0]).toEqual(
+      expect(output.rows[0]).toEqual(
         expect.objectContaining(listResult.data[0]),
       );
     });
@@ -213,11 +214,45 @@ describe('AppointmentController', () => {
         limit,
         orderBy: 'createdAt',
         sort: 'desc',
+        status: ['PENDING', 'CONFIRMED'],
       });
       expect(output.total).toBe(listResult.total);
       expect(output.page).toBe(page);
       expect(output.limit).toBe(limit);
-      expect(output.appointments[0]).toEqual(
+      expect(output.rows[0]).toEqual(
+        expect.objectContaining(SimpleAppointmentModel.map(listResult.data[0])),
+      );
+    });
+  });
+
+  describe('ListPRofileEmployee', () => {
+    it('should return appointments and total', async () => {
+      const employeeId = 'an_user_id';
+      const spy = jest
+        .spyOn(listAppointmentByEmployee, 'execute')
+        .mockResolvedValueOnce(listResult);
+
+      const pagination = new PaginateAppointmentQuery();
+      const searchParam = new SearchAppointmentQuery();
+      const output = await controller.listProfileEmployee(
+        employeeId,
+        pagination,
+        searchParam,
+      );
+      expect(spy).toHaveBeenCalledWith({
+        employeeId,
+        fromDate: expect.any(Date),
+        toDate: expect.any(Date),
+        page,
+        limit,
+        orderBy: 'createdAt',
+        sort: 'desc',
+        status: ['PENDING', 'CONFIRMED', 'COMPLETED'],
+      });
+      expect(output.total).toBe(listResult.total);
+      expect(output.page).toBe(page);
+      expect(output.limit).toBe(limit);
+      expect(output.rows[0]).toEqual(
         expect.objectContaining(listResult.data[0]),
       );
     });
