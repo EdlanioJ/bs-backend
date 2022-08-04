@@ -11,6 +11,7 @@ type Input = {
   toDate?: Date;
   orderBy?: string;
   sort?: string;
+  status?: string[];
 };
 
 type Output = {
@@ -30,11 +31,15 @@ export class ListAppointmentByCustomerService {
     toDate,
     orderBy,
     sort,
+    status,
   }: Input): Promise<Output> {
     const [total, appointments] = await Promise.all([
       this.appointmentRepo.count({
         where: {
           customerId,
+          status: {
+            in: status as any,
+          },
           start: {
             gte: fromDate,
             lte: toDate,
@@ -48,6 +53,9 @@ export class ListAppointmentByCustomerService {
           [orderBy]: sort,
         },
         where: {
+          status: {
+            in: status as any,
+          },
           customerId,
           start: {
             gte: fromDate,
