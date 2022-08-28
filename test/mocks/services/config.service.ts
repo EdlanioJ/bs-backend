@@ -7,6 +7,8 @@ export const mockedConfigService = {
         return 'googleClientSecret';
       case 'GOOGLE_CALLBACK_URL':
         return 'googleCallbackUrl';
+      case 'GOOGLE_MOBILE_CALLBACK_URL':
+        return 'googleMobileCallbackUrl';
       case 'JWT_SECRET':
         return 'jwtSecret';
       case 'JWT_REFRESH_SECRET':

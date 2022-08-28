@@ -1,4 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
+import httpMock from 'node-mocks-http';
+
 import {
   LoginService,
   LogoutService,
@@ -10,6 +13,7 @@ import {
 import { AuthController } from './auth.controller';
 
 jest.mock('../services');
+jest.mock('@nestjs/config');
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -19,6 +23,7 @@ describe('AuthController', () => {
   let resetPasswordService: ResetPasswordService;
   let refreshTokensService: RefreshTokensService;
   let logoutService: LogoutService;
+  let configService: ConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -30,6 +35,7 @@ describe('AuthController', () => {
         RegisterService,
         LogoutService,
         RefreshTokensService,
+        ConfigService,
       ],
     }).compile();
 
@@ -44,6 +50,7 @@ describe('AuthController', () => {
     refreshTokensService =
       module.get<RefreshTokensService>(RefreshTokensService);
     logoutService = module.get<LogoutService>(LogoutService);
+    configService = module.get<ConfigService>(ConfigService);
   });
 
   it('should be defined', () => {
@@ -76,10 +83,54 @@ describe('AuthController', () => {
     });
   });
 
+  describe('GoogleMobileAuthCallback', () => {
+    it('should LoginService return tokens', async () => {
+      const spy = jest.spyOn(loginService, 'execute').mockResolvedValueOnce({
+        accessToken: 'any_access_token',
+        refreshToken: 'any_refresh_token',
+      });
+
+      const spyGetEnvHost = jest
+        .spyOn(configService, 'get')
+        .mockReturnValueOnce('host');
+
+      const spyGetEnvPathname = jest
+        .spyOn(configService, 'get')
+        .mockReturnValue('pathname');
+      const res = httpMock.createResponse();
+
+      await controller.googleCallbackMobile(res, {
+        role: 'any_role',
+        sub: 'any_sub',
+        username: 'any_username',
+      });
+
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spyGetEnvHost).toHaveBeenCalledWith('MOBILE_AUTH_HOSTNAME');
+      expect(spyGetEnvPathname).toHaveBeenCalledWith('MOBILE_AUTH_PATHNAME');
+      expect(spy).toHaveBeenCalledWith({
+        role: 'any_role',
+        sub: 'any_sub',
+        username: 'any_username',
+      });
+      expect(res._getRedirectUrl()).toBe(
+        'https://host/pathname?access_token=any_access_token&refresh_token=any_refresh_token',
+      );
+    });
+  });
+
   describe('GoogleAuth', () => {
     it('should have been called', async () => {
       const spy = jest.spyOn(controller, 'googleAuth');
       controller.googleAuth();
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('GoogleMobileAuth', () => {
+    it('should have been called', async () => {
+      const spy = jest.spyOn(controller, 'mobileGoogleAuth');
+      controller.mobileGoogleAuth();
       expect(spy).toHaveBeenCalledTimes(1);
     });
   });

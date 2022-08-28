@@ -10,6 +10,7 @@ import { AuthController } from './controllers';
 import {
   RefreshJwtStrategy,
   GoogleStrategy,
+  GoogleMobileStrategy,
   LocalStrategy,
   JwtStrategy,
 } from './strategies';
@@ -30,6 +31,7 @@ import { AuthHelpers } from './helpers';
   exports: [JwtStrategy, RolesGuard],
   providers: [
     RefreshJwtStrategy,
+    GoogleMobileStrategy,
     GoogleStrategy,
     LocalStrategy,
     JwtStrategy,

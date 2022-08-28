@@ -7,8 +7,10 @@ import {
   HttpStatus,
   Param,
   Post,
+  Res,
   UseGuards,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -19,6 +21,8 @@ import {
   ApiBearerAuth,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { Response } from 'express';
+import * as url from 'url';
 
 import { GetCurrentUser } from '../decorators';
 import {
@@ -27,7 +31,13 @@ import {
   RegisterDto,
   ResetPasswordDto,
 } from '../dto';
-import { GoogleGuard, JwtGuard, LocalGuard, RefreshJwtGuard } from '../guards';
+import {
+  GoogleGuard,
+  GoogleMobileGuard,
+  JwtGuard,
+  LocalGuard,
+  RefreshJwtGuard,
+} from '../guards';
 import { TokensModel } from '../models';
 
 import {
@@ -38,7 +48,6 @@ import {
   ForgotPasswordService,
   ResetPasswordService,
 } from '../services';
-
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
@@ -49,6 +58,7 @@ export class AuthController {
     private readonly logoutService: LogoutService,
     private readonly refreshTokensService: RefreshTokensService,
     private readonly resetPasswordService: ResetPasswordService,
+    private readonly configService: ConfigService,
   ) {}
 
   @Get('google')
@@ -62,6 +72,34 @@ export class AuthController {
     @GetCurrentUser() { role, sub, username }: AuthPayloadDto,
   ) {
     return this.loginService.execute({ role, sub, username });
+  }
+
+  @Get('google/mobile')
+  @UseGuards(GoogleMobileGuard)
+  mobileGoogleAuth() {}
+
+  @Get('google/mobile/callback')
+  @UseGuards(GoogleMobileGuard)
+  async googleCallbackMobile(
+    @Res() res: Response,
+    @GetCurrentUser() { role, sub, username }: AuthPayloadDto,
+  ) {
+    const { accessToken, refreshToken } = await this.loginService.execute({
+      role,
+      sub,
+      username,
+    });
+    const uri = url.format({
+      protocol: 'https',
+      hostname: this.configService.get('MOBILE_AUTH_HOSTNAME'),
+      pathname: this.configService.get('MOBILE_AUTH_PATHNAME'),
+      query: {
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      },
+    });
+
+    return res.redirect(uri);
   }
 
   @ApiBody({
