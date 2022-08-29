@@ -22,7 +22,6 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Response } from 'express';
-import * as url from 'url';
 
 import { GetCurrentUser } from '../decorators';
 import {
@@ -89,15 +88,11 @@ export class AuthController {
       sub,
       username,
     });
-    const uri = url.format({
-      protocol: 'https',
-      hostname: this.configService.get('MOBILE_AUTH_HOSTNAME'),
-      pathname: this.configService.get('MOBILE_AUTH_PATHNAME'),
-      query: {
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      },
-    });
+    const deepLinking = this.configService.get('MOBILE_DEEP_LINKING');
+
+    const uri =
+      deepLinking +
+      `?access_token=${accessToken}&refresh_token=${refreshToken}`;
 
     return res.redirect(uri);
   }

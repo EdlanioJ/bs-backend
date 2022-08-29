@@ -90,13 +90,10 @@ describe('AuthController', () => {
         refreshToken: 'any_refresh_token',
       });
 
-      const spyGetEnvHost = jest
+      const spyGetDeepLinkingEnv = jest
         .spyOn(configService, 'get')
-        .mockReturnValueOnce('host');
+        .mockReturnValueOnce('myApp://');
 
-      const spyGetEnvPathname = jest
-        .spyOn(configService, 'get')
-        .mockReturnValue('pathname');
       const res = httpMock.createResponse();
 
       await controller.googleCallbackMobile(res, {
@@ -106,15 +103,14 @@ describe('AuthController', () => {
       });
 
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spyGetEnvHost).toHaveBeenCalledWith('MOBILE_AUTH_HOSTNAME');
-      expect(spyGetEnvPathname).toHaveBeenCalledWith('MOBILE_AUTH_PATHNAME');
+      expect(spyGetDeepLinkingEnv).toHaveBeenCalledWith('MOBILE_DEEP_LINKING');
       expect(spy).toHaveBeenCalledWith({
         role: 'any_role',
         sub: 'any_sub',
         username: 'any_username',
       });
       expect(res._getRedirectUrl()).toBe(
-        'https://host/pathname?access_token=any_access_token&refresh_token=any_refresh_token',
+        'myApp://?access_token=any_access_token&refresh_token=any_refresh_token',
       );
     });
   });
