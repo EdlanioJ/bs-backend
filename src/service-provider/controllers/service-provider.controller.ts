@@ -79,13 +79,26 @@ export class ServiceProviderController {
   @ApiOkResponse({ status: HttpStatus.OK, type: ServiceProviderModel })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @HttpCode(HttpStatus.OK)
+  @Get()
   async getAll(
     @Query('page') page = 1,
     @Query('limit') limit = 10,
     @Query('order_by') orderBy = 'createdAt',
     @Query('sort') sort = 'desc',
   ) {
-    const {} = await this.listProvider.execute({ limit, page, orderBy, sort });
+    const { data, total } = await this.listProvider.execute({
+      limit,
+      page,
+      orderBy,
+      sort,
+    });
+
+    return {
+      rows: data,
+      count: total,
+      page,
+      limit,
+    };
   }
 
   @ApiOkResponse({ status: HttpStatus.OK, type: ServiceProviderModel })
