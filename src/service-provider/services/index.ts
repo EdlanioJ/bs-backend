@@ -7,3 +7,4 @@ export * from './list-connection-by-manager.service';
 export * from './list-connection.service';
 export * from './reject-connection.service';
 export * from './require-connection.service';
+export * from './list-provider.service';

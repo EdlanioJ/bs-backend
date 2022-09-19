@@ -5,6 +5,7 @@ import {
   AddServiceProviderService,
   DeleteServiceProviderService,
   GetServiceProviderService,
+  ListProviderService,
 } from '../services';
 import { ServiceProviderController } from './service-provider.controller';
 
@@ -23,6 +24,7 @@ describe('ServiceProviderController', () => {
         AddServiceProviderService,
         DeleteServiceProviderService,
         GetServiceProviderService,
+        ListProviderService,
       ],
     }).compile();
 

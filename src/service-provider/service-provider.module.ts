@@ -24,6 +24,7 @@ import {
   DeleteConnectionService,
   RejectConnectionService,
   ListConnectionService,
+  ListProviderService,
 } from './services';
 
 import { UserRepository } from '../user/repositories';
@@ -40,6 +41,7 @@ import { UserRepository } from '../user/repositories';
     DeleteConnectionService,
     RejectConnectionService,
     ListConnectionService,
+    ListProviderService,
     ProviderConnectionRepository,
     RequestConnectionRepository,
     ServiceProviderRepository,
