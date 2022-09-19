@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 
@@ -19,12 +20,14 @@ import {
   AddServiceProviderService,
   DeleteServiceProviderService,
   GetServiceProviderService,
+  ListProviderService,
 } from '../services';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOkResponse,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -38,6 +41,7 @@ export class ServiceProviderController {
   constructor(
     private readonly addProvider: AddServiceProviderService,
     private readonly getProvider: GetServiceProviderService,
+    private readonly listProvider: ListProviderService,
     private readonly deleteProvider: DeleteServiceProviderService,
   ) {}
 
@@ -54,6 +58,34 @@ export class ServiceProviderController {
     @GetCurrentUser('sub') userId: string,
   ) {
     return this.addProvider.execute({ name, userId });
+  }
+
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({
+    name: 'order_by',
+    required: false,
+    type: String,
+    enum: ['createdAt', 'id'],
+    example: 'createdAt',
+  })
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    type: String,
+    enum: ['asc', 'desc'],
+    example: 'desc',
+  })
+  @ApiOkResponse({ status: HttpStatus.OK, type: ServiceProviderModel })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @HttpCode(HttpStatus.OK)
+  async getAll(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query('order_by') orderBy = 'createdAt',
+    @Query('sort') sort = 'desc',
+  ) {
+    const {} = await this.listProvider.execute({ limit, page, orderBy, sort });
   }
 
   @ApiOkResponse({ status: HttpStatus.OK, type: ServiceProviderModel })
